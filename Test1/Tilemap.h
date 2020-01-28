@@ -3,8 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Tilemap : public sf::Drawable, public sf::Transformable
-{
+class Tilemap : public sf::Drawable, public sf::Transformable {
 public:
 	struct tilemap_data {
 		int numb_layers;
