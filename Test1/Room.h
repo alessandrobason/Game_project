@@ -7,7 +7,7 @@
 
 class Room {
 public:
-	Room(std::string fold, std::string config_path, InputHandler in);
+	Room(std::string fold, std::string config_path, InputHandler* input);
 	~Room();
 
 	virtual void handle_input();
@@ -32,7 +32,7 @@ protected:
 	sf::Shader shader;
 
 	// main camera
-	sf::View *main_camera;
+	sf::View main_camera;
 
 	// input handler
 	InputHandler* in;

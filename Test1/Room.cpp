@@ -1,10 +1,12 @@
 #include "Room.h"
 
-Room::Room(std::string fold, std::string config_path, InputHandler in){
+Room::Room(std::string fold, std::string config_path, InputHandler* input){
 	FOLDER = fold;
 	config = new JSONparser(FOLDER + config_path);
 
-	main_camera = new sf::View(sf::FloatRect(0, 0, 16*10, 16*5));
+	main_camera = sf::View(sf::FloatRect(0, 0, 16*10, 16*5));
+
+	in = input;
 }
 Room::~Room(){
 	delete config;

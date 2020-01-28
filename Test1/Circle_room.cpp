@@ -2,19 +2,36 @@
 #include <iostream>
 
 
-Circle_room::Circle_room(sf::RenderWindow *window, std::string fold, std::string config_path) : Room(fold, config_path) {
+Circle_room::Circle_room(sf::RenderWindow* window, InputHandler* input, std::string fold, std::string config_path) : Room(fold, config_path, input) {
 	w = window;
-	w->setView(*main_camera);
-	//if (!shader.loadFromFile("Shaders/grayscale.frag", sf::Shader::Fragment)) {
-	//	std::cout << "Failed to load fragment shader\n";
-	//}
-	//shader.setUniform("texture", sf::Shader::CurrentTexture);
-	
+	w->setView(main_camera);
+	/*
+	if (!shader.loadFromFile("Shaders/grayscale.frag", sf::Shader::Fragment)) {
+		std::cout << "Failed to load fragment shader\n";
+	}
+	shader.setUniform("texture", sf::Shader::CurrentTexture);
+	*/
 }
 
 Circle_room::~Circle_room(){}
 
 void Circle_room::handle_input() {
+	if (in->isKeyDown(in->KEY_UP)) {
+		main_camera.move(sf::Vector2f(0, -0.5f));
+		w->setView(main_camera);
+	}
+	if (in->isKeyDown(in->KEY_RIGHT)) {
+		main_camera.move(sf::Vector2f(0.5f, 0));
+		w->setView(main_camera);
+	}
+	if (in->isKeyDown(in->KEY_DOWN)) {
+		main_camera.move(sf::Vector2f(0, 0.5f));
+		w->setView(main_camera);
+	}
+	if (in->isKeyDown(in->KEY_LEFT)) {
+		main_camera.move(sf::Vector2f(-0.5f, 0));
+		w->setView(main_camera);
+	}
 }
 
 void Circle_room::update() {
