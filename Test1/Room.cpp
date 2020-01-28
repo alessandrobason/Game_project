@@ -4,7 +4,7 @@ Room::Room(std::string fold, std::string config_path, InputHandler* input){
 	FOLDER = fold;
 	config = new JSONparser(FOLDER + config_path);
 
-	main_camera = sf::View(sf::FloatRect(0, 0, 16*10, 16*5));
+	main_camera = sf::View(sf::FloatRect(0, 0, 16*12, 16*9));
 
 	in = input;
 }
@@ -14,7 +14,7 @@ Room::~Room(){
 }
 
 void Room::handle_input() {}
-void Room::update() {}
+void Room::update(float dt) {}
 void Room::draw() {}
 void Room::load() {
 	std::string tileset_json;

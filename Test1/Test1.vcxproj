@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\forest_tiles.png" />
+    <Image Include="Assets\link.png" />
     <Image Include="Assets\oak.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

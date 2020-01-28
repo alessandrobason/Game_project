@@ -11,7 +11,7 @@ public:
 	~Room();
 
 	virtual void handle_input();
-	virtual void update();
+	virtual void update(float dt);
 	virtual void draw();
 	virtual void load();
 

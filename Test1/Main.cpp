@@ -3,8 +3,6 @@
 #include "Circle_room.h"
 #include "InputHandler.h"
 
-// https://www.sfml-dev.org/tutorials/2.5/graphics-view.php
-
 float min(float a, float b) {return (a<b ? a:b);}
 
 bool pressed = false;
@@ -52,7 +50,7 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1000, 500), "CMP105_W1");
+	sf::RenderWindow window(sf::VideoMode(16*12*5, 16*9*5), "CMP105_W1");
 	InputHandler *in = new InputHandler();
 
 	//Create the window
@@ -66,6 +64,7 @@ int main()
 	rooms[0]->load();
 	rooms[1]->load();
 
+	sf::Clock deltaClock;
 	// Game Loop
 	while (window.isOpen())
 	{
@@ -73,7 +72,8 @@ int main()
 		windowProcess(&window, in);
 
 		rooms[current_room]->handle_input();
-		rooms[current_room]->update();
+		rooms[current_room]->update(deltaClock.restart().asSeconds());
 		rooms[current_room]->draw();
+		deltaClock.restart().asSeconds();
 	}
 }

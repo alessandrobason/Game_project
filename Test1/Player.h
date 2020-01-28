@@ -1,13 +1,25 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include "InputHandler.h"
 
-class Player : public sf::Drawable, public sf::Transformable {
+class Player {
 public:
+	Player();
+	Player(InputHandler* input, std::string txt_path, sf::Vector2f pos);
+
+	void Update(float dt);
+
+	void move(sf::Vector2f mov);
+
+	sf::Sprite sprite;
 
 private:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	sf::Texture spritesheet;
+	InputHandler *in;
 
-	sf::VertexArray m_vertices;
-	sf::Texture m_tileset;
+	float speed = 1.5;
+
+	bool pressed_keys[256] = { false };
 };
 

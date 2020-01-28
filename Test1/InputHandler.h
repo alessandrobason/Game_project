@@ -6,8 +6,15 @@ class InputHandler
 public:
 
 	void setKeyDown(unsigned int key) { keys[key] = true; };
-	void setKeyUp(unsigned int key) { keys[key] = false; };
+	void setKeyUp(unsigned int key) { keys[key] = false; pressed_keys[key] = false;};
 	bool isKeyDown(unsigned int key) { return keys[key]; };
+	bool isKeyPressed(unsigned int key) {
+		if (keys[key] && !pressed_keys[key]) {
+			pressed_keys[key] = true;
+			return true;
+		}
+		return false;
+	}
 
 	void setMouseX(int lx) { mouse.position.x = lx; };
 	void setMouseY(int ly) { mouse.position.y = ly; };
@@ -24,7 +31,8 @@ public:
 		KEY_UP = sf::Keyboard::W,
 		KEY_LEFT = sf::Keyboard::A,
 		KEY_RIGHT = sf::Keyboard::D,
-		KEY_DOWN = sf::Keyboard::S
+		KEY_DOWN = sf::Keyboard::S,
+		KEY_SPACE = sf::Keyboard::Space
 	};
 
 private:
@@ -36,6 +44,7 @@ private:
 	};
 
 	bool keys[256]{ false };
+	bool pressed_keys[256]{ false };
 	Mouse mouse;
 };
 

@@ -1,5 +1,7 @@
 #pragma once
+#include <iostream>
 #include "Room.h"
+#include "Player.h"
 
 class Circle_room : public Room {
 public:
@@ -7,6 +9,8 @@ public:
 	~Circle_room();
 
 	void handle_input();
-	void update();
+	void update(float dt);
 	void draw();
+private:
+	Player *p;
 };
