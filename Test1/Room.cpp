@@ -1,6 +1,6 @@
 #include "Room.h"
 
-Room::Room(std::string fold, std::string config_path){
+Room::Room(std::string fold, std::string config_path, InputHandler in){
 	FOLDER = fold;
 	config = new JSONparser(FOLDER + config_path);
 

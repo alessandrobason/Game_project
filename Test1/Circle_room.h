@@ -9,8 +9,4 @@ public:
 	void handle_input();
 	void update();
 	void draw();
-
-	void ciao() const{
-		std::cout << "ciao3\n";
-	}
 };

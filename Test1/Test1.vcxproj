@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="Circle_room.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Tilemap.h" />

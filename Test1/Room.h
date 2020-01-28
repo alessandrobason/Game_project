@@ -3,10 +3,11 @@
 #include <SFML/Graphics.hpp>
 #include "JSONparser/JSONparser.h"
 #include "Tilemap.h"
+#include "InputHandler.h"
 
 class Room {
 public:
-	Room(std::string fold, std::string config_path);
+	Room(std::string fold, std::string config_path, InputHandler in);
 	~Room();
 
 	virtual void handle_input();
@@ -14,22 +15,25 @@ public:
 	virtual void draw();
 	virtual void load();
 
-	virtual void ciao() {
-		std::cout << "ciao\n";
-	}
-
 	JSONparser* config;
 
 protected:
+	// render window
 	sf::RenderWindow* w;
 
+	// useful information
+	std::string FOLDER;
+	const std::string ASSETS = "Assets/";
+
+	// tilemap data
 	std::vector<int> layers;
 	Tilemap::tilemap_data tilemap_data;
 	Tilemap tilemap;
 	sf::Shader shader;
 
+	// main camera
 	sf::View *main_camera;
 
-	std::string FOLDER;
-	const std::string ASSETS = "Assets/";
+	// input handler
+	InputHandler* in;
 };
