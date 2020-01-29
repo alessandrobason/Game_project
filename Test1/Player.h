@@ -18,7 +18,7 @@ private:
 	sf::Texture spritesheet;
 	InputHandler *in;
 
-	float speed = 1.5;
+	float speed = 1.5f;
 
 	bool pressed_keys[256] = { false };
 };

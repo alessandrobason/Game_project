@@ -14,6 +14,9 @@ public:
 
 	bool load(const std::string& tileset, std::vector<int> tiles, tilemap_data tilemapdata);
 
+	void setVertexArray(sf::VertexArray v);
+	sf::VertexArray getVertexArray();
+
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

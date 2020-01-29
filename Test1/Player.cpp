@@ -32,6 +32,7 @@ void Player::Update(float dt) {
 		//move(sf::Vector2f(-speed, 0) * 0.01f);
 	}
 	move(vel);
+	
 }
 
 void Player::move(sf::Vector2f mov) {

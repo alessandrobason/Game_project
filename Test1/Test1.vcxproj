@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Circle_room.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="JSONparser\JSONparser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle_room.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />
