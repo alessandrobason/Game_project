@@ -27,7 +27,7 @@ public:
 	bool isMouseLDown() { return mouse.left; };
 	bool isMouseRDown() { return mouse.right; };
 
-	const enum KEY_ENUM {
+	enum KEY_ENUM {
 		KEY_UP = sf::Keyboard::W,
 		KEY_LEFT = sf::Keyboard::A,
 		KEY_RIGHT = sf::Keyboard::D,

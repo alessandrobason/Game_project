@@ -18,7 +18,7 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in)
 			window->close();
 			break;
 		case sf::Event::Resized:
-			window->setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
+			//window->setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
 			break;
 		case sf::Event::KeyPressed:
 			in->setKeyDown(event.key.code);
@@ -57,12 +57,12 @@ int main()
 
 	std::vector<Room*> rooms;
 	rooms.push_back(new Circle_room(&window, in, "Levels/Level2/", "Level2.json"));
-	rooms.push_back(new Circle_room(&window, in, "Levels/Level1/", "Level1.json"));
+	//rooms.push_back(new Circle_room(&window, in, "Levels/Level1/", "Level1.json"));
 
 	int current_room = 0;
 
 	rooms[0]->load();
-	rooms[1]->load();
+	//rooms[1]->load();
 
 	sf::Clock deltaClock;
 	// Game Loop

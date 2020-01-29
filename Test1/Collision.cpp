@@ -41,21 +41,21 @@ bool Collision::Check_Collision(sf::IntRect r) {
 		float d = std::sqrtf(dx * dx + dy * dy);
 		return d < circle.radius - c.radius;
 		*/
-		return false;
 		break;
 	}
+	return false;
 }
 
 bool Collision::Check_Collision(IntCircle c) {
 	switch (type) {
 		case RECT:
-			return false;
 			break;
 		case CIRCLE:
 			int dx = circle.pos.x - c.pos.y;
 			int dy = circle.pos.y - c.pos.y;
-			float d = std::sqrtf(dx * dx + dy * dy);
+			float d = std::sqrt(dx * dx + dy * dy);
 			return d < circle.radius - c.radius;
 			break;
 	}
+	return false;
 }
