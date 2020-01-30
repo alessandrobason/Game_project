@@ -42,13 +42,21 @@ void Room::load() {
 	std::cout << "Number of layers: " << tilemap_data.numb_layers << "\n";
 
 	int numb_layers = tilemap_data.numb_layers;
+	std::vector<Collision> collisions;
 
 	// LOAD LAYERS DATA //
 	for (int i = 0; i < numb_layers; i++) {
 		std::cout << "Layer " << i + 1 << ": \n";
 
-		if(tilemap_json->doc["layers"].arr[i].obj["name"].str == "collisions") {
+		if(tilemap_json->doc["layers"].arr[i].obj["type"].str == "objectgroup") {
 			tilemap_data.numb_layers--;
+			for (size_t k = 0; k < tilemap_json->doc["layers"].arr[i].obj["objects"].arr.size(); k++) {
+				int x = tilemap_json->doc["layers"].arr[3].obj["objects"].arr[k].obj["x"].i;
+				int y = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["y"].i;
+				int w = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["width"].i;
+				int h = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["height"].i;
+				collisions.push_back(Collision(x, y, w, h));
+			}
 			continue;
 		}
 		std::cout << "\tName: " << tilemap_json->doc["layers"].arr[i].obj["name"].str << "\n";
@@ -60,6 +68,7 @@ void Room::load() {
 		}
 	}
 
+
 	// load tileset json
 	tileset_json = ASSETS + tilemap_json->doc["tilesets"].arr[0].obj["source"].str;
 	JSONparser* ts_json = new JSONparser(tileset_json);
@@ -70,6 +79,7 @@ void Room::load() {
 	std::cout << "Tileset image file: " << tileset_file << "\n";
 
 	tilemap.load(tileset_file, layers, tilemap_data);
+	tilemap.loadCollisions(collisions);
 
 	delete tilemap_json;
 	delete ts_json;

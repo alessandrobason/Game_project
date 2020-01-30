@@ -33,11 +33,14 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 				int tv = tileNumber / (m_tileset.getSize().x / tilemapdata.tileSize.x);
 
 				// pointer to the tile's quad
-				sf::Vertex* quad = &under[position * 4];
+				sf::Vertex* quad = NULL;
 
 				if(nl == tilemapdata.numb_layers-1){
 					position = (y * tilemapdata.w) + (x);
 					quad = &over[position * 4];
+				}
+				else {
+					quad = &under[position * 4];
 				}
 
 				// set position of 4 vertices (cw order)
@@ -62,6 +65,22 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 	return true;
 }
 
+bool Tilemap::loadCollisions(std::vector<Collision> c) {
+	collisions = c;
+	for (size_t i=0; i < c.size(); i++) {
+		sf::RectangleShape rect = sf::RectangleShape();
+		rect.setPosition(sf::Vector2f(c[i].rect.left + 1, c[i].rect.top + 1));
+		rect.setSize(sf::Vector2f(c[i].rect.width-2, c[i].rect.height-2));
+		rect.setOutlineColor(sf::Color::Red);
+		rect.setOutlineThickness(1.f);
+		rect.setFillColor(sf::Color::Transparent);
+		std::cout << "->" << rect.getPosition().x << " " << rect.getPosition().y << " " << rect.getSize().x << " " << rect.getSize().y << "\n";
+		std::cout << "-->" << collisions[i].rect.left << " " << collisions[i].rect.top << " " << collisions[i].rect.width << " " << collisions[i].rect.height << "\n";
+		collisionShapes.push_back(rect);
+	}
+	return true;
+}
+
 void Tilemap::setWindow(sf::RenderWindow* w){
 	window = w;
 }
@@ -83,6 +102,12 @@ void Tilemap::drawUnder(){
 
 void Tilemap::drawOver(){
 	window->draw(over, states);
+	for (size_t i = 0; i < collisionShapes.size(); i++) {
+		window->draw(collisionShapes[i]);
+	}
+}
+void Tilemap::setShader(sf::Shader s){
+	states.shader = &s;
 }
 
 void Tilemap::setVertexArray(sf::VertexArray v) {

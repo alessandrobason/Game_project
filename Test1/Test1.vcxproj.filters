@@ -70,6 +70,7 @@
     <None Include="Shaders\grayscale.frag" />
     <None Include="Levels\Level2\Level2_map.json" />
     <None Include="Levels\Level2\Level2.json" />
+    <None Include="Levels\Level3\Level3_map.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\forest_tiles.png">

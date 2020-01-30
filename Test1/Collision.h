@@ -14,14 +14,18 @@ private:
 		int radius;
 	};
 
-	COLLISION_TYPES type;
-	sf::IntRect rect;
-	IntCircle circle;
 
 public:
+	struct Colliding {
+		bool coll_top = false;
+		bool coll_bot = false;
+		bool coll_lef = false;
+		bool coll_rig = false;
+	};
+
 	// RECTANGLE (by default it's a 0x0 rectangle) 
 	Collision();
-	Collision(sf::IntRect r);
+	Collision(sf::FloatRect r);
 	Collision(int x, int y, int w, int h);
 
 	// CIRCLE
@@ -29,7 +33,21 @@ public:
 	Collision(int x, int y, int r);
 	~Collision();
 
-	bool Check_Collision(sf::IntRect r);
+	bool Check_Collision(sf::FloatRect r);
 	bool Check_Collision(IntCircle c);
+
+	COLLISION_TYPES type;
+	sf::FloatRect rect;
+	IntCircle circle;
+
+	enum COLLISION_SIDE {
+		NONE,
+		N,
+		E,
+		S,
+		W
+	};
+
+	COLLISION_SIDE collision_side = NONE;
 };
 
