@@ -16,22 +16,22 @@ void Player::Update(float dt) {
 	sf::Vector2f vel(0, 0);
 
 	if (in->isKeyDown(in->KEY_UP)) {
-		vel.y -= speed * 0.01f;
+		vel.y -= speed;
 		//move(sf::Vector2f(0, -speed) * 0.01f);
 	}
 	if (in->isKeyDown(in->KEY_DOWN)) {
-		vel.y += speed * 0.01f;
+		vel.y += speed;
 		//move(sf::Vector2f(0, speed) * 0.01f);
 	}
 	if (in->isKeyDown(in->KEY_RIGHT)) {
-		vel.x += speed * 0.01f;
+		vel.x += speed;
 		//move(sf::Vector2f(speed, 0) * 0.01f);
 	}
 	if (in->isKeyDown(in->KEY_LEFT)) {
-		vel.x -= speed * 0.01f;
+		vel.x -= speed;
 		//move(sf::Vector2f(-speed, 0) * 0.01f);
 	}
-	move(vel);
+	move(vel*dt);
 	
 }
 

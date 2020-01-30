@@ -2,8 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 
-class Tilemap : public sf::Drawable, public sf::Transformable {
+class Tilemap {
 public:
 	struct tilemap_data {
 		int numb_layers;
@@ -12,15 +13,22 @@ public:
 		int h;
 	};
 
+	void setWindow(sf::RenderWindow* w);
+
 	bool load(const std::string& tileset, std::vector<int> tiles, tilemap_data tilemapdata);
+
+	void drawUnder();
+	void drawOver();
 
 	void setVertexArray(sf::VertexArray v);
 	sf::VertexArray getVertexArray();
 
 private:
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-	sf::VertexArray m_vertices;
+	sf::VertexArray under;
+	sf::VertexArray over;
 	sf::Texture m_tileset;
+
+	sf::RenderWindow* window;
+	sf::RenderStates states;
 };
 

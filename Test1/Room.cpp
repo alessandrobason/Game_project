@@ -41,9 +41,16 @@ void Room::load() {
 	std::cout << "Map width: " << tilemap_data.w << "\n";
 	std::cout << "Number of layers: " << tilemap_data.numb_layers << "\n";
 
+	int numb_layers = tilemap_data.numb_layers;
+
 	// LOAD LAYERS DATA //
-	for (int i = 0; i < tilemap_data.numb_layers; i++) {
+	for (int i = 0; i < numb_layers; i++) {
 		std::cout << "Layer " << i + 1 << ": \n";
+
+		if(tilemap_json->doc["layers"].arr[i].obj["name"].str == "collisions") {
+			tilemap_data.numb_layers--;
+			continue;
+		}
 		std::cout << "\tName: " << tilemap_json->doc["layers"].arr[i].obj["name"].str << "\n";
 
 		for (int j = 0; j < tilemap_json->doc["layers"].arr[i].obj["data"].arr.size(); j++) {

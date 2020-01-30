@@ -8,16 +8,20 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 	}
 
 	// set the primitive of the vertex array to quads (instead of triangles)
-	m_vertices.setPrimitiveType(sf::Quads);
-	// set the size of the vertex array to be enough for the whole tilemap
-	m_vertices.resize(tiles.size() * 4);
+	under.setPrimitiveType(sf::Quads);
+	over.setPrimitiveType(sf::Quads);
 
+	// set the size of the vertex array to be enough for the whole tilemap
 	const int layer_dimension = tiles.size() / tilemapdata.numb_layers;
+	
+	under.resize(layer_dimension * (tilemapdata.numb_layers-1) * 4);
+	over.resize(layer_dimension * 4);
 
 	for (int nl = 0; nl < tilemapdata.numb_layers; nl++) {
 		for (int y = 0; y < tilemapdata.h; y++) {
 			for (int x = 0; x < tilemapdata.w; x++) {
 				int position = (nl * layer_dimension) + (y * tilemapdata.w) + (x);
+				
 				// get tile
 				int tileNumber = tiles[position];
 
@@ -29,7 +33,12 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 				int tv = tileNumber / (m_tileset.getSize().x / tilemapdata.tileSize.x);
 
 				// pointer to the tile's quad
-				sf::Vertex* quad = &m_vertices[position * 4];
+				sf::Vertex* quad = &under[position * 4];
+
+				if(nl == tilemapdata.numb_layers-1){
+					position = (y * tilemapdata.w) + (x);
+					quad = &over[position * 4];
+				}
 
 				// set position of 4 vertices (cw order)
 				quad[0].position = sf::Vector2f(x * tilemapdata.tileSize.x,			y * tilemapdata.tileSize.y);
@@ -45,22 +54,40 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 			}
 		}
 	}
+	std::cout << "Mv:" << under.getVertexCount() << "\n";
+	std::cout << "Mv:" << over.getVertexCount() << "\n";
 
+	states.texture = &m_tileset;
+	
 	return true;
 }
 
+void Tilemap::setWindow(sf::RenderWindow* w){
+	window = w;
+}
+/*
 
 void Tilemap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	states.transform *= getTransform();
 
 	states.texture = &m_tileset;
 
-	target.draw(m_vertices, states);
+	target.draw(under, states);
+	target.draw(over, states);
+}
+*/
+
+void Tilemap::drawUnder(){
+	window->draw(under, states);
+}
+
+void Tilemap::drawOver(){
+	window->draw(over, states);
 }
 
 void Tilemap::setVertexArray(sf::VertexArray v) {
-	m_vertices = v;
+	under = v;
 }
 sf::VertexArray Tilemap::getVertexArray() {
-	return m_vertices;
+	return under;
 }

@@ -1,10 +1,5 @@
-CFLAGS = -O
-CC = g++
-SRC = *.cpp
-OBJ = $(SRC:.cpp = .o)
-
 Game:
-	g++ -c *cpp
+	g++ -c *.cpp
 	g++ *.o -o game -lsfml-graphics -lsfml-window -lsfml-system
 	./game
 

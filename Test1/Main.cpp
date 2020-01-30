@@ -56,7 +56,7 @@ int main()
 	//Create the window
 
 	std::vector<Room*> rooms;
-	rooms.push_back(new Circle_room(&window, in, "Levels/Level2/", "Level2.json"));
+	rooms.push_back(new Circle_room(&window, in, "Levels/Level3/", "Level3.json"));
 	//rooms.push_back(new Circle_room(&window, in, "Levels/Level1/", "Level1.json"));
 
 	int current_room = 0;
@@ -74,6 +74,6 @@ int main()
 		rooms[current_room]->handle_input();
 		rooms[current_room]->update(deltaClock.restart().asSeconds());
 		rooms[current_room]->draw();
-		deltaClock.restart().asSeconds();
+		//deltaClock.restart().asSeconds();
 	}
 }
