@@ -15,21 +15,22 @@ private:
 
 	bool pressed_keys[256] = { false };
 
-
 public:
 	Player();
 	Player(InputHandler* input, std::string txt_path, sf::Vector2f pos);
 
-	void Update(float dt);
+	void handleInput(float dt);
+	void update(float dt);
 	void draw(sf::RenderWindow* w);
 
 
-	sf::Vector2f testMovement(float dt);
 	void move(sf::Vector2f mov);
 
 	sf::Sprite sprite;
 
 	Collision::Colliding colliding = { false, false, false, false };
 	Collision collision = Collision();
+	
+	sf::Vector2f vel;
 };
 

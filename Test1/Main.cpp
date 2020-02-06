@@ -71,8 +71,9 @@ int main()
 		// Handle window events.
 		windowProcess(&window, in);
 
-		rooms[current_room]->handle_input();
-		rooms[current_room]->update(deltaClock.restart().asSeconds());
+		float dt = deltaClock.restart().asSeconds();
+		rooms[current_room]->handleInput(dt);
+		rooms[current_room]->update(dt);
 		rooms[current_room]->draw();
 		//deltaClock.restart().asSeconds();
 	}

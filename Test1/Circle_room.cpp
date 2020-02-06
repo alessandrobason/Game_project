@@ -17,20 +17,20 @@ Circle_room::Circle_room(sf::RenderWindow* window, InputHandler* input, std::str
 
 Circle_room::~Circle_room(){}
 
-void Circle_room::handle_input() {}
+void Circle_room::handleInput(float dt) {
+	p->handleInput(dt);
+}
 
 void Circle_room::update(float dt) {
-	sf::Vector2f vel = p->testMovement(dt);
+	p->update(dt);
 
-	p->move(sf::Vector2f(vel.x, vel.y));
 	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
 		sf::FloatRect rect = tilemap.collisions[i].rect;
 		if (p->collision.Check_Collision(rect)) {
-			std::cout << p->collision.rect.left << "\t" << p->collision.rect.top << "\n";
-			std::cout << p->collision.rect.left+ p->collision.rect.top << "\n\n";
-			std::cout << rect.left << "\t" << rect.top << "\n";
-			std::cout << rect.left + rect.top << "\n\n";
-			p->move(sf::Vector2f(-vel.x, -vel.y));
+			/*
+			set position right beside collisionbox
+			*/
+			p->move(-p->vel* dt);
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
 		}
 		else {

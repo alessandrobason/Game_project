@@ -21,29 +21,29 @@ Player::Player(InputHandler* input, std::string txt_path, sf::Vector2f pos) {
 	collisionShape.setFillColor(sf::Color::Transparent);
 }
 
-sf::Vector2f Player::testMovement(float dt) {
-	sf::Vector2f vel(0, 0);
+void Player::handleInput(float dt) {
+	vel = sf::Vector2f(0, 0);
 
 	if (in->isKeyDown(in->KEY_UP)) {
-		vel.y -= speed;
-		//move(sf::Vector2f(0, -speed) * 0.01f);
+		vel.y -= 1;
 	}
 	if (in->isKeyDown(in->KEY_DOWN)) {
-		vel.y += speed;
-		//move(sf::Vector2f(0, speed) * 0.01f);
+		vel.y += 1;
 	}
 	if (in->isKeyDown(in->KEY_RIGHT)) {
-		vel.x += speed;
-		//move(sf::Vector2f(speed, 0) * 0.01f);
+		vel.x += 1;
 	}
 	if (in->isKeyDown(in->KEY_LEFT)) {
-		vel.x -= speed;
-		//move(sf::Vector2f(-speed, 0) * 0.01f);
+		vel.x -= 1;
 	}
-	return vel*dt;
+
+	float l = std::sqrt(vel.x * vel.x + vel.y * vel.y);
+	if (l != 0)	vel /= l;
+	vel *= speed;
 }
 
-void Player::Update(float dt) {
+void Player::update(float dt) {
+	move(vel * dt);
 }
 
 void Player::draw(sf::RenderWindow* w) {

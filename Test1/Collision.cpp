@@ -83,13 +83,13 @@ bool Collision::Check_Collision(sf::FloatRect r) {
 		r.top--;
 		r.width++;
 		r.height++;
-		*/
 		if (rect.left+1 < r.left + r.width && r.left < rect.left + rect.width &&
 			rect.top < r.top + r.height && rect.top + rect.height > r.top) {
 			return true;
 		}
+		*/
 
-		//return rect.intersects(r);
+		return rect.intersects(r);
 		break;
 	}
 	case CIRCLE:

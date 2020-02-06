@@ -10,7 +10,7 @@ public:
 	Room(std::string fold, std::string config_path, InputHandler* input);
 	~Room();
 
-	virtual void handle_input();
+	virtual void handleInput(float dt);
 	virtual void update(float dt);
 	virtual void draw();
 	virtual void load();

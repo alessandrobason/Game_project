@@ -8,9 +8,9 @@ public:
 	Circle_room(sf::RenderWindow* window, InputHandler* input, std::string fold, std::string config_path);
 	~Circle_room();
 
-	void handle_input();
-	void update(float dt);
-	void draw();
+	void handleInput(float dt) override;
+	void update(float dt) override;
+	void draw() override;
 private:
 	Player *p;
 };

@@ -13,7 +13,7 @@ Room::~Room(){
 	config = NULL;
 }
 
-void Room::handle_input() {}
+void Room::handleInput(float dt) {}
 void Room::update(float dt) {}
 void Room::draw() {}
 void Room::load() {
