@@ -22,6 +22,7 @@ Player::Player(InputHandler* input, std::string txt_path, sf::Vector2f pos) {
 }
 
 void Player::handleInput(float dt) {
+	oldVel = vel;
 	vel = sf::Vector2f(0, 0);
 
 	if (in->isKeyDown(in->KEY_UP)) {
@@ -43,6 +44,7 @@ void Player::handleInput(float dt) {
 }
 
 void Player::update(float dt) {
+	//std::cout << vel.x * dt << " " << vel.y * dt << "\n";
 	move(vel * dt);
 }
 

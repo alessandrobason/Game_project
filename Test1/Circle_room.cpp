@@ -6,6 +6,7 @@ Circle_room::Circle_room(sf::RenderWindow* window, InputHandler* input, std::str
 	w->setView(main_camera);
 
 	p = new Player(in, ASSETS + "link.png", sf::Vector2f(50, 50));
+	p->setSpeed(100.f);
 	tilemap.setWindow(w);
 	/*
 	if (!shader.loadFromFile("Shaders/grayscale.frag", sf::Shader::Fragment)) {
@@ -22,50 +23,31 @@ void Circle_room::handleInput(float dt) {
 }
 
 void Circle_room::update(float dt) {
-	p->update(dt);
+	p->update(dt); 
+	std::cout << "vel.x: " << p->vel.x << "\n";
+	std::cout << "vel.y: " << p->vel.y << "\n";
 
 	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
 		sf::FloatRect rect = tilemap.collisions[i].rect;
 		if (p->collision.Check_Collision(rect)) {
+			sf::Vector2f revVel = p->collision.getCollisionSide(rect, p->oldVel);
+			std::cout << "vel.x: " << p->oldVel.x << "\n";
+			std::cout << "vel.y: " << p->oldVel.y << "\n";
+			std::cout << "reverseVel.x: " << revVel.x << "\n";
+			std::cout << "reverseVel.y: " << revVel.y << "\n--------------\n";
+			//if(revVel.x == revVel.y) w->close();
+			p->move(revVel);
 			/*
 			set position right beside collisionbox
 			*/
-			p->move(-p->vel* dt);
+			//p->move(-p->vel* dt);
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
 		}
 		else {
+			//p->oldVel = sf::Vector2f(0, 0);
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Red);
 		}
 	}
-
-	/*
-	p->move(sf::Vector2f(vel.x, 0));
-	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
-		sf::FloatRect rect = tilemap.collisions[i].rect;
-		if (p->collision.Check_Collision(rect)) {
-			p->move(sf::Vector2f(-vel.x, 0));
-			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
-			break;
-		}
-		else {
-			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Red);
-		}
-	}
-
-	p->move(sf::Vector2f(0, vel.y));
-	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
-		sf::FloatRect rect = tilemap.collisions[i].rect;
-		if (p->collision.Check_Collision(rect)) {
-			p->move(sf::Vector2f(0, -vel.y));
-			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
-			break;
-		}
-		else {
-			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Red);
-		}
-	}
-	*/
-
 	
 	sf::Vector2f playerSize = sf::Vector2f(p->sprite.getLocalBounds().width/2, p->sprite.getLocalBounds().height/2);
 	main_camera.setCenter(p->sprite.getPosition() + playerSize);

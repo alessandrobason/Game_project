@@ -4,7 +4,9 @@
 
 class Collision {
 private:
-	enum COLLISION_TYPES {
+	bool collide = false;
+
+	enum COLLISION_SHAPES {
 		RECT,
 		CIRCLE
 	};
@@ -36,7 +38,9 @@ public:
 	bool Check_Collision(sf::FloatRect r);
 	bool Check_Collision(IntCircle c);
 
-	COLLISION_TYPES type;
+	sf::Vector2f getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel);
+
+	COLLISION_SHAPES type;
 	sf::FloatRect rect;
 	IntCircle circle;
 

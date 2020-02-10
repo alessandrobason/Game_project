@@ -38,58 +38,8 @@ bool Collision::Check_Collision(sf::FloatRect r) {
 	switch (type) {
 	case RECT:
 	{
-		/*
-		bool coll = false;
-		if (rect.top + rect.height > r.top && rect.top < r.top + r.height) {
-			if (rect.left + rect.width == r.left) {
-				collision_side = E;
-				coll = true;
-			}
-			if (rect.left + 1 == r.left + r.width) {
-				collision_side = W;
-				coll = true;
-			}
-		}
-
-		if (rect.left + rect.width > r.left && rect.left < r.left + r.width) {
-			if (rect.top + rect.height == r.top) {
-				collision_side = S;
-				coll = true;
-			}
-			if (rect.top + 1 == r.top + r.height) {
-				collision_side = N;
-				coll = true;
-			}
-		}
-
-		return coll;
-		if (rect.left == r.left + r.width && rect.top < r.top+r.height && rect.top+rect.height > r.top) {
-			collision_side = W;
-			std::cout << "West\n";
-			return true;
-		}
-		if (rect.left == r.left + r.width && rect.top < r.top + r.height && rect.top + rect.height > r.top) {
-			collision_side = W;
-			std::cout << "West\n";
-			return true;
-		}
-		/*
-		if (rect.left < r.left + r.width && r.left < rect.left+rect.width &&
-			rect.top < r.top + r.height && rect.top + rect.height > r.top) {
-			return true;
-		}
-
-		r.left--;
-		r.top--;
-		r.width++;
-		r.height++;
-		if (rect.left+1 < r.left + r.width && r.left < rect.left + rect.width &&
-			rect.top < r.top + r.height && rect.top + rect.height > r.top) {
-			return true;
-		}
-		*/
-
-		return rect.intersects(r);
+		collide = rect.intersects(r);
+		return collide;
 		break;
 	}
 	case CIRCLE:
@@ -116,4 +66,35 @@ bool Collision::Check_Collision(IntCircle c) {
 			break;
 	}
 	return false;
+}
+
+sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) {
+	/*
+	prendere quanto si è dentro da ogni lato
+	il lato con il valore maggiore è il lato 
+	in cui sta collidendo
+	*/
+	sf::Vector2f reverseVel = sf::Vector2f(0, 0);
+	
+	// if left side is after half of rectangle (coming from RIGHT)
+	if (rect.left < r.left + r.width && rect.left >= r.left + (r.width / 2)) {
+		reverseVel.x = r.left + r.width - rect.left;
+	}
+	// if left side is before half of rectangle (coming from LEFT)
+	else {
+		reverseVel.x -= rect.left + rect.width - r.left;
+	}
+	// if top side is after half of rectangle (coming from BOTTOM)
+	if (rect.top < r.top + r.height && rect.top >= r.top + (r.height/2)) {
+		reverseVel.y = r.top + r.height - rect.top;
+	}
+	// if top side is after half of rectangle (coming from TOP)
+	else {
+		reverseVel.y -= rect.top + rect.height - r.top;
+	}
+
+	if (std::abs(reverseVel.x) > 1)		reverseVel.x = 0;
+	else if(std::abs(reverseVel.y) > 1)	reverseVel.y = 0;
+
+	return reverseVel;
 }
