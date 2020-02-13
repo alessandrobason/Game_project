@@ -37,8 +37,8 @@ void Circle_room::update(float dt) {
 		}
 	}
 	
-	sf::Vector2f playerSize = sf::Vector2f(p->sprite.getLocalBounds().width/2, p->sprite.getLocalBounds().height/2);
-	main_camera.setCenter(p->sprite.getPosition() + playerSize);
+	sf::Vector2f playerSize = sf::Vector2f(p->getSprite()->getLocalBounds().width/2, p->getSprite()->getLocalBounds().height/2);
+	main_camera.setCenter(p->getSprite()->getPosition() + playerSize);
 	w->setView(main_camera);
 }
 
@@ -48,6 +48,7 @@ void Circle_room::draw() {
 	//w->draw(tilemap, &shader);
 	tilemap.drawUnder();
 	p->draw(w);
+	//w->draw(*p);
 	tilemap.drawOver();
 
 	w->display();

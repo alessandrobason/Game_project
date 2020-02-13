@@ -122,7 +122,6 @@ void JSONparser::readJSON(const std::string path) {
 			if (tokens[parser.next_token - 1].type != JSON_ARRAY && tokens[parser.next_token - 1].end == 0) {
 				break;
 			}
-
 			tokens.push_back({ JSON_PRIMITIVE, parser.super_token, parser.pos });
 			parser.next_token++;
 			break;
@@ -152,7 +151,7 @@ void JSONparser::readJSON(const std::string path) {
 
 }
 
-void JSONparser::parseData(std::map<std::string, datatypes>& r, int& i, std::string json, bool& is_key, bool is_array) {
+void JSONparser::parseData(std::map<std::string, datatypes>& r, int& i, std::string json, bool& is_key, bool is_array) {	
 	int start = tokens[i].start;
 	int end = tokens[i].end;
 	int len = end - start + 1;
@@ -230,6 +229,7 @@ void JSONparser::parseData(std::map<std::string, datatypes>& r, int& i, std::str
 		}
 		else {
 			r[arrKey].type = VAR_ARRAY;
+			//std::cout << "Array size: " << tokens.size() << "\n";
 			//std::cout << "[";
 			while (i + 1 < tokens.size() && tokens[i + 1].parent == self_token) {
 				i++;
@@ -237,6 +237,7 @@ void JSONparser::parseData(std::map<std::string, datatypes>& r, int& i, std::str
 				currentKey = arrKey;
 				//std::cout << "-----";
 			}
+			is_key = true;
 			//std::cout << "++++++";
 			//std::cout << "]\n";
 		}

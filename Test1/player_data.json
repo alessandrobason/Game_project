@@ -1,0 +1,52 @@
+{
+  "animations": [
+    {
+      "name": "idle up",
+      "array": [ 7 ],
+      "speed": 0.2,
+      "looping": false
+    },
+    {
+      "name": "idle down",
+      "array": [ 4 ],
+      "speed": 0.2,
+      "looping": false
+    },
+    {
+      "name": "idle left",
+      "array": [ 0 ],
+      "speed": 0.2,
+      "looping": false
+    },
+    {
+      "name": "idle right",
+      "array": [ 9 ],
+      "speed": 0.2,
+      "looping": false
+    },
+    {
+      "name": "walk up",
+      "array": [ 5, 6 ],
+      "speed": 0.2,
+      "looping": true
+    },
+    {
+      "name": "walk down",
+      "array": [ 2, 3 ],
+      "speed": 0.2,
+      "looping": true
+    },
+    {
+      "name": "walk left",
+      "array": [ 1, 0 ],
+      "speed": 0.2,
+      "looping": true
+    },
+    {
+      "name": "walk right",
+      "array": [ 8, 9 ],
+      "speed": 0.2,
+      "looping": true
+    }
+  ]
+}

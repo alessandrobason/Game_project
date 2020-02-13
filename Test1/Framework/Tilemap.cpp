@@ -74,8 +74,6 @@ bool Tilemap::loadCollisions(std::vector<Collision> c) {
 		rect.setOutlineColor(sf::Color::Red);
 		rect.setOutlineThickness(1.f);
 		rect.setFillColor(sf::Color::Transparent);
-		std::cout << "->" << rect.getPosition().x << " " << rect.getPosition().y << " " << rect.getSize().x << " " << rect.getSize().y << "\n";
-		std::cout << "-->" << collisions[i].rect.left << " " << collisions[i].rect.top << " " << collisions[i].rect.width << " " << collisions[i].rect.height << "\n";
 		collisionShapes.push_back(rect);
 	}
 	return true;
