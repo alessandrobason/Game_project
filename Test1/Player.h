@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "GameObject.h"
-#include "InputHandler.h"
-#include "Collision.h"
+#include "Framework/GameObject.h"
+#include "Framework/InputHandler.h"
+#include "Framework/Collision.h"
+#include "Framework/AnimatedSprite.h"
 
-class Player : public GameObject{
+class Player : public GameObject, public AnimatedSprite {
 private:
 	sf::Texture spritesheet;
 	sf::RectangleShape collisionShape = sf::RectangleShape();

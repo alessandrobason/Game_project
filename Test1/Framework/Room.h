@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "JSONparser/JSONparser.h"
+#include "../JSONparser/JSONparser.h"
 #include "Tilemap.h"
 #include "InputHandler.h"
 

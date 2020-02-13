@@ -77,7 +77,7 @@ void JSONparser::readJSON(const std::string path) {
 				tokens[parser.next_token - 1].end = parser.pos - 1;
 				parser.super_token = tokens[parser.next_token - 1].parent;
 			}
-			for (int i = tokens.size() - 1; i >= 0; i--) {
+			for (size_t i = tokens.size() - 1; i >= 0; i--) {
 				if (tokens[i].end == 0) {
 					// close the array
 					tokens[i].end = parser.pos;

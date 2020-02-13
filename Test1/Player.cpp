@@ -1,6 +1,10 @@
 #include "Player.h"
 
 Player::Player() {
+	std::vector<int> an = {
+		0, 1
+	};
+	addAnimation(an, 0.1f, sf::IntRect(0, 0, 16, 16));
 }
 
 Player::Player(InputHandler* input, std::string txt_path, sf::Vector2f pos) {

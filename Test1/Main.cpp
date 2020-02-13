@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Circle_room.h"
-#include "InputHandler.h"
 
 float min(float a, float b) {return (a<b ? a:b);}
 

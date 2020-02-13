@@ -24,27 +24,15 @@ void Circle_room::handleInput(float dt) {
 
 void Circle_room::update(float dt) {
 	p->update(dt); 
-	std::cout << "vel.x: " << p->vel.x << "\n";
-	std::cout << "vel.y: " << p->vel.y << "\n";
 
 	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
 		sf::FloatRect rect = tilemap.collisions[i].rect;
 		if (p->collision.Check_Collision(rect)) {
 			sf::Vector2f revVel = p->collision.getCollisionSide(rect, p->oldVel);
-			std::cout << "vel.x: " << p->oldVel.x << "\n";
-			std::cout << "vel.y: " << p->oldVel.y << "\n";
-			std::cout << "reverseVel.x: " << revVel.x << "\n";
-			std::cout << "reverseVel.y: " << revVel.y << "\n--------------\n";
-			//if(revVel.x == revVel.y) w->close();
 			p->move(revVel);
-			/*
-			set position right beside collisionbox
-			*/
-			//p->move(-p->vel* dt);
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
 		}
 		else {
-			//p->oldVel = sf::Vector2f(0, 0);
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Red);
 		}
 	}

@@ -17,9 +17,9 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 	under.resize(layer_dimension * (tilemapdata.numb_layers-1) * 4);
 	over.resize(layer_dimension * 4);
 
-	for (int nl = 0; nl < tilemapdata.numb_layers; nl++) {
-		for (int y = 0; y < tilemapdata.h; y++) {
-			for (int x = 0; x < tilemapdata.w; x++) {
+	for (size_t nl = 0; nl < tilemapdata.numb_layers; nl++) {
+		for (size_t y = 0; y < tilemapdata.h; y++) {
+			for (size_t x = 0; x < tilemapdata.w; x++) {
 				int position = (nl * layer_dimension) + (y * tilemapdata.w) + (x);
 				
 				// get tile

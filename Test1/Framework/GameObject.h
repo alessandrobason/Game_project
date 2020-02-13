@@ -22,7 +22,7 @@ public:
 
 protected:
 	// Sprite properties
-	float speed;
+	float speed = 0;
 
 	// input component
 	InputHandler* in = nullptr;
