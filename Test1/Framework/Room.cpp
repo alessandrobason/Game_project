@@ -8,6 +8,7 @@ Room::Room(std::string fold, std::string config_path, InputHandler* input){
 
 	in = input;
 }
+
 Room::~Room(){
 	delete config;
 	config = NULL;
@@ -16,6 +17,7 @@ Room::~Room(){
 void Room::handleInput(float dt) {}
 void Room::update(float dt) {}
 void Room::draw() {}
+
 void Room::load() {
 	std::string tileset_json;
 	std::string tileset_file;
@@ -30,7 +32,7 @@ void Room::load() {
 	JSONparser* tilemap_json = new JSONparser(FOLDER + map);
 
 	// load tilemap data
-	tilemap_data.numb_layers = tilemap_json->doc["layers"].arr.size();
+	tilemap_data.numb_layers = (int) tilemap_json->doc["layers"].arr.size();
 	tilemap_data.tileSize.x = tilemap_json->doc["tilewidth"].i;
 	tilemap_data.tileSize.y = tilemap_json->doc["tileheight"].i;
 	tilemap_data.h = tilemap_json->doc["height"].i;
@@ -68,21 +70,30 @@ void Room::load() {
 		}
 	}
 
-
 	// load tileset json
-	tileset_json = ASSETS + tilemap_json->doc["tilesets"].arr[0].obj["source"].str;
+	tileset_json = /*ASSETS +*/ tilemap_json->doc["tilesets"].arr[0].obj["source"].str;
 	JSONparser* ts_json = new JSONparser(tileset_json);
 
-	tileset_file = ASSETS + ts_json->doc["image"].str;
+	tileset_file = /*ASSETS +*/ ts_json->doc["image"].str;
 
 	std::cout << "Tileset json file: " << tileset_json << "\n";
 	std::cout << "Tileset image file: " << tileset_file << "\n";
 
-	tilemap.load(tileset_file, layers, tilemap_data);
+	//textures["tileset"] = sf::Texture();
+
+	if (!textures["tileset"].loadFromFile(tileset_file)) {
+		std::cout << "Couldn't load tileset from " << tileset_file << "\n";
+	}
+
+	tilemap.load(&isdebug, &textures["tileset"], layers, tilemap_data);
 	tilemap.loadCollisions(collisions);
 
 	delete tilemap_json;
 	delete ts_json;
 	tilemap_json = NULL;
 	ts_json = NULL;
+}
+
+void Room::sortGameObjects() {
+	std::sort(sceneObjects.begin(), sceneObjects.end(), gameobjectsorting());
 }

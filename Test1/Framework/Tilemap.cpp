@@ -1,18 +1,16 @@
 #include "Tilemap.h"
 
-bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_data tilemapdata) {
-
-	if (!m_tileset.loadFromFile(tileset)) {
-		std::cout << "Failed to load tileset\n";
-		return false;
-	}
+bool Tilemap::load(bool* d, sf::Texture* t, std::vector<int> tiles, tilemap_data tilemapdata) {
+	isdebug = d;
+	std::cout << "isdebug: " << isdebug << "\n";
+	m_tileset = t;
 
 	// set the primitive of the vertex array to quads (instead of triangles)
 	under.setPrimitiveType(sf::Quads);
 	over.setPrimitiveType(sf::Quads);
 
 	// set the size of the vertex array to be enough for the whole tilemap
-	const int layer_dimension = tiles.size() / tilemapdata.numb_layers;
+	const int layer_dimension = (int) tiles.size() / tilemapdata.numb_layers;
 	
 	under.resize(layer_dimension * (tilemapdata.numb_layers-1) * 4);
 	over.resize(layer_dimension * 4);
@@ -29,8 +27,8 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 				if (tileNumber == -1) continue;
 
 				// get position in texture
-				int tu = tileNumber % (m_tileset.getSize().x / tilemapdata.tileSize.x);
-				int tv = tileNumber / (m_tileset.getSize().x / tilemapdata.tileSize.x);
+				int tu = tileNumber % (m_tileset->getSize().x / tilemapdata.tileSize.x);
+				int tv = tileNumber / (m_tileset->getSize().x / tilemapdata.tileSize.x);
 
 				// pointer to the tile's quad
 				sf::Vertex* quad = NULL;
@@ -57,10 +55,8 @@ bool Tilemap::load(const std::string& tileset, std::vector<int> tiles, tilemap_d
 			}
 		}
 	}
-	std::cout << "Mv:" << under.getVertexCount() << "\n";
-	std::cout << "Mv:" << over.getVertexCount() << "\n";
 
-	states.texture = &m_tileset;
+	states.texture = m_tileset;
 	
 	return true;
 }
@@ -82,8 +78,8 @@ bool Tilemap::loadCollisions(std::vector<Collision> c) {
 void Tilemap::setWindow(sf::RenderWindow* w){
 	window = w;
 }
-/*
 
+/*
 void Tilemap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 	states.transform *= getTransform();
 
@@ -100,8 +96,10 @@ void Tilemap::drawUnder(){
 
 void Tilemap::drawOver(){
 	window->draw(over, states);
-	for (size_t i = 0; i < collisionShapes.size(); i++) {
-		window->draw(collisionShapes[i]);
+	if (*isdebug) {
+		for (size_t i = 0; i < collisionShapes.size(); i++) {
+			window->draw(collisionShapes[i]);
+		}
 	}
 }
 void Tilemap::setShader(sf::Shader s){

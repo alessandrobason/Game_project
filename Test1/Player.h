@@ -5,10 +5,13 @@
 #include "Framework/InputHandler.h"
 #include "Framework/Collision.h"
 #include "Framework/AnimatedSprite.h"
+#include "Framework/Room.h"
 
 class Player : public GameObject {
 private:
-	sf::Texture spritesheet;
+	// pointer to the parent room to access texture ecc
+	Room* room = nullptr;
+
 	sf::RectangleShape collisionShape = sf::RectangleShape();
 
 	bool pressed_keys[256] = { false };
@@ -30,18 +33,19 @@ private:
 
 public:
 	Player();
-	Player(InputHandler* input, std::string txt_path, sf::Vector2f pos);
+	Player(InputHandler* input, Room* r, std::string txt_path, sf::Vector2f pos);
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw(sf::RenderWindow* w) override;
+	void drawDebug(sf::RenderWindow* w) override;
+
+	float getY() override { return getSprite()->getPosition().y; };
 
 	void move(sf::Vector2f mov);
 
 	sf::Sprite* getSprite() { return animSprite.getSprite(); };
-
-	//sf::Sprite sprite;
-
+	
 	Collision collision = Collision();
 	
 	sf::Vector2f vel;

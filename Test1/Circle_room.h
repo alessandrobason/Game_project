@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Framework/Room.h"
 #include "Player.h"
+#include "GameObjects/Tree.h"
 
 class Circle_room : public Room {
 public:
@@ -11,6 +12,7 @@ public:
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
+
 private:
 	Player *p;
 };

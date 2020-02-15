@@ -49,7 +49,7 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in)
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(16*12*5, 16*9*5), "CMP105_W1");
+	sf::RenderWindow window(sf::VideoMode(16*12*5, 16*9*5), "Game Project");
 	InputHandler *in = new InputHandler();
 
 	//Create the window

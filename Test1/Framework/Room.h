@@ -2,8 +2,9 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "../JSONparser/JSONparser.h"
-#include "Tilemap.h"
 #include "InputHandler.h"
+#include "GameObject.h"
+#include "Tilemap.h"
 
 class Room {
 public:
@@ -15,7 +16,21 @@ public:
 	virtual void draw();
 	virtual void load();
 
+	void sortGameObjects();
+
+	// dictionary with all the textures of the scene
+	std::map<std::string, sf::Texture> textures;
+
+	// if true: draw collisionboxes ecc
+	bool isdebug = false;
+
 	JSONparser* config;
+
+	struct gameobjectsorting {
+		inline bool operator() (GameObject* g1, GameObject* g2) {
+			return g1->getY() < g2->getY();
+		}
+	};
 
 protected:
 	// render window
@@ -36,4 +51,9 @@ protected:
 
 	// input handler
 	InputHandler* in;
+
+	// vector with all the gameobjects of the scene
+	std::vector<GameObject*> sceneObjects;
+
+
 };

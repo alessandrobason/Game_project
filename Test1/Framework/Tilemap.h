@@ -16,7 +16,10 @@ public:
 
 	void setWindow(sf::RenderWindow* w);
 
-	bool load(const std::string& tileset, std::vector<int> tiles, tilemap_data tilemapdata);
+	void setTexture(sf::Texture* txt) { m_tileset = txt; }
+	sf::Texture* getTexture() { return m_tileset; }
+
+	bool load(bool* d, sf::Texture* t, std::vector<int> tiles, tilemap_data tilemapdata);
 	bool loadCollisions(std::vector<Collision> collisions);
 
 	void drawUnder();
@@ -32,9 +35,11 @@ public:
 private:
 	sf::VertexArray under;
 	sf::VertexArray over;
-	sf::Texture m_tileset;
+	sf::Texture* m_tileset;
 
 	sf::RenderWindow* window;
 	sf::RenderStates states;
+
+	bool* isdebug = nullptr;
 };
 

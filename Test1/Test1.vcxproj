@@ -130,23 +130,25 @@
     <ClCompile Include="Circle_room.cpp" />
     <ClCompile Include="Framework\AnimatedSprite.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
-    <ClCompile Include="Framework\GameObject.cpp" />
     <ClCompile Include="JSONparser\JSONparser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Framework\Room.cpp" />
     <ClCompile Include="Framework\Tilemap.cpp" />
+    <ClCompile Include="GameObjects\Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle_room.h" />
     <ClInclude Include="Framework\AnimatedSprite.h" />
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="Framework\GameObject.h" />
+    <ClInclude Include="Framework\Framework.h" />
     <ClInclude Include="Framework\InputHandler.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Framework\Room.h" />
     <ClInclude Include="Framework\Tilemap.h" />
+    <ClInclude Include="GameObjects\Tree.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\forest_tileset.json" />

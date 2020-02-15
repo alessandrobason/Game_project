@@ -5,7 +5,7 @@
 
 class AnimatedSprite {
 protected:
-	sf::Texture spriteSheet;
+	sf::Texture* spriteSheet = nullptr;
 	sf::Sprite sprite;
 
 	int rows = 0;
@@ -22,7 +22,7 @@ protected:
 	bool playing = true;
 	bool flipped = false;
 	int current_frame = 0;
-	int current_animation = 0.1;
+	int current_animation = 0;
 	std::vector<Anim> animations;
 
 	float elapsedTime = 0;
@@ -34,17 +34,17 @@ public:
 	void draw(sf::RenderWindow* w);
 	void animate(float dt);
 
-	void setSpriteSheet(sf::Texture txt, int c, int r) {
+	void setSpriteSheet(sf::Texture* txt, int c, int r) {
 		spriteSheet = txt; 
 		rows = r;
 		columns = c; 
-		width = spriteSheet.getSize().x / c;
-		height = spriteSheet.getSize().y / r;
-		sprite.setTexture(spriteSheet);
+		width = spriteSheet->getSize().x / c;
+		height = spriteSheet->getSize().y / r;
+		sprite.setTexture(*spriteSheet);
 		sprite.setTextureRect(sf::IntRect(0, 0, 0, 0));
 	}
 
-	sf::Texture getSpriteSheet() { return spriteSheet; }
+	sf::Texture getSpriteSheet() { return *spriteSheet; }
 	sf::Sprite* getSprite() { return &sprite; }
 
 	void setCurrentFrame(int c) { current_frame = c; }
