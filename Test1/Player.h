@@ -11,9 +11,7 @@ class Player : public GameObject {
 private:
 	// pointer to the parent room to access texture ecc
 	Room* room = nullptr;
-
-	sf::RectangleShape collisionShape = sf::RectangleShape();
-
+	
 	bool pressed_keys[256] = { false };
 
 	enum SPRITE_ANIMATIONS {
@@ -38,17 +36,9 @@ public:
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw(sf::RenderWindow* w) override;
-	void drawDebug(sf::RenderWindow* w) override;
 
 	float getY() override { return getSprite()->getPosition().y; };
-
-	void move(sf::Vector2f mov);
-
-	sf::Sprite* getSprite() { return animSprite.getSprite(); };
 	
-	Collision collision = Collision();
-	
-	sf::Vector2f vel;
-	sf::Vector2f oldVel;
+	sf::Sprite* getSprite() override { return animSprite.getSprite(); };
 };
 

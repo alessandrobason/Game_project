@@ -60,7 +60,7 @@ int main()
 
 	int current_room = 0;
 
-	rooms[0]->load();
+	//rooms[0]->load();
 	//rooms[1]->load();
 
 	sf::Clock deltaClock;

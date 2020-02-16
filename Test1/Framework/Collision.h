@@ -6,6 +6,10 @@ class Collision {
 private:
 	bool collide = false;
 
+	sf::RectangleShape debug;
+
+	void setupDebugBox(sf::FloatRect r);
+
 	enum COLLISION_SHAPES {
 		RECT,
 		CIRCLE
@@ -15,7 +19,6 @@ private:
 		sf::Vector2i pos;
 		int radius;
 	};
-
 
 public:
 	struct Colliding {
@@ -35,23 +38,18 @@ public:
 	Collision(int x, int y, int r);
 	~Collision();
 
+	void setDebugPosition(sf::Vector2f pos) { debug.setPosition(pos); }
+	void setDebugSize(sf::Vector2f size) { debug.setSize(size); }
+	void setDebugColor(sf::Color c) { debug.setOutlineColor(c); }
+
 	bool Check_Collision(sf::FloatRect r);
 	bool Check_Collision(IntCircle c);
-
+	
 	sf::Vector2f getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel);
+
+	void drawDebug(sf::RenderWindow* w);
 
 	COLLISION_SHAPES type;
 	sf::FloatRect rect;
 	IntCircle circle;
-
-	enum COLLISION_SIDE {
-		NONE,
-		N,
-		E,
-		S,
-		W
-	};
-
-	COLLISION_SIDE collision_side = NONE;
 };
-

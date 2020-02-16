@@ -5,16 +5,27 @@
 Collision::Collision() {
 	type = RECT;
 	rect = sf::FloatRect(0, 0, 0, 0);
+	setupDebugBox(rect);
 }
 
 Collision::Collision(sf::FloatRect r) {
 	type = RECT;
 	rect = r;
+	setupDebugBox(rect);
 }
 
 Collision::Collision(int x, int y, int w, int h) {
 	type = RECT;
 	rect = sf::FloatRect(x, y, w, h);
+	setupDebugBox(rect);
+}
+
+void Collision::setupDebugBox(sf::FloatRect r) {
+	debug.setPosition(sf::Vector2f(r.left, r.top));
+	debug.setSize(sf::Vector2f(r.width, r.height));
+	debug.setOutlineColor(sf::Color::Red);
+	debug.setOutlineThickness(1.f);
+	debug.setFillColor(sf::Color::Transparent);
 }
 
 // CIRCLE
@@ -28,9 +39,7 @@ Collision::Collision(int x, int y, int r) {
 	circle = { sf::Vector2i(x, y), r };
 }
 
-Collision::~Collision()
-{
-}
+Collision::~Collision() {}
 
 //////////////////////////////////////////////////
 
@@ -69,11 +78,6 @@ bool Collision::Check_Collision(IntCircle c) {
 }
 
 sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) {
-	/*
-	prendere quanto si è dentro da ogni lato
-	il lato con il valore maggiore è il lato 
-	in cui sta collidendo
-	*/
 	sf::Vector2f reverseVel = sf::Vector2f(0, 0);
 	
 	// if left side is after half of rectangle (coming from RIGHT)
@@ -97,4 +101,9 @@ sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) 
 	else if(std::abs(reverseVel.y) > 1)	reverseVel.y = 0;
 
 	return reverseVel;
+}
+
+void Collision::drawDebug(sf::RenderWindow* w) {
+	//debug.setPosition(sf::Vector2f(rect.left, rect.top));
+	w->draw(debug);
 }

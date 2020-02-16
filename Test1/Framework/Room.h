@@ -14,7 +14,7 @@ public:
 	virtual void handleInput(float dt);
 	virtual void update(float dt);
 	virtual void draw();
-	virtual void load();
+	void load();
 
 	void sortGameObjects();
 
@@ -54,6 +54,6 @@ protected:
 
 	// vector with all the gameobjects of the scene
 	std::vector<GameObject*> sceneObjects;
-
+	std::vector<Collision*> sceneColliders;
 
 };

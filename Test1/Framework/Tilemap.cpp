@@ -96,12 +96,14 @@ void Tilemap::drawUnder(){
 
 void Tilemap::drawOver(){
 	window->draw(over, states);
-	if (*isdebug) {
-		for (size_t i = 0; i < collisionShapes.size(); i++) {
-			window->draw(collisionShapes[i]);
-		}
+}
+
+void Tilemap::drawDebug() {
+	for (size_t i = 0; i < collisionShapes.size(); i++) {
+		window->draw(collisionShapes[i]);
 	}
 }
+
 void Tilemap::setShader(sf::Shader s){
 	states.shader = &s;
 }

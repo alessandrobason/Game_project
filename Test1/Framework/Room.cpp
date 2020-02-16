@@ -50,10 +50,11 @@ void Room::load() {
 	for (int i = 0; i < numb_layers; i++) {
 		std::cout << "Layer " << i + 1 << ": \n";
 
+		// load collisions
 		if(tilemap_json->doc["layers"].arr[i].obj["type"].str == "objectgroup") {
 			tilemap_data.numb_layers--;
 			for (size_t k = 0; k < tilemap_json->doc["layers"].arr[i].obj["objects"].arr.size(); k++) {
-				int x = tilemap_json->doc["layers"].arr[3].obj["objects"].arr[k].obj["x"].i;
+				int x = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["x"].i;
 				int y = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["y"].i;
 				int w = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["width"].i;
 				int h = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["height"].i;

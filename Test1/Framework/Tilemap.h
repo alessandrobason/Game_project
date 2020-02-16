@@ -24,6 +24,7 @@ public:
 
 	void drawUnder();
 	void drawOver();
+	void drawDebug();
 	void setShader(sf::Shader s);
 
 	void setVertexArray(sf::VertexArray v);

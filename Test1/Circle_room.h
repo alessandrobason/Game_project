@@ -12,7 +12,7 @@ public:
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
-
+	
 private:
 	Player *p;
 };

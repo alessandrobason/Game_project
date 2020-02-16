@@ -8,12 +8,12 @@ public:
 	~Tree();
 
 	void draw(sf::RenderWindow* w) override;
-	void drawDebug(sf::RenderWindow* w) override;
 
 	float getY() override { return sprite.getPosition().y + 48; };
 
+	sf::Sprite* getSprite() override { return &sprite; }
+
 protected:
 	sf::Sprite sprite;
-	sf::RectangleShape collisionShape = sf::RectangleShape();
 };
 

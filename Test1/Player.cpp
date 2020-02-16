@@ -5,6 +5,10 @@ Player::Player() {}
 Player::Player(InputHandler* input, Room* r, std::string txt_path, sf::Vector2f pos) {
     in = input; 
 
+    collider = Collision(0, 0, 16, 16);
+    collider.setDebugPosition(sf::Vector2f(pos.x + 1, pos.y + 1));
+    collider.setDebugSize(sf::Vector2f(14, 14));
+    
     // load player data from json
     config = new JSONparser("player_data.json");
     
@@ -38,13 +42,6 @@ Player::Player(InputHandler* input, Room* r, std::string txt_path, sf::Vector2f 
     animSprite.setCurrentAnimation(IDLE_D);
 
     getSprite()->setPosition(pos);
-
-    collision = Collision(0, 0, 16, 16);
-    collisionShape.setPosition(sf::Vector2f(pos.x+1, pos.y+1));
-    collisionShape.setSize(sf::Vector2f(collision.rect.width-2, collision.rect.height-2));
-    collisionShape.setOutlineColor(sf::Color::Red);
-    collisionShape.setOutlineThickness(1.f);
-    collisionShape.setFillColor(sf::Color::Transparent);
 }
 
 void Player::handleInput(float dt) {
@@ -113,15 +110,4 @@ void Player::update(float dt) {
 void Player::draw(sf::RenderWindow* w) {
     animSprite.draw(w);
     w->draw(*getSprite());
-}
-
-void Player::drawDebug(sf::RenderWindow* w) {
-    w->draw(collisionShape);
-}
-
-void Player::move(sf::Vector2f mov) {
-    getSprite()->move(mov);
-    collisionShape.move(mov);
-    collision.rect.left = getSprite()->getGlobalBounds().left;
-    collision.rect.top = getSprite()->getGlobalBounds().top;
 }
