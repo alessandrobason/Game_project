@@ -12,7 +12,7 @@ Circle_room::Circle_room(sf::RenderWindow* window, InputHandler* input, std::str
 
 	sceneObjects.push_back(p);
 	for (size_t i = 0; i < 3; i++) {
-		sceneObjects.push_back(new Tree(&textures["tileset"], in, sf::Vector2f(16 * i * 2, 16 * i * 3)));
+		//sceneObjects.push_back(new Tree(&textures["tileset"], in, sf::Vector2f(16 * i * 2, 16 * i * 3)));
 	}
 
 	// load collisions
@@ -50,6 +50,7 @@ void Circle_room::update(float dt) {
 		sceneObjects[i]->update(dt);
 	}
 	// PLAYER UPDATE
+	/*
 
 	for (size_t i = 0; i < sceneColliders.size(); i++) {
 		sf::FloatRect rect = sceneColliders[i]->rect;
@@ -63,14 +64,15 @@ void Circle_room::update(float dt) {
 			sceneColliders[i]->setDebugColor(sf::Color::Red);
 		}
 	}
+	*/
 
-	/*
 	for (size_t i = 0; i < tilemap.collisions.size(); i++) {
 		sf::FloatRect rect = tilemap.collisions[i].rect;
 		if (p->collider.Check_Collision(rect)) {
 			sf::Vector2f revVel = p->collider.getCollisionSide(rect, p->oldVel);
 			p->move(revVel);
 
+			/*
 			std::cout << "p->left " << p->collider.rect.left << "\n";
 			std::cout << "p->top " << p->collider.rect.top<< "\n";
 			std::cout << "p->width " << p->collider.rect.width << "\n";
@@ -80,14 +82,13 @@ void Circle_room::update(float dt) {
 			std::cout << "col->top " << rect.top << "\n";
 			std::cout << "col->width " << rect.width << "\n";
 			std::cout << "col->height " << rect.height << "\n";
-
+			*/
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Blue);
 		}
 		else {
 			tilemap.collisionShapes[i].setOutlineColor(sf::Color::Red);
 		}
 	}
-	*/
 	
 	sf::Vector2f playerSize = sf::Vector2f(p->getSprite()->getLocalBounds().width/2, p->getSprite()->getLocalBounds().height/2);
 	main_camera.setCenter(p->getSprite()->getPosition() + playerSize);
@@ -103,13 +104,15 @@ void Circle_room::draw() {
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->draw(w);
 	}
+	tilemap.drawOver();
+
+	// draw debug
 	if (isdebug) {
 		for (size_t i = 0; i < sceneObjects.size(); i++) {
 			sceneObjects[i]->drawDebug(w);
 		}
-		//tilemap.drawDebug();
+		tilemap.drawDebug();
 	}
-	tilemap.drawOver();
 
 	w->display();
 }

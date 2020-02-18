@@ -55,7 +55,7 @@ int main()
 	//Create the window
 
 	std::vector<Room*> rooms;
-	rooms.push_back(new Circle_room(&window, in, "Levels/Level3/", "Level3.json"));
+	rooms.push_back(new Circle_room(&window, in, "Levels/Level4/", "Level4.json"));
 	//rooms.push_back(new Circle_room(&window, in, "Levels/Level1/", "Level1.json"));
 
 	int current_room = 0;
