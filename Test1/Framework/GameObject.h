@@ -21,15 +21,14 @@ public:
 
 	void move(sf::Vector2f mov) {
 		getSprite()->move(mov);
-		collider.rect.left = getSprite()->getGlobalBounds().left;
-		collider.rect.top = getSprite()->getGlobalBounds().top;
-		collider.setDebugPosition(sf::Vector2f(collider.rect.left + 1, collider.rect.top + 1));
+		collider.moveCollision(mov);
+		//collider.setDebugPosition(sf::Vector2f(collider.rect.left + 1, collider.rect.top + 1));
 	}
 
 	// Set the input component
 	void setInput(InputHandler* input) { in = input; }
 
-	virtual float getY() { return 0.f; }
+	float getY() { return collider.rect.top; }
 
 	// Control sprite speed
 	void setSpeed(float spd) { speed = spd; }

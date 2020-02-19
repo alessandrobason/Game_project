@@ -5,9 +5,9 @@ Player::Player() {}
 Player::Player(InputHandler* input, Room* r, std::string txt_path, sf::Vector2f pos) {
     in = input; 
 
-    collider = Collision(0, 0, 16, 16);
-    collider.setDebugPosition(sf::Vector2f(pos.x + 1, pos.y + 1));
-    collider.setDebugSize(sf::Vector2f(14, 14));
+    collider = Collision(9, 34, 14, 14);
+    //collider.setDebugPosition(sf::Vector2f(pos.x + 1, pos.y + 1));
+    //collider.setDebugSize(sf::Vector2f(14, 14));
     
     // load player data from json
     config = new JSONparser("player_data.json");
@@ -22,7 +22,7 @@ Player::Player(InputHandler* input, Room* r, std::string txt_path, sf::Vector2f 
     txt = &room->textures["player"];
 
     // animated sprite
-    animSprite.setSpriteSheet(txt, 8, 2);
+    animSprite.setSpriteSheet(txt, 7, 4);
 
     for (size_t i = 0; i < config->doc["animations"].arr.size(); i++) {
         std::vector<int> animFrames;

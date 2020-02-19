@@ -37,7 +37,7 @@ public:
 	void update(float dt) override;
 	void draw(sf::RenderWindow* w) override;
 
-	float getY() override { return getSprite()->getPosition().y; };
+	//float getY() override { return collider.rect.top; };
 	
 	sf::Sprite* getSprite() override { return animSprite.getSprite(); };
 };

@@ -5,6 +5,8 @@ bool Tilemap::load(bool* d, sf::Texture* t, std::vector<int> tiles, tilemap_data
 	std::cout << "isdebug: " << isdebug << "\n";
 	m_tileset = t;
 
+	data = tilemapdata;
+
 	// set the primitive of the vertex array to quads (instead of triangles)
 	under.setPrimitiveType(sf::Quads);
 	over.setPrimitiveType(sf::Quads);
@@ -70,7 +72,7 @@ bool Tilemap::loadCollisions(std::vector<Collision> c) {
 		rect.setOutlineColor(sf::Color::Red);
 		rect.setOutlineThickness(1.f);
 		rect.setFillColor(sf::Color::Transparent);
-		collisionShapes.push_back(rect);
+		//collisionShapes.push_back(rect);
 	}
 	return true;
 }
@@ -99,8 +101,8 @@ void Tilemap::drawOver(){
 }
 
 void Tilemap::drawDebug() {
-	for (size_t i = 0; i < collisionShapes.size(); i++) {
-		window->draw(collisionShapes[i]);
+	for (size_t i = 0; i < collisions.size(); i++) {
+		collisions[i].drawDebug(window);
 	}
 }
 

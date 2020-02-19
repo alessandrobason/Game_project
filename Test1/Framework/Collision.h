@@ -44,6 +44,8 @@ public:
 
 	bool Check_Collision(sf::FloatRect r);
 	bool Check_Collision(IntCircle c);
+
+	void moveCollision(sf::Vector2f mov);
 	
 	sf::Vector2f getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel);
 

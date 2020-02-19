@@ -9,7 +9,7 @@ public:
 
 	void draw(sf::RenderWindow* w) override;
 
-	float getY() override { return sprite.getPosition().y + 48; };
+	//float getY() override { return sprite.getPosition().y + 48; };
 
 	sf::Sprite* getSprite() override { return &sprite; }
 

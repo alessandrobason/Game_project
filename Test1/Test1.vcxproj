@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Circle_room.cpp" />
+    <ClCompile Include="Forest_room.cpp" />
     <ClCompile Include="Framework\AnimatedSprite.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
     <ClCompile Include="JSONparser\JSONparser.cpp" />
@@ -138,7 +138,7 @@
     <ClCompile Include="GameObjects\Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circle_room.h" />
+    <ClInclude Include="Forest_room.h" />
     <ClInclude Include="Framework\AnimatedSprite.h" />
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="Framework\GameObject.h" />

@@ -4,10 +4,10 @@
 #include "Player.h"
 #include "GameObjects/Tree.h"
 
-class Circle_room : public Room {
+class Forest_room : public Room {
 public:
-	Circle_room(sf::RenderWindow* window, InputHandler* input, std::string fold, std::string config_path);
-	~Circle_room();
+	Forest_room(sf::RenderWindow* window, InputHandler* input, std::string fold, std::string config_path);
+	~Forest_room();
 
 	void handleInput(float dt) override;
 	void update(float dt) override;

@@ -21,8 +21,10 @@ Collision::Collision(int x, int y, int w, int h) {
 }
 
 void Collision::setupDebugBox(sf::FloatRect r) {
-	debug.setPosition(sf::Vector2f(r.left, r.top));
-	debug.setSize(sf::Vector2f(r.width, r.height));
+	debug.setPosition(sf::Vector2f(r.left + 1, r.top + 1));
+	debug.setSize(sf::Vector2f(r.width - 2, r.height - 2));
+	//debug.setPosition(sf::Vector2f(r.left, r.top));
+	//debug.setSize(sf::Vector2f(r.width, r.height));
 	debug.setOutlineColor(sf::Color::Red);
 	debug.setOutlineThickness(1.f);
 	debug.setFillColor(sf::Color::Transparent);
@@ -47,8 +49,8 @@ bool Collision::Check_Collision(sf::FloatRect r) {
 	switch (type) {
 	case RECT:
 	{
-		collide = rect.intersects(r);
-		return collide;
+
+		return rect.intersects(r) && r!=rect;
 		break;
 	}
 	case CIRCLE:
@@ -101,6 +103,12 @@ sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) 
 	else if(std::abs(reverseVel.y) > 1)	reverseVel.y = 0;
 
 	return reverseVel;
+}
+
+void Collision::moveCollision(sf::Vector2f mov) {
+	rect.left += mov.x;
+	rect.top += mov.y;
+	debug.setPosition(sf::Vector2f(rect.left + 1, rect.top + 1));
 }
 
 void Collision::drawDebug(sf::RenderWindow* w) {

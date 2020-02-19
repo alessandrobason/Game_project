@@ -27,11 +27,15 @@ public:
 	void drawDebug();
 	void setShader(sf::Shader s);
 
+	tilemap_data getData() { return data; }
+	sf::VertexArray getOver() { return over; }
+	sf::RenderStates getStates() { return states; }
+
 	void setVertexArray(sf::VertexArray v);
 	sf::VertexArray getVertexArray();
 
 	std::vector<Collision> collisions;
-	std::vector<sf::RectangleShape> collisionShapes;
+	//std::vector<sf::RectangleShape> collisionShapes;
 
 private:
 	sf::VertexArray under;
@@ -40,6 +44,8 @@ private:
 
 	sf::RenderWindow* window;
 	sf::RenderStates states;
+
+	tilemap_data data;
 
 	bool* isdebug = nullptr;
 };

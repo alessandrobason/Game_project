@@ -4,10 +4,10 @@ Tree::Tree(sf::Texture* t, InputHandler* i, sf::Vector2f p) {
 	in = i;
 	txt = t;
 	sprite.setTexture(*txt);
-	sprite.setTextureRect(sf::IntRect(0, 48, 32, 64));
+	sprite.setTextureRect(sf::IntRect(32, 96, 32, 64));
 	sprite.setPosition(p);
 
-	collider = Collision(p.x, p.y + 48, 32, 16);
+	collider = Collision(p.x + 10, p.y + 42, 12, 12);
 }
 
 Tree::~Tree() {}
