@@ -5,10 +5,11 @@ class InputHandler
 {
 public:
 
-	void setKeyDown(unsigned int key) { keys[key] = true; };
-	void setKeyUp(unsigned int key) { keys[key] = false; pressed_keys[key] = false;};
-	bool isKeyDown(unsigned int key) { return keys[key]; };
+	void setKeyDown(unsigned int key) { if(key < 256) keys[key] = true;};
+	void setKeyUp(unsigned int key) { if (key < 256) { keys[key] = false; pressed_keys[key] = false; } };
+	bool isKeyDown(unsigned int key) { if (key >= 256) return false; return keys[key];};
 	bool isKeyPressed(unsigned int key) {
+		if (key >= 256) return false;
 		if (keys[key] && !pressed_keys[key]) {
 			pressed_keys[key] = true;
 			return true;

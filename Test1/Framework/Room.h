@@ -5,21 +5,28 @@
 #include "InputHandler.h"
 #include "GameObject.h"
 #include "Tilemap.h"
+#include "Room.fwd.h"
+#include "RoomManager.fwd.h"
 
 class Room {
 public:
-	Room(std::string fold, std::string config_path, InputHandler* input);
+	Room(std::string fold, InputHandler* input, RoomManager* rm);
 	~Room();
 
 	virtual void handleInput(float dt);
 	virtual void update(float dt);
 	virtual void draw();
-	void load();
+	virtual void load(sf::Vector2f offset);
 
-	void sortGameObjects();
+	sf::Vector2f moveRoom(sf::Transform t);
+
+	sf::Vector2f getOffset() { return offset; }
+	sf::View getMainCamera() { return main_camera; }
+	std::string getFolder() { return FOLDER; }
+
 
 	// dictionary with all the textures of the scene
-	std::map<std::string, sf::Texture> textures;
+	std::map<std::string, sf::Texture>* textures = nullptr;
 
 	// if true: draw collisionboxes ecc
 	bool isdebug = false;
@@ -36,15 +43,19 @@ protected:
 	// render window
 	sf::RenderWindow* w;
 
+	// room manager
+	RoomManager* roomManager = nullptr;
+
 	// useful information
 	std::string FOLDER;
 	const std::string ASSETS = "Assets/";
 
 	// tilemap data
-	std::vector<int> layers;
-	Tilemap::tilemap_data tilemap_data;
-	Tilemap tilemap;
-	sf::Shader shader;
+	sf::Vector2f offset;
+	std::vector<int>* layers = nullptr;
+	Tilemap::tilemap_data* tilemap_data = nullptr;
+	Tilemap* tilemap = nullptr;
+	sf::Shader* shader = nullptr;
 
 	// main camera
 	sf::View main_camera;
@@ -52,8 +63,10 @@ protected:
 	// input handler
 	InputHandler* in;
 
-	// vector with all the gameobjects of the scene
+	// vectors with scene objects/colliders
 	std::vector<GameObject*> sceneObjects;
+	std::vector<GameObject*> invisibleSceneObjects;
 	std::vector<Collision*> sceneColliders;
+	std::vector<Collision*> invisibleSceneColliders;
 
 };

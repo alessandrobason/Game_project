@@ -33,13 +33,16 @@
     <ClCompile Include="Framework\Tilemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\AnimatedSprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjects\Tree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Forest_room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RoomManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,16 +68,22 @@
     <ClInclude Include="Framework\Tilemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\AnimatedSprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjects\Tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Framework.h">
+    <ClInclude Include="Forest_room.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Forest_room.h">
+    <ClInclude Include="Framework\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RoomManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Room.fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RoomManager.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,7 +95,9 @@
     <None Include="Levels\Level2\Level2_map.json" />
     <None Include="Levels\Level2\Level2.json" />
     <None Include="Levels\Level3\Level3_map.json" />
+    <None Include="old_player_data.json" />
     <None Include="player_data.json" />
+    <None Include="Levels\worldmap.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\forest_tiles.png">

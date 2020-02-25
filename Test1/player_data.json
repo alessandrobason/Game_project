@@ -1,52 +1,63 @@
 {
+  "spritesheet": {
+    "image": "Assets/link.png",
+    "rows": 2,
+    "columns": 8
+  }
   "animations": [
-    {
-      "name": "idle up",
-      "array": [ 7 ],
-      "speed": 0.15,
-      "looping": false
-    },
-    {
-      "name": "idle down",
-      "array": [ 0 ],
-      "speed": 0.15,
-      "looping": false
-    },
-    {
-      "name": "idle left",
-      "array": [ 21 ],
-      "speed": 0.15,
-      "looping": false
-    },
-    {
-      "name": "idle right",
-      "array": [ 14 ],
-      "speed": 0.15,
-      "looping": false
-    },
-    {
-      "name": "walk up",
-      "array": [ 8, 9, 10, 11, 12, 13 ],
-      "speed": 0.15,
-      "looping": true
-    },
-    {
-      "name": "walk down",
-      "array": [ 1, 2, 3, 4, 5, 6 ],
-      "speed": 0.15,
-      "looping": true
-    },
-    {
-      "name": "walk left",
-      "array": [ 22, 23, 24, 25, 26, 27 ],
-      "speed": 0.15,
-      "looping": true
-    },
-    {
-      "name": "walk right",
-      "array": [ 15, 16, 17, 18, 19, 20 ],
-      "speed": 0.15,
-      "looping": true
+      {
+        "name": "idle up",
+        "array": [ 7 ],
+        "speed": 0.2,
+        "looping": false
+      },
+      {
+        "name": "idle down",
+        "array": [ 4 ],
+        "speed": 0.2,
+        "looping": false
+      },
+      {
+        "name": "idle left",
+        "array": [ 0 ],
+        "speed": 0.2,
+        "looping": false
+      },
+      {
+        "name": "idle right",
+        "array": [ 9 ],
+        "speed": 0.2,
+        "looping": false
+      },
+      {
+        "name": "walk up",
+        "array": [ 5, 6 ],
+        "speed": 0.2,
+        "looping": true
+      },
+      {
+        "name": "walk down",
+        "array": [ 2, 3 ],
+        "speed": 0.2,
+        "looping": true
+      },
+      {
+        "name": "walk left",
+        "array": [ 1, 0 ],
+        "speed": 0.2,
+        "looping": true
+      },
+      {
+        "name": "walk right",
+        "array": [ 8, 9 ],
+        "speed": 0.2,
+        "looping": true
+      }
+    ],
+  "collision": {
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
     }
-  ]
-}
+  }

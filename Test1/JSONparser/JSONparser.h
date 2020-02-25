@@ -18,10 +18,11 @@ public:
 
 	struct datatypes {
 		int type;
-		int i;
-		double d;
+		int size = 0;
+		int i = NULL;
+		double d = NULL;
 		bool b;
-		std::string str;
+		std::string str = "null";
 		std::vector<datatypes> arr;
 		std::map<std::string, datatypes> obj;
 	};

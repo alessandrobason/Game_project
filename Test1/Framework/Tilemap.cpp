@@ -1,12 +1,17 @@
 #include "Tilemap.h"
 
-bool Tilemap::load(bool* d, sf::Texture* t, std::vector<int> tiles, tilemap_data tilemapdata) {
+bool Tilemap::load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> animData, std::vector<int>& tiles, tilemap_data tilemapdata, sf::Vector2f offset) {
 	isdebug = d;
-	std::cout << "isdebug: " << isdebug << "\n";
 	m_tileset = t;
+
+	sf::Transform positionoffset;
+	positionoffset.translate(offset);
+	states.transform = positionoffset;
 
 	data = tilemapdata;
 
+	animatedTiles.setTilemap(t);
+	
 	// set the primitive of the vertex array to quads (instead of triangles)
 	under.setPrimitiveType(sf::Quads);
 	over.setPrimitiveType(sf::Quads);
@@ -28,32 +33,77 @@ bool Tilemap::load(bool* d, sf::Texture* t, std::vector<int> tiles, tilemap_data
 				// if tile is empty
 				if (tileNumber == -1) continue;
 
+				bool isAnimated = false;
+				int positionInAnimData = -1;
+				
+				std::string tileStr = std::to_string(tileNumber);
+				for (size_t i = 0; i < animData.size(); i++) {
+					if (animData[i].name == tileStr) {
+						isAnimated = true;
+						positionInAnimData = i;
+						break;
+					}
+				}
+				
+
 				// get position in texture
 				int tu = tileNumber % (m_tileset->getSize().x / tilemapdata.tileSize.x);
 				int tv = tileNumber / (m_tileset->getSize().x / tilemapdata.tileSize.x);
 
-				// pointer to the tile's quad
-				sf::Vertex* quad = NULL;
 
-				if(nl == tilemapdata.numb_layers-1){
-					position = (y * tilemapdata.w) + (x);
-					quad = &over[position * 4];
+				if (isAnimated) {
+					sf::Vertex quad[4];
+
+					// set position of 4 vertices (cw order)
+					quad[0].position = sf::Vector2f(x * tilemapdata.tileSize.x, y * tilemapdata.tileSize.y);
+					quad[1].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x, y * tilemapdata.tileSize.y);
+					quad[2].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x, (y + 1) * tilemapdata.tileSize.y);
+					quad[3].position = sf::Vector2f(x * tilemapdata.tileSize.x, (y + 1) * tilemapdata.tileSize.y);
+					// set texture coords (cw order)
+					quad[0].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x, tv * tilemapdata.tileSize.y);
+					quad[1].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, tv * tilemapdata.tileSize.y);
+					quad[2].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, (tv + 1) * tilemapdata.tileSize.y);
+					quad[3].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x, (tv + 1) * tilemapdata.tileSize.y);
+					
+					std::vector<sf::IntRect> frames;
+					int speed = animData[positionInAnimData].frames[0].duration;
+
+					for (size_t i = 0; i < animData[positionInAnimData].frames.size(); i++) {
+						int fu = animData[positionInAnimData].frames[i].tileid % (m_tileset->getSize().x / tilemapdata.tileSize.x);
+						int fv = animData[positionInAnimData].frames[i].tileid / (m_tileset->getSize().x / tilemapdata.tileSize.x);
+						int fx = fu * tilemapdata.tileSize.x;
+						int fy = fv * tilemapdata.tileSize.y;
+						int fw = (fu + 1) * tilemapdata.tileSize.x;
+						int fh = (fv + 1) * tilemapdata.tileSize.y;
+						frames.push_back(sf::IntRect(fx, fy, fw, fh));
+					}
+
+					animatedTiles.appendTile(quad, frames, speed);
 				}
 				else {
-					quad = &under[position * 4];
+					// pointer to the tile's quad
+					sf::Vertex* quad = nullptr;
+
+					if (nl == tilemapdata.numb_layers - 1) {
+						position = (y * tilemapdata.w) + (x);
+						quad = &over[position * 4];
+					}
+					else {
+						quad = &under[position * 4];
+					}
+
+					// set position of 4 vertices (cw order)
+					quad[0].position = sf::Vector2f(x * tilemapdata.tileSize.x, y * tilemapdata.tileSize.y);
+					quad[1].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x, y * tilemapdata.tileSize.y);
+					quad[2].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x, (y + 1) * tilemapdata.tileSize.y);
+					quad[3].position = sf::Vector2f(x * tilemapdata.tileSize.x, (y + 1) * tilemapdata.tileSize.y);
+
+					// set texture coords (cw order)
+					quad[0].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x, tv * tilemapdata.tileSize.y);
+					quad[1].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, tv * tilemapdata.tileSize.y);
+					quad[2].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, (tv + 1) * tilemapdata.tileSize.y);
+					quad[3].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x, (tv + 1) * tilemapdata.tileSize.y);
 				}
-
-				// set position of 4 vertices (cw order)
-				quad[0].position = sf::Vector2f(x * tilemapdata.tileSize.x,			y * tilemapdata.tileSize.y);
-				quad[1].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x,	y * tilemapdata.tileSize.y);
-				quad[2].position = sf::Vector2f((x + 1) * tilemapdata.tileSize.x,	(y + 1) * tilemapdata.tileSize.y);
-				quad[3].position = sf::Vector2f(x * tilemapdata.tileSize.x,			(y + 1) * tilemapdata.tileSize.y);
-
-				// set texture coords (cw order)
-				quad[0].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x,		tv * tilemapdata.tileSize.y);
-				quad[1].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, tv * tilemapdata.tileSize.y);
-				quad[2].texCoords = sf::Vector2f((tu + 1) * tilemapdata.tileSize.x, (tv + 1) * tilemapdata.tileSize.y);
-				quad[3].texCoords = sf::Vector2f(tu * tilemapdata.tileSize.x,		(tv + 1) * tilemapdata.tileSize.y);
 			}
 		}
 	}
@@ -81,19 +131,13 @@ void Tilemap::setWindow(sf::RenderWindow* w){
 	window = w;
 }
 
-/*
-void Tilemap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	states.transform *= getTransform();
-
-	states.texture = &m_tileset;
-
-	target.draw(under, states);
-	target.draw(over, states);
+void Tilemap::animate(float dt) {
+	animatedTiles.animate(dt);
 }
-*/
 
 void Tilemap::drawUnder(){
 	window->draw(under, states);
+	window->draw(animatedTiles, states);
 }
 
 void Tilemap::drawOver(){
@@ -113,6 +157,7 @@ void Tilemap::setShader(sf::Shader s){
 void Tilemap::setVertexArray(sf::VertexArray v) {
 	under = v;
 }
-sf::VertexArray Tilemap::getVertexArray() {
-	return under;
+
+sf::VertexArray* Tilemap::getVertexArray() {
+	return &under;
 }

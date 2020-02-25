@@ -1,0 +1,7 @@
+{
+  "width": 2,
+  "height": 1,
+  "spawn": 1,
+  "Levels": [ "Level5", "Level6" ],
+  "map": [ 0, 1 ]
+}

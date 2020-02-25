@@ -22,8 +22,8 @@ protected:
 	bool playing = true;
 	bool flipped = false;
 	int current_frame = 0;
-	int current_animation = 0;
-	std::vector<Anim> animations;
+	std::string current_animation = "";
+	std::map<std::string, Anim> animations;
 
 	float elapsedTime = 0;
 
@@ -50,8 +50,8 @@ public:
 	void setCurrentFrame(int c) { current_frame = c; }
 	int getCurrentFrame() { return current_frame; }
 
-	void setCurrentAnimation(int c);
-	int getCurrentAnimation() { return current_animation; }
+	void setCurrentAnimation(std::string name);
+	std::string getCurrentAnimation() { return current_animation; }
 
 	void setPlaying(bool p) { playing = p; }
 	bool getPlaying() { return playing; }
@@ -59,7 +59,43 @@ public:
 	void setFlipped(bool f) { flipped = f; }
 	bool getFlipped() { return flipped; }
 
-	void addAnimation(std::vector<int> frames, float speed, bool looping = true, int index = -1);
+	void addAnimation(std::string name, std::vector<int> frames, float speed, bool looping = true);
 
 	void reset();
+};
+
+class AnimatedTile : public sf::Drawable, public sf::Transformable {
+public:
+	AnimatedTile() {
+		tiles.setPrimitiveType(sf::Quads);
+	}
+	~AnimatedTile() {}
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+	void appendTile(sf::Vertex t[4], std::vector<sf::IntRect> f, int s) {
+		for(size_t i=0; i<4; i++)
+			tiles.append(t[i]);
+		frames.push_back(f);
+		speeds.push_back((float)s / 1000);
+		elapsedTimes.push_back(0);
+		current_frames.push_back(0);
+	}
+
+	void animate(float dt);
+	void reset();
+
+	void setTilemap(sf::Texture* t) { m_tilemap = t; }
+	void setPlaying(bool p) { playing = p; }
+	bool getPlaying() { return playing; }
+
+private:
+	sf::VertexArray tiles;
+	sf::Texture* m_tilemap = nullptr;
+	std::vector<std::vector<sf::IntRect>> frames;
+	std::vector<float> speeds;
+	std::vector<float> elapsedTimes;
+	std::vector<int> current_frames;
+	bool playing = true;
+
 };

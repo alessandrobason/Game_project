@@ -169,20 +169,24 @@ void JSONparser::parseData(std::map<std::string, datatypes>& r, int& i, std::str
 			datatypes dt;
 			dt.type = VAR_OBJECT;
 			while (i + 1 < tokens.size() && tokens[i + 1].parent == self_token) {
+				dt.size++;
 				i++;
 				//if(is_key) std::cout << "\t";
 				parseData(dt.obj, i, json, is_key, false);
 			}
+			dt.size /= 2;
 			r[objKey].arr.push_back(dt);
 			//std::cout << "},\n";
 		}
 		else {
 			r[objKey].type = VAR_OBJECT;
 			while (i + 1 < tokens.size() && tokens[i + 1].parent == self_token) {
+				r[objKey].size++;
 				i++;
 				//if (is_key) std::cout << "\t";
 				parseData(r[objKey].obj, i, json, is_key, false);
 			}
+			r[objKey].size /= 2;
 			//std::cout << "}\n";
 		}
 		break;
