@@ -1,10 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 class Collision {
 private:
-	bool collide = false;
+	bool isenabled = true;
 
 	sf::RectangleShape debug;
 
@@ -37,6 +38,11 @@ public:
 	Collision(sf::Vector2i p, int r);
 	Collision(int x, int y, int r);
 	~Collision();
+
+	void setEnabled(bool e) { isenabled = e; }
+	void enable() { isenabled = true; }
+	void disable() { isenabled = false; }
+	bool isEnabled() { return isenabled; }
 
 	void setDebugPosition(sf::Vector2f pos) { debug.setPosition(pos); }
 	void setDebugSize(sf::Vector2f size) { debug.setSize(size); }

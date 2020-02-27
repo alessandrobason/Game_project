@@ -1,16 +1,13 @@
 #include "Tilemap.h"
 
-bool Tilemap::load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> animData, std::vector<int>& tiles, tilemap_data tilemapdata, sf::Vector2f offset) {
+bool Tilemap::load(bool* d, sf::Image* t, std::vector <animated_tiles_data> animData, std::vector<int>& tiles, tilemap_data tilemapdata, sf::Vector2f offset) {
 	isdebug = d;
-	m_tileset = t;
 
 	sf::Transform positionoffset;
 	positionoffset.translate(offset);
 	states.transform = positionoffset;
-
+	
 	data = tilemapdata;
-
-	animatedTiles.setTilemap(t);
 	
 	// set the primitive of the vertex array to quads (instead of triangles)
 	under.setPrimitiveType(sf::Quads);
@@ -47,8 +44,8 @@ bool Tilemap::load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> an
 				
 
 				// get position in texture
-				int tu = tileNumber % (m_tileset->getSize().x / tilemapdata.tileSize.x);
-				int tv = tileNumber / (m_tileset->getSize().x / tilemapdata.tileSize.x);
+				int tu = tileNumber % (t->getSize().x / tilemapdata.tileSize.x);
+				int tv = tileNumber / (t->getSize().x / tilemapdata.tileSize.x);
 
 
 				if (isAnimated) {
@@ -69,8 +66,8 @@ bool Tilemap::load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> an
 					int speed = animData[positionInAnimData].frames[0].duration;
 
 					for (size_t i = 0; i < animData[positionInAnimData].frames.size(); i++) {
-						int fu = animData[positionInAnimData].frames[i].tileid % (m_tileset->getSize().x / tilemapdata.tileSize.x);
-						int fv = animData[positionInAnimData].frames[i].tileid / (m_tileset->getSize().x / tilemapdata.tileSize.x);
+						int fu = animData[positionInAnimData].frames[i].tileid % (t->getSize().x / tilemapdata.tileSize.x);
+						int fv = animData[positionInAnimData].frames[i].tileid / (t->getSize().x / tilemapdata.tileSize.x);
 						int fx = fu * tilemapdata.tileSize.x;
 						int fy = fv * tilemapdata.tileSize.y;
 						int fw = (fu + 1) * tilemapdata.tileSize.x;
@@ -108,9 +105,13 @@ bool Tilemap::load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> an
 		}
 	}
 
-	states.texture = m_tileset;
-	
 	return true;
+}
+
+void Tilemap::setTexture(sf::Texture* t) {
+	m_tileset = t;
+	states.texture = m_tileset;
+	animatedTiles.setTilemap(t);
 }
 
 bool Tilemap::loadCollisions(std::vector<Collision> c) {

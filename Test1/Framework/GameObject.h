@@ -6,7 +6,7 @@
 
 class GameObject {
 public:
-	GameObject() {
+	GameObject(InputHandler* i, sf::RenderWindow* win) {
 		collider.setDebugColor(sf::Color::Green);
 	}
 	~GameObject() {}
@@ -14,8 +14,8 @@ public:
 	// Virtual update/draw function.
 	virtual void handleInput(float dt) {}
 	virtual void update(float dt) {}
-	virtual void draw(sf::RenderWindow* w) {}
-	void drawDebug(sf::RenderWindow* w) { collider.drawDebug(w); }
+	virtual void draw() {}
+	void drawDebug() { collider.drawDebug(w); }
 
 	virtual sf::Sprite* getSprite() { return nullptr; }
 
@@ -48,6 +48,7 @@ protected:
 
 	// input component
 	InputHandler* in = nullptr;
+	sf::RenderWindow* w = nullptr;
 
 	sf::Texture* txt = nullptr;
 };

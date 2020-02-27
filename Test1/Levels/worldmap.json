@@ -1,7 +1,10 @@
 {
   "width": 2,
-  "height": 1,
-  "spawn": 1,
-  "Levels": [ "Level5", "Level6" ],
-  "map": [ 0, 1 ]
+  "height": 2,
+  "spawn": 2,
+  "Levels": [ "Level5", "Level6", "Level7", "Level8" ],
+  "map": [
+    3, 2,
+    1, 0
+  ]
 }

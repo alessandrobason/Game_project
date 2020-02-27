@@ -26,10 +26,10 @@ public:
 
 	void setWindow(sf::RenderWindow* w);
 
-	void setTexture(sf::Texture* txt) { m_tileset = txt; }
+	void setTexture(sf::Texture* t);
 	sf::Texture* getTexture() { return m_tileset; }
 
-	bool load(bool* d, sf::Texture* t, std::vector <animated_tiles_data> animData, std::vector<int>& tiles, tilemap_data tilemapdata, sf::Vector2f offset);
+	bool load(bool* d, sf::Image* t, std::vector <animated_tiles_data> animData, std::vector<int>& tiles, tilemap_data tilemapdata, sf::Vector2f offset);
 	bool loadCollisions(std::vector<Collision> collisions);
 
 	void drawUnder();

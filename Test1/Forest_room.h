@@ -7,9 +7,7 @@
 class Forest_room : public Room {
 public:
 	Forest_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold);
-	~Forest_room() {
-		//p = nullptr;
-	}
+	~Forest_room() {}
 
 	void load(sf::Vector2f offset) override;
 	void setPlayer(Player* pl);
@@ -24,6 +22,10 @@ public:
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
+
+	sf::Vector2f moveRoom(sf::Transform t);
+	void setBounds(sf::Vector2f offset);
+	sf::Vector2f getOffset() { return offset; }
 	
 private:
 	sf::FloatRect bounds[4];

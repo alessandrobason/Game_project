@@ -9,3 +9,8 @@ struct MapData {
 	Tilemap tilemap;
 	sf::Shader shader;
 };
+
+struct Image {
+	std::string key = "";
+	sf::Image img;
+};

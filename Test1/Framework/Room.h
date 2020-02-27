@@ -18,18 +18,20 @@ public:
 	virtual void draw();
 	virtual void load(sf::Vector2f offset);
 
-	sf::Vector2f moveRoom(sf::Transform t);
-
-	sf::Vector2f getOffset() { return offset; }
 	sf::View getMainCamera() { return main_camera; }
 	std::string getFolder() { return FOLDER; }
 
+	void setMainCamera(sf::View c) { main_camera = c; }
 
 	// dictionary with all the textures of the scene
-	std::map<std::string, sf::Texture>* textures = nullptr;
+	//std::map<std::string, sf::Texture>* textures = nullptr;
+	std::vector<Image>* images = nullptr;
 
 	// if true: draw collisionboxes ecc
 	bool isdebug = false;
+
+	bool* isloaded = nullptr;
+	Tilemap* tilemap = nullptr;
 
 	JSONparser* config;
 
@@ -54,7 +56,6 @@ protected:
 	sf::Vector2f offset;
 	std::vector<int>* layers = nullptr;
 	Tilemap::tilemap_data* tilemap_data = nullptr;
-	Tilemap* tilemap = nullptr;
 	sf::Shader* shader = nullptr;
 
 	// main camera

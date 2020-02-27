@@ -6,16 +6,17 @@ Room::Room(std::string fold, InputHandler* input, RoomManager* rm){
 	std::cout << FOLDER + "/" + FOLDER + ".json" << "\n";
 	config = new JSONparser("Levels/" + FOLDER + "/" + FOLDER + ".json");
 
-	main_camera = sf::View(sf::FloatRect(0, 0, 16*12, 16*9));
-
 	in = input;
 	roomManager = rm;
 
-	textures = &roomManager->textures;
+	main_camera = in->getView();
+
+	images = &roomManager->images;
 	layers = &roomManager->tilemapData[fold].layers;
 	tilemap_data = &roomManager->tilemapData[fold].tilemap_data;
 	tilemap = &roomManager->tilemapData[fold].tilemap;
 	shader = &roomManager->tilemapData[fold].shader;
+	isloaded = &roomManager->tilemapData[fold].loaded;
 }
 
 Room::~Room() {
@@ -103,11 +104,16 @@ void Room::load(sf::Vector2f offs) {
 
 	std::cout << "Tileset json file: " << tileset_json << "\n";
 	std::cout << "Tileset image file: " << tileset_file << "\n";
-	sf::Texture tilesetTemp;
+	sf::Image tilesetTemp;
+	//sf::Texture tilesetTemp;
 	if (!tilesetTemp.loadFromFile(tileset_file)) {
 		std::cout << "Couldn't load tileset from " << tileset_file << "\n";
 	}
-	textures->insert(std::pair<std::string, sf::Texture>("tileset", tilesetTemp));
+
+	int tilesetinimagesposition = images->size();
+	images->push_back({"tiles", tilesetTemp});
+
+	//textures->insert(std::pair<std::string, sf::Texture>("tileset", tilesetTemp));
 
 
 	std::cout << "number of tiles: " << ts_json->doc["tiles"].size << "\n";
@@ -127,20 +133,13 @@ void Room::load(sf::Vector2f offs) {
 
 	std::cout << "animatedTilesData: " << animatedTilesData.size() << "\n";
 
-	tilemap->load(&isdebug, &textures->at("tileset"), animatedTilesData, *layers, *tilemap_data, offset);
+	tilemap->load(&isdebug, &images->at(tilesetinimagesposition).img, animatedTilesData, *layers, *tilemap_data, offset);
 	tilemap->loadCollisions(collisions);
-
-	roomManager->tilemapData[FOLDER].loaded = true;
 
 	delete tilemap_json;
 	delete ts_json;
 	tilemap_json = nullptr;
 	ts_json = nullptr;
-}
 
-sf::Vector2f Room::moveRoom(sf::Transform t) {
-	sf::RenderStates tilemapstate = tilemap->getStates();
-	tilemapstate.transform *= t;
-	tilemap->setStates(tilemapstate);
-	return tilemap->getPosition();
+	*isloaded = true;
 }

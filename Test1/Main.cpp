@@ -6,6 +6,7 @@ float min(float a, float b) { return (a < b ? a : b); }
 float max(float a, float b) { return (a > b ? a : b); }
 bool pressed = false;
 
+
 void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 	sf::Event event;
 	while (window->pollEvent(event)) {
@@ -14,6 +15,7 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 			window->close();
 			break;
 		case sf::Event::Resized:
+			in->resizeView(sf::Vector2u(event.size.width, event.size.height), sf::Vector2u(192, 144));
 			//window->setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
 			break;
 		case sf::Event::KeyPressed:
@@ -45,15 +47,14 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 }
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(16*12*5, 16*9*5), "Game Project");
-	InputHandler *in = new InputHandler();
+	sf::RenderWindow window(sf::VideoMode(192*5, 144*5), "Game Project");
+	InputHandler *in = new InputHandler(&window);
 
-	RoomManager roomManager = RoomManager(&window, in);
-	roomManager.loadMaps();
+	RoomManager roomManager;
 
 	sf::Clock deltaClock;
 
-	roomManager.setDeltaTime(&deltaClock);
+	roomManager.setData(&window, in, &deltaClock);
 	// Game Loop
 	while (window.isOpen()) {
 		// Handle window events.

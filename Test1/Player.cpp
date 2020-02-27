@@ -1,33 +1,30 @@
 #include "Player.h"
+#include "Framework/RoomManager.h"
 
-Player::Player() {}
+Player::Player() : GameObject(nullptr, nullptr) {}
 
-Player::Player(InputHandler* input, Room* r, sf::Vector2f pos) {
+Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : GameObject(input, win){
     in = input;
+    w = win;
 
     // load player data from json
     config = new JSONparser("player_data.json");
 
-    int x = pos.x;
-    int y = pos.y;
     int w = config->doc["collision"].obj["width"].i;
     int h = config->doc["collision"].obj["height"].i;
-    collider = Collision(x, y, w, h);
+    collider = Collision(0, 0, w, h);
 
-    room = r;
-    sf::Texture playerTemp;
+    roommanager = rm;
 
-    if (!playerTemp.loadFromFile(config->doc["spritesheet"].obj["image"].str)) {
+    if (!roommanager->textures["player"].loadFromFile(config->doc["spritesheet"].obj["image"].str)) {
         std::cout << "Failed to load " << config->doc["spritesheet"].str << "\n";
     }
-
-    room->textures->insert(std::pair<std::string, sf::Texture>("player", playerTemp));
 
     int rows = config->doc["spritesheet"].obj["rows"].i;
     int columns = config->doc["spritesheet"].obj["columns"].i;
 
     // animated sprite
-    animSprite.setSpriteSheet(&room->textures->at("player"), columns, rows);
+    animSprite.setSpriteSheet(&roommanager->textures["player"], columns, rows);
 
     for (size_t i = 0; i < config->doc["animations"].arr.size(); i++) {
         std::vector<int> animFrames;
@@ -39,8 +36,6 @@ Player::Player(InputHandler* input, Room* r, sf::Vector2f pos) {
         animSprite.addAnimation(config->doc["animations"].arr[i].obj["name"].str, animFrames, speed, looping);
     }
     animSprite.setCurrentAnimation("idle down");
-
-    getSprite()->setPosition(pos);
 }
 
 void Player::setPosition(sf::Vector2f pos) {
@@ -48,8 +43,8 @@ void Player::setPosition(sf::Vector2f pos) {
     collider.rect = sf::FloatRect(pos.x, pos.y, collider.rect.width, collider.rect.height);
 }
 
-void Player::setDirection(DIRECTIONS dir) {
-    last_direction = dir;
+void Player::setDirection(int dir) {
+    last_direction = (DIRECTIONS)dir;
     switch (last_direction) {
     case UP:
         animSprite.setCurrentAnimation("idle up");
@@ -67,35 +62,43 @@ void Player::setDirection(DIRECTIONS dir) {
 }
 
 void Player::handleInput(float dt) {
-    //bool up = false, down = false, left = false, right = false;
     oldVel = vel;
     vel = sf::Vector2f(0, 0);
 
-    if (in->isKeyDown(in->KEY_UP)) {
-        last_direction = UP;
-        //up = true;
-        vel.y -= 1;
-    }
-    if (in->isKeyDown(in->KEY_DOWN)) {
-        last_direction = DOWN;
-        //down = true;
-        vel.y += 1;
-    }
-    if (in->isKeyDown(in->KEY_LEFT)) {
+    vel.x = in->isKeyDown(in->KEY_RIGHT) - in->isKeyDown(in->KEY_LEFT);
+    vel.y = in->isKeyDown(in->KEY_DOWN) - in->isKeyDown(in->KEY_UP);
+
+    sf::Vector2f mousepos = (sf::Vector2f) in->getMouseRelative();
+    sf::Vector2f center = (sf::Vector2f) w->getSize()/2.f;
+    center.x = mousepos.x - center.x;
+    center.y = mousepos.y - center.y;
+    float angle = (std::atan2(center.y, center.x)*180/M_PI + 180) / 45;
+
+    switch ((int)angle) {
+    case 0:
+    case 7:
         last_direction = LEFT;
-        //left = true;
-        vel.x -= 1;
-    }
-    if (in->isKeyDown(in->KEY_RIGHT)) {
+        break;
+    case 1:
+    case 2:
+        last_direction = UP;
+        break;
+    case 3:
+    case 4:
         last_direction = RIGHT;
-        //right = true;
-        vel.x += 1;
+        break;
+    case 5:
+    case 6:
+        last_direction = DOWN;
+        break;
     }
 
+    //std::cout << (int)angle << "\n";
+   
     float l = std::sqrt(vel.x * vel.x + vel.y * vel.y);
     if (l != 0)	vel /= l;
     vel *= speed;
-    std::cout << "AIUTOOO\n";
+
     std::string anim = "";
     if (vel != sf::Vector2f(0, 0)) anim += "walk ";
     else anim += "idle ";
@@ -116,47 +119,14 @@ void Player::handleInput(float dt) {
     }
 
     animSprite.setCurrentAnimation(anim);
-
-    /*
-    if (vel != sf::Vector2f(0, 0)) {
-        if (right) {
-            animSprite.setCurrentAnimation("WALK_R");
-        }
-        else if (left) {
-            animSprite.setCurrentAnimation("WALK_L");
-        }
-        else if (down) {
-            animSprite.setCurrentAnimation("WALK_D");
-        }
-        else if (up) {
-            animSprite.setCurrentAnimation("WALK_U");
-        }
-    }
-    else {
-        std::string cur = animSprite.getCurrentAnimation();
-        if (cur == "WALK_U") {
-            animSprite.setCurrentAnimation("IDLE_U");
-        }
-        else if (cur == "WALK_D") {
-            animSprite.setCurrentAnimation("IDLE_D");
-        }
-        else if (cur == "WALK_L") {
-            animSprite.setCurrentAnimation("IDLE_L");
-        }
-        else if (cur == "WALK_R") {
-            animSprite.setCurrentAnimation("IDLE_R");
-        }
-    }
-    */
 }
 
 void Player::update(float dt) {
     animSprite.animate(dt);
     move(vel * dt);
-    //std::cout << getSprite()->getPosition().x << " " << getSprite()->getPosition().y << "\n";
+    //std::cout << "spr pos:\t" << getSprite()->getPosition().x << " " << getSprite()->getPosition().y << "\n";
 }
 
-void Player::draw(sf::RenderWindow* w) {
+void Player::draw() {
     animSprite.draw(w);
-    //w->draw(*getSprite());
 }

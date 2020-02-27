@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include "InputHandler.h"
 #include "Tilemap.h"
 #include "../JSONparser/JSONparser.h"
@@ -23,7 +24,10 @@ class RoomManager {
 	sf::RenderWindow* w;
 	sf::Clock* deltaclock = 0;
 
-	//sf::Thread loadingThread;
+	void loadMaps();
+	void loadTextures();
+
+	sf::Thread loadingThread;
 public:
 	enum RoomSides {
 		TOP,
@@ -32,12 +36,10 @@ public:
 		RIGHT
 	};
 
-	RoomManager(sf::RenderWindow* win, InputHandler* i);
+	RoomManager();
 	~RoomManager();
 
-	void setDeltaTime(sf::Clock* dt) { deltaclock = dt; }
-
-	void loadMaps();
+	void setData(sf::RenderWindow* win, InputHandler* i, sf::Clock* dt);
 
 	void handleInput(float dt);
 	void update(float dt);
@@ -47,6 +49,7 @@ public:
 
 	// dictionary with all the textures of the game
 	std::map<std::string, sf::Texture> textures;
+	std::vector<Image> images;
 	// dictionary with all the maps currently loaded
 	std::map<std::string, MapData> tilemapData;
 

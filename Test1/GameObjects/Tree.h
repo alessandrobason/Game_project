@@ -4,10 +4,10 @@
 
 class Tree : public GameObject {
 public:
-	Tree(sf::Texture* t, InputHandler* i, sf::Vector2f p);
+	Tree(sf::Texture* t, InputHandler* i, sf::RenderWindow* win, sf::Vector2f p);
 	~Tree();
 
-	void draw(sf::RenderWindow* w) override;
+	void draw() override;
 
 	//float getY() override { return sprite.getPosition().y + 48; };
 

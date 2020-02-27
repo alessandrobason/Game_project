@@ -5,7 +5,7 @@
 #include "Framework/InputHandler.h"
 #include "Framework/Collision.h"
 #include "Framework/Animation.h"
-#include "Framework/Room.h"
+#include "Framework/RoomManager.fwd.h"
 
 class Player : public GameObject {
 public:
@@ -16,8 +16,8 @@ public:
 		RIGHT
 	};
 private:
-	// pointer to the parent room to access texture ecc
-	Room* room = nullptr;
+	// pointer to the room manager to access texture ecc
+	RoomManager* roommanager = nullptr;
 	
 	bool pressed_keys[256] = { false };
 
@@ -29,18 +29,14 @@ private:
 
 public:
 	Player();
-	Player(InputHandler* input, Room* r, sf::Vector2f pos);
+	Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win);
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
-	void draw(sf::RenderWindow* w) override;
-
-	void setTexture(sf::Texture* txt) {
-
-	}
+	void draw() override;
 
 	void setPosition(sf::Vector2f pos);
-	void setDirection(DIRECTIONS dir);
+	void setDirection(int dir);
 	DIRECTIONS getDirection() { return last_direction; }
 	void setCurrentAnimation(std::string anim) { animSprite.setCurrentAnimation(anim); }
 

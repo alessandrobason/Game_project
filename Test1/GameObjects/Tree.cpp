@@ -1,7 +1,6 @@
 #include "Tree.h"
 
-Tree::Tree(sf::Texture* t, InputHandler* i, sf::Vector2f p) {
-	in = i;
+Tree::Tree(sf::Texture* t, InputHandler* i, sf::RenderWindow* win, sf::Vector2f p) : GameObject(in, win) {
 	txt = t;
 	sprite.setTexture(*txt);
 	sprite.setTextureRect(sf::IntRect(128, 112, 32, 32));
@@ -12,6 +11,6 @@ Tree::Tree(sf::Texture* t, InputHandler* i, sf::Vector2f p) {
 
 Tree::~Tree() {}
 
-void Tree::draw(sf::RenderWindow* w) {
+void Tree::draw() {
 	w->draw(sprite);
 }

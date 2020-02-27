@@ -4,6 +4,7 @@
 class InputHandler
 {
 public:
+	InputHandler(sf::RenderWindow* win) { w = win; }
 
 	void setKeyDown(unsigned int key) { if(key < 256) keys[key] = true;};
 	void setKeyUp(unsigned int key) { if (key < 256) { keys[key] = false; pressed_keys[key] = false; } };
@@ -23,10 +24,34 @@ public:
 	int getMouseX() { return mouse.position.x; };
 	int getMouseY() { return mouse.position.y; };
 	sf::Vector2i getMousePosition() { return mouse.position; };
+	sf::Vector2i getMouseRelative() { return sf::Mouse::getPosition(*w); }
 	void setMouseLDown(bool down) { mouse.left = down; };
 	void setMouseRDown(bool down) { mouse.right = down; };
 	bool isMouseLDown() { return mouse.left; };
 	bool isMouseRDown() { return mouse.right; };
+
+
+	void resizeView(sf::Vector2u windowsize, sf::Vector2u designedsize) {
+		sf::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
+
+		float screenwidth = windowsize.x / designedsize.x;
+		float screenheight = windowsize.y / designedsize.y;
+
+		if (screenwidth > screenheight) {
+			viewport.width = screenheight / screenwidth;
+			viewport.left = (1.f - viewport.width) / 2.f;
+		}
+		else if (screenwidth < screenheight) {
+			viewport.height = screenwidth / screenheight;
+			viewport.top = (1.f - viewport.height) / 2.f;
+		}
+
+		sf::View view(sf::FloatRect(0, 0, designedsize.x, designedsize.y));
+		view.setViewport(viewport);
+		windowview = view;
+	}
+
+	sf::View getView() { return windowview; }
 
 	enum KEY_ENUM {
 		KEY_UP = sf::Keyboard::W,
@@ -37,6 +62,7 @@ public:
 	};
 
 private:
+	sf::RenderWindow* w = nullptr;
 
 	struct Mouse {
 		sf::Vector2i position;
@@ -47,5 +73,7 @@ private:
 	bool keys[256]{ false };
 	bool pressed_keys[256]{ false };
 	Mouse mouse;
+
+	sf::View windowview = sf::View(sf::FloatRect(0, 0, 16 * 12, 16 * 9));
 };
 

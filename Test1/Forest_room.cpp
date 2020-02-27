@@ -10,26 +10,10 @@ Forest_room::Forest_room(RoomManager* rm, sf::RenderWindow* window, InputHandler
 
 void Forest_room::load(sf::Vector2f offset) {
 	Room::load(offset);
-	sf::Vector2f tilemapposition = offset;
-	sf::Vector2f positionsigns = sf::Vector2f(1, 1);
-	if (tilemapposition.x < 0) positionsigns.x = -1;
-	if (tilemapposition.y < 0) positionsigns.y = -1;
+	setBounds(offset);
 
-	std::cout << "tilemapposition: " << tilemapposition.x << " " << tilemapposition.y << "\n";
-	bounds[0] = sf::FloatRect(tilemapposition.x						  , tilemapposition.y					    , roomManager->MAPSIZE, 0.1); //top
-	bounds[1] = sf::FloatRect(tilemapposition.x						  , tilemapposition.y + roomManager->MAPSIZE, roomManager->MAPSIZE, 0.1); //bottom
-	bounds[2] = sf::FloatRect(tilemapposition.x						  , tilemapposition.y					    , 0.1				  , roomManager->MAPSIZE); //left
-	bounds[3] = sf::FloatRect(tilemapposition.x + roomManager->MAPSIZE, tilemapposition.y						, 0.1				  , roomManager->MAPSIZE); //right
-	
-	std::cout << bounds[0].left << " " << bounds[0].top << " " << bounds[0].width << " " << bounds[0].height << "\n";
-	std::cout << bounds[1].left << " " << bounds[1].top << " " << bounds[1].width << " " << bounds[1].height << "\n";
-	std::cout << bounds[2].left << " " << bounds[2].top << " " << bounds[2].width << " " << bounds[2].height << "\n";
-	std::cout << bounds[3].left << " " << bounds[3].top << " " << bounds[3].width << " " << bounds[3].height << "\n";
-	
 	tilemap->setWindow(w);
-
-	//p = new Player(in, this, sf::Vector2f());
-
+	
 	// load objects into array
 	std::cout << "size: " << sceneObjects.size() << "\n";
 	for (size_t i = 0; i < 5; i++) {
@@ -77,13 +61,24 @@ void Forest_room::setPlayerPosition(sf::Vector2f pos) {
 	p->setPosition(pos);
 }
 
+/*######################*\
+||                      ||
+||     HANDLE INPUT     ||
+||                      ||
+\*######################*/
 void Forest_room::handleInput(float dt) {
 	if (in->isKeyPressed(sf::Keyboard::F1)) isdebug = !isdebug;
+	
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->handleInput(dt);
 	}
 }
 
+/*######################*\
+||                      ||
+||        UPDATE        ||
+||                      ||
+\*######################*/
 void Forest_room::update(float dt) {
 	tilemap->animate(dt);
 
@@ -127,44 +122,50 @@ void Forest_room::update(float dt) {
 	}
 
 	sf::Vector2f playerSize = sf::Vector2f(p->getSprite()->getLocalBounds().width/2, p->getSprite()->getLocalBounds().height/2);
+	//main_camera.setSize(w->getView().getSize());
+	main_camera.setViewport(in->getView().getViewport());
 	main_camera.setCenter(p->getSprite()->getPosition() + playerSize);
 	sf::Vector2f top_left_camera = main_camera.getCenter() - main_camera.getSize() / 2.f;
 	sf::Vector2f bottom_right_camera = main_camera.getCenter() + main_camera.getSize() / 2.f;
 	// STICK CAMERA //
 	// left
 	if (top_left_camera.x <= bounds[2].left + bounds[2].width) {
-		main_camera.setCenter(sf::Vector2f(main_camera.getSize().x / 2.f, main_camera.getCenter().y));
+		main_camera.setCenter(sf::Vector2f(bounds[2].left + (main_camera.getSize().x / 2.f), main_camera.getCenter().y));
 	}
 	// right
 	if (bottom_right_camera.x >= bounds[3].left) {
-		std::cout << bounds[3].left << " " << main_camera.getSize().x / 2.f << " " << bounds[3].left - (main_camera.getSize().x / 2.f) << "\n";
 		main_camera.setCenter(sf::Vector2f(bounds[3].left - (main_camera.getSize().x / 2.f), main_camera.getCenter().y));
 	}
 	// top
 	if (top_left_camera.y <= bounds[0].top) {
-		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x , main_camera.getSize().y / 2.f));
+		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x , bounds[0].top + main_camera.getSize().y / 2.f));
 	}
 	// bottom
 	if (bottom_right_camera.y >= bounds[1].top + bounds[1].height) {
-		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x, roomManager->MAPSIZE - (main_camera.getSize().y / 2.f)));
+		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x, bounds[1].top - (main_camera.getSize().y / 2.f)));
 	}
 	w->setView(main_camera);
 	cullGameObjects();
 	//std::cout << "->" << main_camera.getCenter().x << " " << main_camera.getCenter().x << "\n";
 }
 
+/*######################*\
+||                      ||
+||         DRAW         ||
+||                      ||
+\*######################*/
 void Forest_room::draw() {
 	sortGameObjects();
 	tilemap->drawUnder();
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
-		sceneObjects[i]->draw(w);
+		sceneObjects[i]->draw();
 	}
 	
 	tilemap->drawOver();
 
 	// draw debug
 	if (isdebug) {
-		p->drawDebug(w);
+		p->drawDebug();
 		for (size_t i = 0; i < sceneColliders.size(); i++) {
 			sceneColliders[i]->drawDebug(w);
 		}
@@ -179,23 +180,19 @@ void Forest_room::sortGameObjects() {
 
 void Forest_room::cullGameObjects() {
 	sf::Vector2f size = main_camera.getSize();
-	if (isdebug) {
-		//size.x /= 2;
-		//size.y /= 2;
-	}
 	sf::Vector2f pos = main_camera.getCenter();
 	sf::FloatRect rect = sf::FloatRect(pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
 
-	sf::RectangleShape r;
-	r.setSize(size);
-	r.setPosition(sf::Vector2f(pos.x - (size.x / 2), pos.y - (size.y / 2)));
-	r.setFillColor(sf::Color::Transparent);
-	r.setOutlineColor(sf::Color::Green);
-	r.setOutlineThickness(1.0f);
-	if (isdebug) w->draw(r);
+	if (isdebug) {
+		sf::RectangleShape r;
+		r.setSize(size);
+		r.setPosition(sf::Vector2f(pos.x - (size.x / 2), pos.y - (size.y / 2)));
+		r.setFillColor(sf::Color::Transparent);
+		r.setOutlineColor(sf::Color::Green);
+		r.setOutlineThickness(1.0f);
+		w->draw(r);
+	}
 
-	//std::cout << "position: " << pos.x << " " << pos.y << "\n";
-	//std::cout << rect.left << " " << rect.top << " " << rect.width << " " << rect.height << "\n";
 	size_t invisibleObjectSize = invisibleSceneObjects.size();
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		if (!rect.intersects(sceneObjects[i]->getSprite()->getGlobalBounds())) {
@@ -217,7 +214,7 @@ void Forest_room::cullGameObjects() {
 
 	size_t invisibleCollidersSize = invisibleSceneColliders.size();
 	for (size_t i = 0; i < sceneColliders.size(); i++) {
-		if (!rect.intersects(sceneColliders[i]->rect)) {
+		if (!rect.intersects(sceneColliders[i]->rect) || !sceneColliders[i]->isEnabled()) {
 			invisibleSceneColliders.push_back(sceneColliders[i]);
 			sceneColliders[i] = sceneColliders[sceneColliders.size() - 1];
 			sceneColliders.resize(sceneColliders.size() - 1);
@@ -225,11 +222,26 @@ void Forest_room::cullGameObjects() {
 	}
 
 	for (size_t i = 0; i < invisibleCollidersSize; i++) {
-		if (rect.intersects(invisibleSceneColliders[i]->rect)) {
+		if (rect.intersects(invisibleSceneColliders[i]->rect) && invisibleSceneColliders[i]->isEnabled()) {
 			sceneColliders.push_back(invisibleSceneColliders[i]);
 			invisibleSceneColliders[i] = invisibleSceneColliders[invisibleSceneColliders.size() - 1];
 			invisibleSceneColliders.resize(invisibleSceneColliders.size() - 1);
 			invisibleCollidersSize--;
 		}
 	}
+}
+
+sf::Vector2f Forest_room::moveRoom(sf::Transform t) {
+	sf::RenderStates tilemapstate = tilemap->getStates();
+	tilemapstate.transform = t;
+	tilemap->setStates(tilemapstate);
+	return tilemap->getPosition();
+}
+
+void Forest_room::setBounds(sf::Vector2f offset) {
+	this->offset = offset;
+	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , roomManager->MAPSIZE, 0.1f); //top
+	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roomManager->MAPSIZE, roomManager->MAPSIZE, 0.1f); //bottom
+	bounds[2] = sf::FloatRect(offset.x						 , offset.y						  , 0.1f				, roomManager->MAPSIZE); //left
+	bounds[3] = sf::FloatRect(offset.x + roomManager->MAPSIZE, offset.y						  , 0.1f				, roomManager->MAPSIZE); //right
 }

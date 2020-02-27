@@ -1,8 +1,18 @@
 #include "RoomManager.h"
 
-RoomManager::RoomManager(sf::RenderWindow* win, InputHandler* i) {
-	w = win;
-	in = i;
+RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
+	//sf::Thread loadThread(&RoomManager::loadMaps, this);
+}
+
+void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* dt) {
+	w = win; 
+	in = inp; 
+	deltaclock = dt;
+
+	p = Player(in, this, w);
+	//p.setPosition(sf::Vector2f(16, 16));
+	p.setSpeed(100);
+
 	JSONparser worldmap = JSONparser("Levels/worldmap.json");
 	map.width = worldmap.doc["width"].i;
 	map.height = worldmap.doc["height"].i;
@@ -14,90 +24,85 @@ RoomManager::RoomManager(sf::RenderWindow* win, InputHandler* i) {
 	for (size_t i = 0; i < worldmap.doc["map"].arr.size(); i++) {
 		map.data.push_back(worldmap.doc["map"].arr[i].i);
 	}
-	map.currentRoom = map.data[worldmap.doc["spawn"].i];
+	map.currentRoom = worldmap.doc["spawn"].i;
 
 	if (!textures["player"].loadFromFile("Assets/link.png")) {
-
+		std::cout << "Couldn't load player texture";
 	}
+
+	rooms[map.data[map.currentRoom]]->setPlayer(&p);
+	loadingThread.launch();
+	loadingThread.wait();
+	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
+	loadTextures();
 }
 
 RoomManager::~RoomManager() {
 	delete in;
 	in = nullptr;
-	delete deltaclock;
 	deltaclock = nullptr;
 }
 
 void RoomManager::handleInput(float dt) {
-	rooms[map.currentRoom]->handleInput(dt);
+	rooms[map.data[map.currentRoom]]->handleInput(dt);
 }
 
 void RoomManager::update(float dt) {
-	rooms[map.currentRoom]->update(dt);
+	rooms[map.data[map.currentRoom]]->update(dt);
 }
 
 void RoomManager::draw() {
 	w->clear();
-	rooms[map.currentRoom]->draw();
+	rooms[map.data[map.currentRoom]]->draw();
 	w->display();
 }
 
 void RoomManager::loadMaps() {
-	std::vector<int> toLoad;
-	toLoad.push_back(map.currentRoom);
+	struct load {
+		int position;
+		int map;
+	};
+	std::vector<load> toLoad;
+	toLoad.push_back({ map.currentRoom, map.data[map.currentRoom] });
 	// on the left
-	if (map.currentRoom > 0) 
-		toLoad.push_back(map.data[map.currentRoom - 1]);
+	if (map.currentRoom % map.width > 0 && map.data[map.currentRoom - 1] != -1)
+		toLoad.push_back({ map.currentRoom - 1, map.data[map.currentRoom - 1] });
 	// on the right
-	if (map.currentRoom % map.width < map.width-1)
-		toLoad.push_back(map.data[map.currentRoom + 1]);
+	if (map.currentRoom % map.width < map.width-1 && map.data[map.currentRoom + 1] != -1)
+		toLoad.push_back({ map.currentRoom + 1, map.data[map.currentRoom + 1] });
 	// on top
-	if (map.currentRoom >= map.width)
-		toLoad.push_back(map.data[map.currentRoom - map.width]);
+	if (map.currentRoom >= map.width && map.data[map.currentRoom - map.width] != -1)
+		toLoad.push_back({ map.currentRoom - map.width, map.data[map.currentRoom - map.width] });
 	// on bottom
-	if (map.currentRoom / map.width < map.height - 1)
-		toLoad.push_back(map.data[map.currentRoom + map.width]);
-
-	std::cout << "rrr: " << rooms.size() << "\n";
-
-	//p = Player(in, rooms[map.currentRoom], sf::Vector2f(0, 0));
-	//Player* pl = new Player(in, rooms[map.currentRoom], sf::Vector2f(64, 64));
-	//pl->setSpeed(100);
-	p = Player(in, rooms[map.currentRoom], sf::Vector2f(64, 64));
-	p.setSpeed(100);
-	rooms[map.currentRoom]->setPlayer(&p);
+	if (map.currentRoom / map.width < map.height - 1 && map.data[map.currentRoom + map.width] != -1)
+		toLoad.push_back({ map.currentRoom + map.width, map.data[map.currentRoom + map.width] });
+	
 	for (size_t i = 0; i < toLoad.size(); i++) {
-		/*
-		##############################
-		##############################
-
-		DA FARE:
-		- FARE UNA MAPPA DELLE ROOMS IN MODO CHE SI POSSA
-		  CHIAMARE rooms[map.files[toLoad[i]]]
-
-		##############################
-		##############################
-		*/
-		std::cout << "load: " << toLoad[i] << "\n";
+		if (*rooms[toLoad[i].map]->isloaded == true) continue;
+		int mapx = toLoad[i].position % map.width;
+		int mapy = toLoad[i].position / map.width;
+		std::cout << "load: " << toLoad[i].map << "\n";
 		sf::Vector2f offset;
-		if (i > 0) {
-			offset = rooms[toLoad[i-1]]->getOffset() + sf::Vector2f(MAPSIZE, 0);
-		}
-		//offset = sf::Vector2f(0, 0);
-		rooms[toLoad[i]]->load(-offset);
+		offset = sf::Vector2f(mapx * MAPSIZE, mapy * MAPSIZE);
 		
-		if (toLoad[i] != map.currentRoom) {
-
-		}
-			//rooms[toLoad[i]]->removePlayer();
+		rooms[toLoad[i].map]->load(offset);
 	}
-	//rooms[map.currentRoom]->load();
-	//rooms[map.currentRoom]->setPlayer(&p);
-	std::cout << "loaded?";
+}
+
+void RoomManager::loadTextures() {
+	for (size_t i = 0; i < images.size(); i++) {
+		if (!textures[images[i].key].loadFromImage(images[i].img)) {
+			std::cout << "couldn't load " << images[i].key << "\n";
+		}
+	}
+	for (size_t i = 0; i < rooms.size(); i++) {
+		if (!rooms[i]->isloaded) continue;
+		rooms[i]->tilemap->setTexture(&textures["tiles"]);
+	}
 }
 
 void RoomManager::moveRoom(int side) {
-	int oldcurrentroom = map.currentRoom;
+	int oldcurrentroom = map.data[map.currentRoom];
 	sf::View maincamera = rooms[oldcurrentroom]->getMainCamera();
 	sf::Vector2f oldplayerpos = rooms[oldcurrentroom]->getPlayerPosition();
 	Player::DIRECTIONS lastplayerdirection = p.getDirection();
@@ -105,50 +110,55 @@ void RoomManager::moveRoom(int side) {
 	sf::FloatRect bound;
 	switch (side) {
 	case TOP:
+		if (map.currentRoom - map.width  < 0) return;
+		map.currentRoom -= map.width;
+		offsetdirection = sf::Vector2f(0, -1);
 		break;
 	case BOTTOM:
+		if (map.currentRoom + map.width >= map.data.size()) return;
+		map.currentRoom += map.width;
+		offsetdirection = sf::Vector2f(0, +1);
 		break;
 	case LEFT:
-		bound = rooms[oldcurrentroom]->getBound(side);
-		if (map.currentRoom == 0) return;
+		if (map.currentRoom%map.width == 0) return;
 		map.currentRoom--;
 		offsetdirection = sf::Vector2f(-1, 0);
 		break;
 	case RIGHT:
-		if (map.currentRoom == rooms.size()-1) return;
-		//if (map.currentRoom == 0) return;
+		if ((map.currentRoom%map.width)+1 >= map.width) return;
 		map.currentRoom++;
 		offsetdirection = sf::Vector2f(1, 0);
 		break;
 	}
-	
-
-	p = Player(in, rooms[map.currentRoom], sf::Vector2f(64, 64));
-	p.setSpeed(100);
+	loadingThread.launch();
+	bound = rooms[oldcurrentroom]->getBound(side);
+	int currentroom = map.data[map.currentRoom];
+	//p = Player(in, rooms[currentroom], oldplayerpos);
+	//p.setSpeed(100);
 
 	rooms[oldcurrentroom]->removePlayer();
-	rooms[map.currentRoom]->setPlayer(&p);
-	rooms[map.currentRoom]->setPlayerPosition(oldplayerpos);
+	rooms[currentroom]->setPlayer(&p);
 	tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.resetAnimation();
-	//sf::Vector2f middleplayerpos = rooms[map.currentRoom]->getPlayerPosition();
-	//std::cout << "middle: " << middleplayerpos.x << " " << middleplayerpos.y << "\n";
 
+	/*
 	sf::Transform t;
-	t.translate(offsetdirection * 16.f * 40.f);
-	//rooms[map.currentRoom]->moveRoom(t);
-	//sf::Vector2f targetPosition = tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.getPosition();
-
-	//std::cout << targetPosition.x << " --- " << targetPosition.y << "\n";
+	sf::Vector2f offset = offsetdirection * (float)MAPSIZE;
+	offset += rooms[oldcurrentroom]->getOffset();
+	t.translate(offset);
+	rooms[currentroom]->moveRoom(t);
+	rooms[currentroom]->setBounds(offset);
+	*/
 
 	bool transitioning = true;
 	bool movingplayer = true;
 	float speed = 200;
 
-	//sf::View help = maincamera;
-
 	sf::Vector2f playeroldposition = p.getSprite()->getPosition();
 	p.setDirection(lastplayerdirection);
 	p.vel = sf::Vector2f(0, 0);
+
+	bool wasdebug = rooms[oldcurrentroom]->isdebug;
+	rooms[oldcurrentroom]->isdebug = false;
 
 	sf::Clock deltaClock;
 	while (transitioning) {
@@ -156,24 +166,36 @@ void RoomManager::moveRoom(int side) {
 		w->clear();
 		float dt = deltaClock.restart().asSeconds();
 		tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.animate(dt);
-		tilemapData[rooms[map.currentRoom]->getFolder()].tilemap.animate(dt);
+		tilemapData[rooms[currentroom]->getFolder()].tilemap.animate(dt);
 		//p.update(dt);
 		
 		rooms[oldcurrentroom]->draw();
-		rooms[map.currentRoom]->draw();
-		w->display();
+		rooms[currentroom]->draw();
 
 		maincamera.move(offsetdirection*dt*speed);
 		if (movingplayer) {
 			p.move(offsetdirection * dt * speed);
 		}
 		w->setView(maincamera);
+		std::cout << maincamera.getCenter().x << " " << maincamera.getCenter().y << "\n";
+		w->display();
+
 		switch (side) {
 		case TOP:
-			return;
+			if (maincamera.getCenter().y + (maincamera.getSize().y / 2) <= bound.top) {
+				transitioning = false;
+			}
+			if (p.collider.rect.top <= oldplayerpos.y - 17) {
+				movingplayer = false;
+			}
 			break;
 		case BOTTOM:
-			return;
+			if (maincamera.getCenter().y - (maincamera.getSize().y / 2) >= bound.top + bound.height) {
+				transitioning = false;
+			}
+			if (p.collider.rect.top >= oldplayerpos.y + 17) {
+				movingplayer = false;
+			}
 			break;
 		case LEFT:
 			if (maincamera.getCenter().x + (maincamera.getSize().x / 2) <=  bound.left) {
@@ -193,6 +215,9 @@ void RoomManager::moveRoom(int side) {
 			break;
 		}		
 	}
+	std::cout << "\n-->\n";
 	std::cout << maincamera.getCenter().x << " " << maincamera.getCenter().y << "\n";
+	rooms[currentroom]->isdebug = wasdebug;
+	rooms[currentroom]->setMainCamera(maincamera);
 	deltaclock->restart();
 }
