@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Framework/Room.h"
 #include "Player.h"
-#include "GameObjects/Tree.h"
+#include "GameObjects/Enemy.h"
 
 class Forest_room : public Room {
 public:
@@ -20,6 +20,8 @@ public:
 	void sortGameObjects();
 	void cullGameObjects();
 
+	std::vector<Enemy*>* getEnemies() { return &enemies; }
+
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
@@ -33,6 +35,8 @@ private:
 
 	sf::Vector2f camera_top_left;
 	sf::Vector2f camera_bottom_right;
+
+	std::vector<Enemy*> enemies;
 
 	Player* p;
 };

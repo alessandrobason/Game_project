@@ -3,7 +3,8 @@
 #include <iostream>
 #include <vector>
 #include "InputHandler.h"
-#include "Collision.h"
+#include "../GameObjects/Enemy.h"
+#include "Projectiles.h"
 
 /*
 needs to have:
@@ -21,8 +22,9 @@ public:
 	void drawArrows(sf::RenderWindow* w);
 	void drawDebug(sf::RenderWindow* w);
 
+	void setEnemies(std::vector<Enemy*>* e) { projectiles.setEnemies(e); }
 	void setAngle(float ang) { angle_to_mouse = ang; }
-	void setCollisionArray(std::vector<Collision> c) {}
+	void setCollisionArray(std::vector<Collision*>* c) {}
 
 	void shoot();
 	void move(sf::Vector2f offset);
@@ -30,21 +32,8 @@ public:
 protected:
 	InputHandler* in = nullptr;
 	float angle_to_mouse = 0.f;
-
-	float projectile_speed = 100.f;
 	
-	struct projectile {
-		sf::Vector2f position;
-		sf::Vector2f velocity;
-		Collision collider;
-	};
-
 	sf::Vector2f texture_coordinates;
 
-	sf::VertexArray projectiles_vertexs;
-	sf::RenderStates projectiles_states;
-	// stores all the data of projectiles, its size
-	// should be equal to projectils_vertexs' size / 4
-	std::vector<projectile> projectile_vector;
-
+	Projectiles projectiles;
 };

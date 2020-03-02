@@ -30,6 +30,7 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	loadingThread.launch();
 	loadingThread.wait();
 	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
+	p.bow.setEnemies(getCurrentRoom()->getEnemies());
 	loadTextures();
 }
 

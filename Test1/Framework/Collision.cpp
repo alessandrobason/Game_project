@@ -9,15 +9,17 @@ Collision::Collision() {
 	setupDebugBox(rect);
 }
 
-Collision::Collision(sf::FloatRect r) {
+Collision::Collision(sf::FloatRect r, COLLISIONTYPE t) {
 	type = RECT;
+	collisiontype = t;
 	rect = r;
 	collision_offset = sf::Vector2f(r.left, r.top);
 	setupDebugBox(rect);
 }
 
-Collision::Collision(int x, int y, int w, int h) {
+Collision::Collision(int x, int y, int w, int h, COLLISIONTYPE t) {
 	type = RECT;
+	collisiontype = t;
 	rect = sf::FloatRect(x, y, w, h);
 	collision_offset = sf::Vector2f(x, y);
 	setupDebugBox(rect);

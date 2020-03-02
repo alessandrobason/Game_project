@@ -1,11 +1,10 @@
 #pragma once
 #include "../Framework/GameObject.h"
-#include "../Framework/Collision.h"
 
-class Tree : public GameObject {
+class Enemy : public GameObject {
 public:
-	Tree(sf::Texture* t, InputHandler* i, sf::RenderWindow* win, sf::Vector2f p);
-	~Tree();
+	Enemy(sf::Texture* t, InputHandler* i, sf::RenderWindow* win, sf::Vector2f p);
+	~Enemy();
 
 	void draw() override;
 

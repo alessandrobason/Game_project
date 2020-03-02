@@ -137,12 +137,13 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Framework\Room.cpp" />
     <ClCompile Include="Framework\Tilemap.cpp" />
-    <ClCompile Include="GameObjects\Tree.cpp" />
+    <ClCompile Include="GameObjects\Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Forest_room.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\Collision.h" />
+    <ClInclude Include="Framework\Projectiles.h" />
     <ClInclude Include="Framework\Room.fwd.h" />
     <ClInclude Include="Framework\GameObject.h" />
     <ClInclude Include="Framework\InputHandler.h" />
@@ -153,7 +154,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Framework\Room.h" />
     <ClInclude Include="Framework\Tilemap.h" />
-    <ClInclude Include="GameObjects\Tree.h" />
+    <ClInclude Include="GameObjects\Enemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\forest_tileset.json" />

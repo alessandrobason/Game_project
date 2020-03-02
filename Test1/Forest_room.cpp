@@ -16,9 +16,9 @@ void Forest_room::load(sf::Vector2f offset) {
 	
 	// load objects into array
 	std::cout << "size: " << sceneObjects.size() << "\n";
-	for (size_t i = 0; i < 5; i++) {
-		//sceneObjects.push_back(new Tree(&textures["tileset"], in, sf::Vector2f(16 * i * 2, 16 * i * 2)));
-	}
+	
+	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
+	enemies.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
 
 	// load collisions
 	//sceneColliders.push_back(&p->collider);
@@ -85,6 +85,9 @@ void Forest_room::update(float dt) {
 	// OTHER GAMEOBJECTS UPDATE
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->update(dt);
+	}
+	for (size_t i = 0; i < enemies.size(); i++) {
+		enemies[i]->update(dt);
 	}
 
 	// PLAYER UPDATE
@@ -161,6 +164,9 @@ void Forest_room::draw() {
 	tilemap->drawUnder();
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->draw();
+	}
+	for (size_t i = 0; i < enemies.size(); i++) {
+		enemies[i]->draw();
 	}
 	
 	tilemap->drawOver();

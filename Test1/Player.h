@@ -30,7 +30,6 @@ private:
 	sf::Vector2f local_center;
 	float angle_to_mouse = 0.f;
 
-	Weapon bow;
 	bool draw_weapon_over = false;
 
 public:
@@ -54,5 +53,6 @@ public:
 
 	sf::Sprite* getSprite() override { return animSprite.getSprite(); };
 
+	Weapon bow;
 };
 

@@ -22,17 +22,17 @@ private:
 	};
 
 public:
-	struct Colliding {
-		bool coll_top = false;
-		bool coll_bot = false;
-		bool coll_lef = false;
-		bool coll_rig = false;
+	enum COLLISIONTYPE {
+		TILE,
+		OBJECT,
+		PLAYER,
+		PROJECTILE
 	};
 
 	// RECTANGLE (by default it's a 0x0 rectangle) 
 	Collision();
-	Collision(sf::FloatRect r);
-	Collision(int x, int y, int w, int h);
+	Collision(sf::FloatRect r, COLLISIONTYPE type);
+	Collision(int x, int y, int w, int h, COLLISIONTYPE type);
 
 	// CIRCLE
 	Collision(sf::Vector2i p, int r);
@@ -58,6 +58,7 @@ public:
 	void drawDebug(sf::RenderWindow* w);
 
 	COLLISION_SHAPES type;
+	COLLISIONTYPE collisiontype;
 	sf::FloatRect rect;
 	sf::Vector2f collision_offset;
 	IntCircle circle;

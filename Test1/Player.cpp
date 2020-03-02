@@ -14,7 +14,7 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     int y = config->doc["collision"].obj["y"].i;
     int w = config->doc["collision"].obj["width"].i;
     int h = config->doc["collision"].obj["height"].i;
-    collider = Collision(x, y, w, h);
+    collider = Collision(x, y, w, h, Collision::PLAYER);
 
     roommanager = rm;
 

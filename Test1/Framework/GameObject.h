@@ -8,6 +8,8 @@ class GameObject {
 public:
 	GameObject(InputHandler* i, sf::RenderWindow* win) {
 		collider.setDebugColor(sf::Color::Green);
+		in = i;
+		w = win;
 	}
 	~GameObject() {}
 
@@ -37,6 +39,8 @@ public:
 	// Setter/getter for texture component
 	void setTexture(sf::Texture* t) { txt = t; }
 	sf::Texture* getTexture() { return txt; }
+
+	virtual void hit() { std::cout << "I've been hit\n"; }
 
 	Collision collider;
 	sf::Vector2f vel;
