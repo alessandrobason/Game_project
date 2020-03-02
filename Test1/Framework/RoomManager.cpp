@@ -26,10 +26,6 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	}
 	map.currentRoom = worldmap.doc["spawn"].i;
 
-	if (!textures["player"].loadFromFile("Assets/link.png")) {
-		std::cout << "Couldn't load player texture";
-	}
-
 	rooms[map.data[map.currentRoom]]->setPlayer(&p);
 	loadingThread.launch();
 	loadingThread.wait();
@@ -139,16 +135,7 @@ void RoomManager::moveRoom(int side) {
 	rooms[oldcurrentroom]->removePlayer();
 	rooms[currentroom]->setPlayer(&p);
 	tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.resetAnimation();
-
-	/*
-	sf::Transform t;
-	sf::Vector2f offset = offsetdirection * (float)MAPSIZE;
-	offset += rooms[oldcurrentroom]->getOffset();
-	t.translate(offset);
-	rooms[currentroom]->moveRoom(t);
-	rooms[currentroom]->setBounds(offset);
-	*/
-
+	
 	bool transitioning = true;
 	bool movingplayer = true;
 	float speed = 200;
@@ -185,7 +172,7 @@ void RoomManager::moveRoom(int side) {
 			if (maincamera.getCenter().y + (maincamera.getSize().y / 2) <= bound.top) {
 				transitioning = false;
 			}
-			if (p.collider.rect.top <= oldplayerpos.y - 17) {
+			if (p.collider.rect.top <= oldplayerpos.y - (p.collider.rect.height + 1)) {
 				movingplayer = false;
 			}
 			break;
@@ -193,7 +180,7 @@ void RoomManager::moveRoom(int side) {
 			if (maincamera.getCenter().y - (maincamera.getSize().y / 2) >= bound.top + bound.height) {
 				transitioning = false;
 			}
-			if (p.collider.rect.top >= oldplayerpos.y + 17) {
+			if (p.collider.rect.top >= oldplayerpos.y + (p.collider.rect.height + 1)) {
 				movingplayer = false;
 			}
 			break;
@@ -201,7 +188,7 @@ void RoomManager::moveRoom(int side) {
 			if (maincamera.getCenter().x + (maincamera.getSize().x / 2) <=  bound.left) {
 				transitioning = false;
 			}
-			if (p.collider.rect.left <= oldplayerpos.x - 17) {
+			if (p.collider.rect.left <= oldplayerpos.x - (p.collider.rect.width + 1)) {
 				movingplayer = false;
 			}
 			break;
@@ -209,7 +196,7 @@ void RoomManager::moveRoom(int side) {
 			if (maincamera.getCenter().x - (maincamera.getSize().x / 2) >= bound.left + bound.width) {
 				transitioning = false;
 			}
-			if (p.collider.rect.left >= oldplayerpos.x + 17) {
+			if (p.collider.rect.left >= oldplayerpos.x + (p.collider.rect.width + 1)) {
 				movingplayer = false;
 			}
 			break;

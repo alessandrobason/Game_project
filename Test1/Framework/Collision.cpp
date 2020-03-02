@@ -5,18 +5,21 @@
 Collision::Collision() {
 	type = RECT;
 	rect = sf::FloatRect(0, 0, 0, 0);
+	collision_offset = sf::Vector2f();
 	setupDebugBox(rect);
 }
 
 Collision::Collision(sf::FloatRect r) {
 	type = RECT;
 	rect = r;
+	collision_offset = sf::Vector2f(r.left, r.top);
 	setupDebugBox(rect);
 }
 
 Collision::Collision(int x, int y, int w, int h) {
 	type = RECT;
 	rect = sf::FloatRect(x, y, w, h);
+	collision_offset = sf::Vector2f(x, y);
 	setupDebugBox(rect);
 }
 

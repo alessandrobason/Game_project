@@ -116,7 +116,7 @@ void Forest_room::update(float dt) {
 	// check if player is going in another map //
 	for (size_t i = 0; i < 4; i++) {
 		if (p->collider.Check_Collision(bounds[i])) {
-			roomManager->moveRoom(i);
+			roomManager->moveRoom(static_cast<int>(i));
 			return;
 		}
 	}
@@ -124,26 +124,28 @@ void Forest_room::update(float dt) {
 	sf::Vector2f playerSize = sf::Vector2f(p->getSprite()->getLocalBounds().width/2, p->getSprite()->getLocalBounds().height/2);
 	//main_camera.setSize(w->getView().getSize());
 	main_camera.setViewport(in->getView().getViewport());
-	main_camera.setCenter(p->getSprite()->getPosition() + playerSize);
-	sf::Vector2f top_left_camera = main_camera.getCenter() - main_camera.getSize() / 2.f;
-	sf::Vector2f bottom_right_camera = main_camera.getCenter() + main_camera.getSize() / 2.f;
+	main_camera.setCenter(p->getSprite()->getPosition() + p->getLocalCenter());
+	camera_top_left = main_camera.getCenter() - main_camera.getSize() / 2.f;
+	camera_bottom_right = main_camera.getCenter() + main_camera.getSize() / 2.f;
 	// STICK CAMERA //
 	// left
-	if (top_left_camera.x <= bounds[2].left + bounds[2].width) {
+	if (camera_top_left.x <= bounds[2].left + bounds[2].width) {
 		main_camera.setCenter(sf::Vector2f(bounds[2].left + (main_camera.getSize().x / 2.f), main_camera.getCenter().y));
 	}
 	// right
-	if (bottom_right_camera.x >= bounds[3].left) {
+	if (camera_bottom_right.x >= bounds[3].left) {
 		main_camera.setCenter(sf::Vector2f(bounds[3].left - (main_camera.getSize().x / 2.f), main_camera.getCenter().y));
 	}
 	// top
-	if (top_left_camera.y <= bounds[0].top) {
+	if (camera_top_left.y <= bounds[0].top) {
 		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x , bounds[0].top + main_camera.getSize().y / 2.f));
 	}
 	// bottom
-	if (bottom_right_camera.y >= bounds[1].top + bounds[1].height) {
+	if (camera_bottom_right.y >= bounds[1].top + bounds[1].height) {
 		main_camera.setCenter(sf::Vector2f(main_camera.getCenter().x, bounds[1].top - (main_camera.getSize().y / 2.f)));
 	}
+	// update top_left of the camera for player
+	camera_top_left = main_camera.getCenter() - main_camera.getSize() / 2.f;
 	w->setView(main_camera);
 	cullGameObjects();
 	//std::cout << "->" << main_camera.getCenter().x << " " << main_camera.getCenter().x << "\n";
@@ -240,8 +242,8 @@ sf::Vector2f Forest_room::moveRoom(sf::Transform t) {
 
 void Forest_room::setBounds(sf::Vector2f offset) {
 	this->offset = offset;
-	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , roomManager->MAPSIZE, 0.1f); //top
-	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roomManager->MAPSIZE, roomManager->MAPSIZE, 0.1f); //bottom
-	bounds[2] = sf::FloatRect(offset.x						 , offset.y						  , 0.1f				, roomManager->MAPSIZE); //left
-	bounds[3] = sf::FloatRect(offset.x + roomManager->MAPSIZE, offset.y						  , 0.1f				, roomManager->MAPSIZE); //right
+	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , static_cast<float>(roomManager->MAPSIZE), 0.1f); //top
+	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roomManager->MAPSIZE, static_cast<float>(roomManager->MAPSIZE), 0.1f); //bottom
+	bounds[2] = sf::FloatRect(offset.x						 , offset.y						  , 0.1f									, static_cast<float>(roomManager->MAPSIZE)); //left
+	bounds[3] = sf::FloatRect(offset.x + roomManager->MAPSIZE, offset.y						  , 0.1f									, static_cast<float>(roomManager->MAPSIZE)); //right
 }

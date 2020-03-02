@@ -29,15 +29,15 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 			break;
 		case sf::Event::MouseButtonPressed:
 			if (event.mouseButton.button == sf::Mouse::Left)
-				in->setMouseLDown(true);
+				in->setMouseLDown();
 			if (event.mouseButton.button == sf::Mouse::Right)
-				in->setMouseRDown(true);
+				in->setMouseRDown();
 			break;
 		case sf::Event::MouseButtonReleased:
 			if (event.mouseButton.button == sf::Mouse::Left)
-				in->setMouseLDown(false);
+				in->setMouseLUp();
 			if (event.mouseButton.button == sf::Mouse::Right)
-				in->setMouseRDown(false);
+				in->setMouseRUp();
 			break;
 		default:
 			// don't handle other events

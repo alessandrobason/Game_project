@@ -59,5 +59,6 @@ public:
 
 	COLLISION_SHAPES type;
 	sf::FloatRect rect;
+	sf::Vector2f collision_offset;
 	IntCircle circle;
 };

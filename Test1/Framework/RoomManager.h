@@ -45,6 +45,8 @@ public:
 	void update(float dt);
 	void draw();
 
+	Forest_room* getCurrentRoom() { return rooms[map.data[map.currentRoom]]; }
+
 	void moveRoom(int side);
 
 	// dictionary with all the textures of the game

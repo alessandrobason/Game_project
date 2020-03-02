@@ -25,17 +25,33 @@ public:
 	int getMouseY() { return mouse.position.y; };
 	sf::Vector2i getMousePosition() { return mouse.position; };
 	sf::Vector2i getMouseRelative() { return sf::Mouse::getPosition(*w); }
-	void setMouseLDown(bool down) { mouse.left = down; };
-	void setMouseRDown(bool down) { mouse.right = down; };
+	void setMouseLDown() { mouse.left = true; };
+	void setMouseRDown() { mouse.right = true; };
+	void setMouseLUp() { mouse.left = false;  mouse.pressedleft = false; };
+	void setMouseRUp() { mouse.right = false; mouse.pressedright = false; };
 	bool isMouseLDown() { return mouse.left; };
 	bool isMouseRDown() { return mouse.right; };
+	bool isMouseLPressed() {
+		if (mouse.left && !mouse.pressedleft) {
+			mouse.pressedleft = true;
+			return true;
+		}
+		return false;
+	}
+	bool isMouseRPressed() {
+		if (mouse.right && !mouse.pressedright) {
+			mouse.pressedright = true;
+			return true;
+		}
+		return false;
+	}
 
 
 	void resizeView(sf::Vector2u windowsize, sf::Vector2u designedsize) {
 		sf::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
 
-		float screenwidth = windowsize.x / designedsize.x;
-		float screenheight = windowsize.y / designedsize.y;
+		float screenwidth = static_cast<float>(windowsize.x / designedsize.x);
+		float screenheight = static_cast<float>(windowsize.y / designedsize.y);
 
 		if (screenwidth > screenheight) {
 			viewport.width = screenheight / screenwidth;
@@ -46,7 +62,7 @@ public:
 			viewport.top = (1.f - viewport.height) / 2.f;
 		}
 
-		sf::View view(sf::FloatRect(0, 0, designedsize.x, designedsize.y));
+		sf::View view(sf::FloatRect(0, 0, static_cast<float>(designedsize.x), static_cast<float>(designedsize.y)));
 		view.setViewport(viewport);
 		windowview = view;
 	}
@@ -68,6 +84,8 @@ private:
 		sf::Vector2i position;
 		bool left = false;
 		bool right = false;
+		bool pressedleft = false;
+		bool pressedright = false;
 	};
 
 	bool keys[256]{ false };

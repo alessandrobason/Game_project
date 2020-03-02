@@ -6,26 +6,32 @@
 #include "Framework/Collision.h"
 #include "Framework/Animation.h"
 #include "Framework/RoomManager.fwd.h"
+#include "Framework/Weapon.h"
 
 class Player : public GameObject {
 public:
 	enum DIRECTIONS {
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT
+		UP_RIGHT,
+		DOWN_RIGHT,
+		DOWN_LEFT,
+		UP_LEFT,
 	};
 private:
 	// pointer to the room manager to access texture ecc
 	RoomManager* roommanager = nullptr;
+
+	JSONparser* config;
 	
 	bool pressed_keys[256] = { false };
 
-	DIRECTIONS last_direction = UP;
-
 	AnimatedSprite animSprite;
-	
-	JSONparser* config;
+	DIRECTIONS last_direction = DOWN_RIGHT;
+
+	sf::Vector2f local_center;
+	float angle_to_mouse = 0.f;
+
+	Weapon bow;
+	bool draw_weapon_over = false;
 
 public:
 	Player();
@@ -34,11 +40,15 @@ public:
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
+	void drawDebug() override;
+
+	void move(sf::Vector2f offset);
 
 	void setPosition(sf::Vector2f pos);
 	void setDirection(int dir);
 	DIRECTIONS getDirection() { return last_direction; }
 	void setCurrentAnimation(std::string anim) { animSprite.setCurrentAnimation(anim); }
+	sf::Vector2f getLocalCenter() { return local_center; }
 
 	static std::string getGameObjectString() { return ""; }
 

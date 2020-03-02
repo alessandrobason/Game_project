@@ -15,12 +15,11 @@ protected:
 
 	struct Anim {
 		float speed;
-		bool looping;
+		bool looping = true;
 		std::vector<sf::IntRect> frames;
 	};
 
 	bool playing = true;
-	bool flipped = false;
 	int current_frame = 0;
 	std::string current_animation = "";
 	std::map<std::string, Anim> animations;
@@ -56,8 +55,8 @@ public:
 	void setPlaying(bool p) { playing = p; }
 	bool getPlaying() { return playing; }
 
-	void setFlipped(bool f) { flipped = f; }
-	bool getFlipped() { return flipped; }
+	//void setFlipped(bool f) { flipped = f; }
+	//bool getFlipped() { return flipped; }
 
 	void addAnimation(std::string name, std::vector<int> frames, float speed, bool looping = true);
 

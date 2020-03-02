@@ -15,7 +15,7 @@ public:
 	virtual void handleInput(float dt) {}
 	virtual void update(float dt) {}
 	virtual void draw() {}
-	void drawDebug() { collider.drawDebug(w); }
+	virtual void drawDebug() { collider.drawDebug(w); }
 
 	virtual sf::Sprite* getSprite() { return nullptr; }
 

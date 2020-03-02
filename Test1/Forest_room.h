@@ -13,8 +13,9 @@ public:
 	void setPlayer(Player* pl);
 	void removePlayer();
 	void setPlayerPosition(sf::Vector2f pos);
-	sf::Vector2f getPlayerPosition() { return p->getSprite()->getPosition(); };
+	sf::Vector2f getPlayerPosition() { return sf::Vector2f(p->collider.rect.left, p->collider.rect.top); };
 	sf::FloatRect getBound(int i) { return bounds[i]; }
+	sf::Vector2f getCameraTopLeft() { return camera_top_left; }
 
 	void sortGameObjects();
 	void cullGameObjects();
@@ -29,6 +30,9 @@ public:
 	
 private:
 	sf::FloatRect bounds[4];
+
+	sf::Vector2f camera_top_left;
+	sf::Vector2f camera_bottom_right;
 
 	Player* p;
 };
