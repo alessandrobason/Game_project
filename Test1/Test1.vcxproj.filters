@@ -51,6 +51,9 @@
     <ClCompile Include="Framework\Projectiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObjects\Octorock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JSONparser\JSONparser.h">
@@ -101,6 +104,9 @@
     <ClInclude Include="Framework\Tween.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjects\Octorock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Levels\Level1\Level1.json" />
@@ -113,6 +119,7 @@
     <None Include="old_player_data.json" />
     <None Include="player_data.json" />
     <None Include="Levels\worldmap.json" />
+    <None Include="GameObjects\enemy_data.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\forest_tiles.png">

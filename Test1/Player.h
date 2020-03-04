@@ -44,7 +44,6 @@ public:
 	void move(sf::Vector2f offset);
 
 	void setPosition(sf::Vector2f pos);
-	void setDirection(int dir);
 	DIRECTIONS getDirection() { return last_direction; }
 	void setCurrentAnimation(std::string anim) { animSprite.setCurrentAnimation(anim); }
 	sf::Vector2f getLocalCenter() { return local_center; }

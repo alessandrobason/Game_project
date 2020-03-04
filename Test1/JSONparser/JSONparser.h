@@ -8,6 +8,7 @@
 class JSONparser
 {
 public:
+	JSONparser() {}
 	JSONparser(const std::string json);
 	~JSONparser();
 

@@ -1,6 +1,6 @@
 #include "RoomManager.h"
 
-RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {}
+RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this)/*, enemyLoadingThread(&RoomManager::loadEnemies, this)*/{}
 
 void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* dt) {
 	w = win; 
@@ -9,6 +9,8 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 
 	p = Player(in, this, w);
 	p.setSpeed(100);
+
+	enemydata.readJSON("GameObjects/enemy_data.json");
 
 	JSONparser worldmap = JSONparser("Levels/worldmap.json");
 	map.width = worldmap.doc["width"].i;
@@ -24,8 +26,12 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	map.currentRoom = worldmap.doc["spawn"].i;
 
 	rooms[map.data[map.currentRoom]]->setPlayer(&p);
+	loadEnemies();
 	loadingThread.launch();
+	// while loading the maps, load enemy data
+	//enemyLoadingThread.launch();
 	loadingThread.wait();
+	//enemyLoadingThread.wait();
 	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
 	//p.bow.setGameObjects(getCurrentRoom()->getGameObjects());
 	loadTextures();
@@ -35,6 +41,48 @@ RoomManager::~RoomManager() {
 	delete in;
 	in = nullptr;
 	deltaclock = nullptr;
+}
+
+void RoomManager::loadEnemies() {
+	if (!textures["enemy"].loadFromFile(enemydata.doc["spritesheet"].str)) {
+		std::cout << "Couldn't load enemy spritesheet\n";
+	}
+	else {
+		std::cout << "Loaded enemy spritesheet\n";
+	}
+
+	for (size_t i = 0; i < enemydata.doc["enemies"].arr.size(); i++) {
+		Enemy e;
+		e.setTexture(&textures["enemy"]);
+		e.setInput(in);
+		e.setWindow(w);
+		std::string name = enemydata.doc["enemies"].arr[i].obj["name"].str;
+		int x = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
+		int y = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
+		int wi = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
+		int h = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
+		e.collisionlayer = Collision::LAYER::ENEMY;
+		e.collider = Collision(x, y, wi, h, e.collisionlayer);
+		
+		int rows = enemydata.doc["rows"].i;
+		int columns = enemydata.doc["columns"].i;
+		AnimatedSprite animatedsprite;
+		animatedsprite.setSpriteSheet(&textures["enemy"], columns, rows);
+		for (size_t j = 0; j < enemydata.doc["enemies"].arr[i].obj["animations"].arr.size(); j++) {
+			std::vector<int> animFrames;
+			float speed = (float)enemydata.doc["enemies"].arr[i].obj["animations"].arr[j].obj["speed"].d;
+			for (size_t k = 0; k < enemydata.doc["enemies"].arr[i].obj["animations"].arr[j].obj["array"].arr.size(); k++) {
+				animFrames.push_back(enemydata.doc["enemies"].arr[i].obj["animations"].arr[j].obj["array"].arr[k].i);
+			}
+			animatedsprite.addAnimation(enemydata.doc["enemies"].arr[i].obj["animations"].arr[j].obj["name"].str, animFrames, speed);
+		}
+		animatedsprite.setCurrentAnimation(enemydata.doc["enemies"].arr[i].obj["animations"].arr[0].obj["name"].str);
+		
+		e.setAnimatedSprite(animatedsprite);
+		e.setProjectile(enemydata.doc["enemies"].arr[i].obj["projectile"].b);
+
+		enemycopies[name] = e;
+	}
 }
 
 void RoomManager::handleInput(float dt) {

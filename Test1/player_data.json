@@ -73,10 +73,12 @@
     "rows": 1,
     "columns": 2,
     "bow": {
-      "texture coordinates": [ 0, 0 ]
+      "texture coordinates": [ 0, 0 ],
+      "base_damage": 10
     },
     "arrow": {
-      "texture coordinates": [ 16, 0 ]
+      "texture coordinates": [ 16, 0 ],
+      "hitbox":  [4, 4, 4, 4]
     }
   }
   }

@@ -49,7 +49,7 @@ void Room::load(sf::Vector2f offs) {
 	// get the json file for the map
 	std::string map = config->doc["map"].str;
 	// load the json file for the map
-	JSONparser* tilemap_json = new JSONparser("Levels/" + FOLDER + "/" + map);
+	tilemap_json = new JSONparser("Levels/" + FOLDER + "/" + map);
 
 	// load tileset json
 	tileset_json = tilemap_json->doc["tilesets"].arr[0].obj["source"].str;
@@ -136,9 +136,7 @@ void Room::load(sf::Vector2f offs) {
 	tilemap->load(&isdebug, &images->at(tilesetinimagesposition).img, animatedTilesData, *layers, *tilemap_data, offset);
 	tilemap->loadCollisions(collisions);
 
-	delete tilemap_json;
 	delete ts_json;
-	tilemap_json = nullptr;
 	ts_json = nullptr;
 
 	*isloaded = true;

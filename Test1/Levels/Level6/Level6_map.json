@@ -960,5 +960,14 @@
  "tilewidth":16,
  "type":"map",
  "version":1,
- "width":40
+  "width": 40,
+  "enemies": [
+    {
+      "name": "octorock",
+      "position": {
+        "x": 64,
+        "y": 64
+      }
+    }
+  ]
 }

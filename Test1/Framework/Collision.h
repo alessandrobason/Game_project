@@ -25,7 +25,8 @@ public:
 	enum class LAYER {
 		ALL,
 		OBJECT,
-		PLAYER
+		PLAYER,
+		ENEMY
 	};
 	
 	// RECTANGLE (by default it's a 0x0 rectangle) 

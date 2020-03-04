@@ -53,6 +53,12 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     bow_texture_coordinates.x = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[0].i;
     bow_texture_coordinates.y = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[1].i;
     bow = Weapon(&roommanager->textures["weapons"], bow_texture_coordinates, in, collisionlayer, roommanager);
+    sf::FloatRect arrowhitbox;
+    arrowhitbox.top = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[0].i;
+    arrowhitbox.left = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[1].i;
+    arrowhitbox.width = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[2].i;
+    arrowhitbox.height = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[3].i;
+    bow.setHitBox(arrowhitbox);
 }
 
 void Player::move(sf::Vector2f offset) {
@@ -64,24 +70,6 @@ void Player::setPosition(sf::Vector2f pos) {
     getSprite()->setPosition(pos);
     collider.rect = sf::FloatRect(pos.x + collider.collision_offset.x, pos.y + collider.collision_offset.y, collider.rect.width, collider.rect.height);
     bow.setPosition(pos + local_center);
-}
-
-void Player::setDirection(int dir) {
-    last_direction = (DIRECTIONS)dir;
-    switch (last_direction) {
-    case UP_RIGHT:
-        animSprite.setCurrentAnimation("idle up-right");
-        break;
-    case UP_LEFT:
-        animSprite.setCurrentAnimation("idle up-left");
-        break;
-    case DOWN_RIGHT:
-        animSprite.setCurrentAnimation("idle down-right");
-        break;
-    case DOWN_LEFT:
-        animSprite.setCurrentAnimation("idle down-left");
-        break;
-    }
 }
 
 void Player::handleInput(float dt) {

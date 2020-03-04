@@ -6,6 +6,7 @@
 
 class GameObject {
 public:
+	GameObject() {}
 	GameObject(InputHandler* i, sf::RenderWindow* win) {
 		collider.setDebugColor(sf::Color::Green);
 		in = i;
@@ -29,6 +30,7 @@ public:
 
 	// Set the input component
 	void setInput(InputHandler* input) { in = input; }
+	void setWindow(sf::RenderWindow* win) { w = win; }
 
 	float getY() { return collider.rect.top; }
 

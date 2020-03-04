@@ -33,6 +33,8 @@ class RoomManager {
 		bool wasdebug;
 	};
 
+	std::map<std::string, Enemy> enemycopies;
+
 	MapMovement mapmovement;
 
 	Player p;
@@ -42,12 +44,15 @@ class RoomManager {
 	sf::RenderWindow* w = nullptr;
 	sf::Clock* deltaclock = nullptr;
 
+	JSONparser enemydata;
+
 	bool movingmap = false;
 
 	void loadMaps();
 	void loadTextures();
 
 	sf::Thread loadingThread;
+	//sf::Thread enemyLoadingThread;
 public:
 	enum RoomSides {
 		TOP,
@@ -66,10 +71,14 @@ public:
 	void draw();
 
 	Forest_room* getCurrentRoom() { return rooms[map.data[map.currentRoom]]; }
+	JSONparser* getEnemyData() { return &enemydata; }
+	Enemy& getEnemyCopy(std::string enemy) { return enemycopies[enemy]; }
 
 	void moveRoom(int side);
 
 	void animatetransition(float dt);
+
+	void loadEnemies();
 
 	// dictionary with all the textures of the game
 	std::map<std::string, sf::Texture> textures;

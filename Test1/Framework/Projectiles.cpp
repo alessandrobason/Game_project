@@ -7,11 +7,22 @@ Projectiles::Projectiles(sf::Texture* txt, sf::Vector2i tex_coords, Collision::L
 	texture_coordinates = (sf::Vector2f) tex_coords;
 	collisionlayer = l;
 	roommanager = rm;
+	projectilesize = sf::Vector2f(16, 16);
 }
 
 void Projectiles::update(float dt) {
 	for (size_t i = 0; i < projectile_vector.size(); i++) {
 		if (projectile_vector[i].hitsomething) continue;
+		sf::FloatRect mapboundaries;
+		mapboundaries.left = roommanager->getCurrentRoom()->getBound(RoomManager::LEFT).left;
+		mapboundaries.top = roommanager->getCurrentRoom()->getBound(RoomManager::TOP).top;
+		mapboundaries.width = roommanager->MAPSIZE;
+		mapboundaries.height = roommanager->MAPSIZE;
+		if (!projectile_vector[i].collider.Check_Collision(mapboundaries)) {
+			removeArrow(i);
+			i--;
+			continue;
+		}
 		sf::Vertex* v = &vertexs[i * 4];
 		sf::Vector2f dt_velocity = projectile_vector[i].velocity * dt;
 		v[0].position += dt_velocity;
@@ -69,22 +80,26 @@ void Projectiles::shoot(sf::Transform transform) {
 	sf::Vertex vertex[4];
 
 	vertex[0].position = transform.transformPoint(sf::Vector2f());
-	vertex[1].position = transform.transformPoint(sf::Vector2f(16, 0));
-	vertex[2].position = transform.transformPoint(sf::Vector2f(16, 16));
-	vertex[3].position = transform.transformPoint(sf::Vector2f(0, 16));
+	vertex[1].position = transform.transformPoint(sf::Vector2f(projectilesize.x, 0));
+	vertex[2].position = transform.transformPoint(sf::Vector2f(projectilesize.x, projectilesize.y));
+	vertex[3].position = transform.transformPoint(sf::Vector2f(0, projectilesize.y));
 
 	vertex[0].texCoords = texture_coordinates;
-	vertex[1].texCoords = texture_coordinates + sf::Vector2f(16, 0);
-	vertex[2].texCoords = texture_coordinates + sf::Vector2f(16, 16);
-	vertex[3].texCoords = texture_coordinates + sf::Vector2f(0, 16);
+	vertex[1].texCoords = texture_coordinates + sf::Vector2f(projectilesize.x, 0);
+	vertex[2].texCoords = texture_coordinates + sf::Vector2f(projectilesize.x, projectilesize.y);
+	vertex[3].texCoords = texture_coordinates + sf::Vector2f(0, projectilesize.y);
 
 	for (size_t i = 0; i < 4; i++) vertexs.push_back(vertex[i]);
 
 	newprojectile.position = sf::Vector2f(transform.getMatrix()[12], transform.getMatrix()[13]);
 	newprojectile.velocity = transform.transformPoint(sf::Vector2f(-speed, -speed));
 	newprojectile.velocity -= newprojectile.position;
-	sf::Vector2f centerofcollision = transform.transformPoint(sf::Vector2f(4, 4));
-	newprojectile.collider = Collision(centerofcollision.x - 2, centerofcollision.y - 2, 4, 4, collisionlayer);
+	sf::Vector2f centerofcollision = transform.transformPoint(sf::Vector2f(projectilehitbox.left, projectilehitbox.top));
+	newprojectile.collider = Collision(centerofcollision.x - projectilehitbox.left/2, 
+									   centerofcollision.y - projectilehitbox.top/ 2, 
+									   projectilehitbox.width, 
+									   projectilehitbox.height, 
+									   collisionlayer);
 	projectile_vector.push_back(newprojectile);
 }
 

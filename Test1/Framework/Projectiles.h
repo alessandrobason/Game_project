@@ -20,6 +20,9 @@ class Projectiles {
 		float alpha = 255.f;
 	};
 
+	sf::Vector2f projectilesize;
+	sf::FloatRect projectilehitbox = sf::FloatRect(4, 4, 4, 4);
+
 	float speed = 100.f;
 	sf::Vector2f texture_coordinates;
 	std::vector<sf::Vertex> vertexs;
@@ -42,11 +45,11 @@ public:
 
 	void setGameObjects(std::vector<GameObject*>* g) { gameobjects = g; }
 	void setTilemap(std::vector<Collision*>* t) { tilemapcollisions = t; }
+	void setHitBox(sf::FloatRect hb) { projectilehitbox = hb; }
 
 	void update(float dt);
 
 	void draw(sf::RenderWindow* w) {
-		//w->draw(vertexs, states);
 		w->draw(vertexs.data(), vertexs.size(), sf::Quads, states);
 	}
 

@@ -53,6 +53,7 @@ protected:
 	const std::string ASSETS = "Assets/";
 
 	// tilemap data
+	JSONparser* tilemap_json;
 	sf::Vector2f offset;
 	std::vector<int>* layers = nullptr;
 	Tilemap::tilemap_data* tilemap_data = nullptr;

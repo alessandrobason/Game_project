@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Framework/Room.h"
 #include "Player.h"
-#include "GameObjects/Enemy.h"
+#include "GameObjects/Octorock.h"
 
 class Forest_room : public Room {
 public:

@@ -133,6 +133,7 @@
     <ClCompile Include="Framework\Projectiles.cpp" />
     <ClCompile Include="Framework\RoomManager.cpp" />
     <ClCompile Include="Framework\Weapon.cpp" />
+    <ClCompile Include="GameObjects\Octorock.cpp" />
     <ClCompile Include="JSONparser\JSONparser.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Framework\RoomManager.h" />
     <ClInclude Include="Framework\Tween.h" />
     <ClInclude Include="Framework\Weapon.h" />
+    <ClInclude Include="GameObjects\Octorock.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Framework\Room.h" />
@@ -160,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\forest_tileset.json" />
+    <None Include="GameObjects\enemy_data.json" />
     <None Include="Levels\Level1\Level1.json" />
     <None Include="Levels\Level1\level1_map.json" />
     <None Include="Levels\Level2\Level2.json" />

@@ -17,8 +17,32 @@ void Forest_room::load(sf::Vector2f offset) {
 	// load objects into array
 	std::cout << "size: " << sceneObjects.size() << "\n";
 	
+	for (size_t i = 0; i < tilemap_json->doc["enemies"].arr.size(); i++) {
+		std::string name = tilemap_json->doc["enemies"].arr[i].obj["name"].str;
+		sf::Vector2f position = offset;
+		position.x += tilemap_json->doc["enemies"].arr[i].obj["position"].obj["x"].i;
+		position.y += tilemap_json->doc["enemies"].arr[i].obj["position"].obj["y"].i;
+		
+		if (name == "octorock") {
+			sceneObjects.push_back(new Octorock(roomManager->getEnemyCopy(name)));
+		}
+		sceneObjects.back()->setInput(in);
+		sceneObjects.back()->setWindow(w);
+		sceneObjects.back()->getSprite()->setPosition(position);
+		sceneColliders.push_back(&sceneObjects.back()->collider);
+		std::cout << "##### LOADING ENEMIES #####\n";
+		std::cout << "name: " << name << "\n";
+		std::cout << "position: " << position.x << " " << position.y << "\n";
+
+		//if (name == "octorock") {
+			//roomManager->getEnemyData()->doc["enemies"].obj["octorock"];
+			//sceneObjects.push_back(new Octorock(&roomManager->textures["enemy"], in, w, position));
+		//}
+		
+	}
+	
 	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
-	sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
+	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
 
 	// load collisions
 	for (size_t i = 0; i < tilemap->collisions.size(); i++) {
