@@ -20,7 +20,8 @@ public:
 	void sortGameObjects();
 	void cullGameObjects();
 
-	std::vector<Enemy*>* getEnemies() { return &enemies; }
+	std::vector<GameObject*>* getGameObjects() { return &sceneObjects; }
+	std::vector<Collision*>* getColliders() { return &sceneColliders; }
 
 	void handleInput(float dt) override;
 	void update(float dt) override;
@@ -36,7 +37,7 @@ private:
 	sf::Vector2f camera_top_left;
 	sf::Vector2f camera_bottom_right;
 
-	std::vector<Enemy*> enemies;
+	//std::vector<Enemy*> enemies;
 
 	Player* p;
 };

@@ -50,8 +50,8 @@ public:
 	void resizeView(sf::Vector2u windowsize, sf::Vector2u designedsize) {
 		sf::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
 
-		float screenwidth = static_cast<float>(windowsize.x / designedsize.x);
-		float screenheight = static_cast<float>(windowsize.y / designedsize.y);
+		float screenwidth = static_cast<float>(windowsize.x) / designedsize.x;
+		float screenheight = static_cast<float>(windowsize.y) / designedsize.y;
 
 		if (screenwidth > screenheight) {
 			viewport.width = screenheight / screenwidth;
@@ -68,6 +68,7 @@ public:
 	}
 
 	sf::View getView() { return windowview; }
+	//sf::FloatRect getViewPort() {}
 
 	enum KEY_ENUM {
 		KEY_UP = sf::Keyboard::W,

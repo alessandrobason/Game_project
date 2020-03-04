@@ -84,7 +84,7 @@ void Room::load(sf::Vector2f offs) {
 				int y = offset.y + tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["y"].i;
 				int w = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["width"].i;
 				int h = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["height"].i;
-				collisions.push_back(Collision(x, y, w, h, Collision::TILE));
+				collisions.push_back(Collision(x, y, w, h, Collision::LAYER::ALL));
 			}
 			continue;
 		}

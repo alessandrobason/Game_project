@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include "Tween.h"
 #include "InputHandler.h"
 #include "Tilemap.h"
 #include "../JSONparser/JSONparser.h"
@@ -17,12 +18,31 @@ class RoomManager {
 		std::vector<std::string> files;
 	};
 
+	struct MapMovement {
+		int oldroom;
+		sf::View maincamera;
+		sf::Vector2f offsetdirection;
+		sf::Vector2f startCamera;
+		sf::Vector2f targetCamera;
+		sf::Vector2f startPlayer;
+		sf::Vector2f targetPlayer;
+		float cameratotaltime;
+		float cameratimeremaining;
+		float playertotaltime;
+		float playertimeremaining;
+		bool wasdebug;
+	};
+
+	MapMovement mapmovement;
+
 	Player p;
 	Map map;
 	std::vector<Forest_room*> rooms;
-	InputHandler* in;
-	sf::RenderWindow* w;
-	sf::Clock* deltaclock = 0;
+	InputHandler* in = nullptr;
+	sf::RenderWindow* w = nullptr;
+	sf::Clock* deltaclock = nullptr;
+
+	bool movingmap = false;
 
 	void loadMaps();
 	void loadTextures();
@@ -48,6 +68,8 @@ public:
 	Forest_room* getCurrentRoom() { return rooms[map.data[map.currentRoom]]; }
 
 	void moveRoom(int side);
+
+	void animatetransition(float dt);
 
 	// dictionary with all the textures of the game
 	std::map<std::string, sf::Texture> textures;

@@ -10,6 +10,10 @@ public:
 
 	//float getY() override { return sprite.getPosition().y + 48; };
 
+	float life = 50.f;
+
+	void hit() override;
+
 	sf::Sprite* getSprite() override { return &sprite; }
 
 protected:

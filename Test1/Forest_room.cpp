@@ -18,10 +18,9 @@ void Forest_room::load(sf::Vector2f offset) {
 	std::cout << "size: " << sceneObjects.size() << "\n";
 	
 	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
-	enemies.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
+	sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
 
 	// load collisions
-	//sceneColliders.push_back(&p->collider);
 	for (size_t i = 0; i < tilemap->collisions.size(); i++) {
 		sceneColliders.push_back(&tilemap->collisions[i]);
 		//std::cout << i << "\n";
@@ -45,10 +44,10 @@ void Forest_room::load(sf::Vector2f offset) {
 void Forest_room::setPlayer(Player* pl) {
 	p = pl;
 	sceneObjects.push_back(p);
+	sceneColliders.push_back(&p->collider);
 }
 
 void Forest_room::removePlayer() {
-	//delete p;
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		if (sceneObjects[i] == p){
 			sceneObjects.erase(sceneObjects.begin() + i);
@@ -85,9 +84,6 @@ void Forest_room::update(float dt) {
 	// OTHER GAMEOBJECTS UPDATE
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->update(dt);
-	}
-	for (size_t i = 0; i < enemies.size(); i++) {
-		enemies[i]->update(dt);
 	}
 
 	// PLAYER UPDATE
@@ -150,7 +146,7 @@ void Forest_room::update(float dt) {
 	// update top_left of the camera for player
 	camera_top_left = main_camera.getCenter() - main_camera.getSize() / 2.f;
 	w->setView(main_camera);
-	cullGameObjects();
+	//cullGameObjects();
 	//std::cout << "->" << main_camera.getCenter().x << " " << main_camera.getCenter().x << "\n";
 }
 
@@ -164,9 +160,6 @@ void Forest_room::draw() {
 	tilemap->drawUnder();
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->draw();
-	}
-	for (size_t i = 0; i < enemies.size(); i++) {
-		enemies[i]->draw();
 	}
 	
 	tilemap->drawOver();

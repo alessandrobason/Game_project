@@ -7,6 +7,8 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     in = input;
     w = win;
 
+    collisionlayer = Collision::LAYER::PLAYER;
+
     // load player data from json
     config = new JSONparser("player_data.json");
 
@@ -14,7 +16,7 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     int y = config->doc["collision"].obj["y"].i;
     int w = config->doc["collision"].obj["width"].i;
     int h = config->doc["collision"].obj["height"].i;
-    collider = Collision(x, y, w, h, Collision::PLAYER);
+    collider = Collision(x, y, w, h, collisionlayer);
 
     roommanager = rm;
 
@@ -50,7 +52,7 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     sf::Vector2i bow_texture_coordinates;
     bow_texture_coordinates.x = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[0].i;
     bow_texture_coordinates.y = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[1].i;
-    bow = Weapon(&roommanager->textures["weapons"], bow_texture_coordinates, in);
+    bow = Weapon(&roommanager->textures["weapons"], bow_texture_coordinates, in, collisionlayer, roommanager);
 }
 
 void Player::move(sf::Vector2f offset) {
@@ -91,9 +93,11 @@ void Player::handleInput(float dt) {
 
     sf::Vector2f mousepos = (sf::Vector2f) in->getMouseRelative();
 
-    float scale = w->getDefaultView().getSize().x / w->getView().getSize().x;
+    sf::Vector2f scale;
+    scale.x = w->getSize().x / w->getView().getSize().x;
+    scale.y = w->getSize().y / w->getView().getSize().y;
     sf::Vector2f player_local_position = getSprite()->getPosition() + local_center - roommanager->getCurrentRoom()->getCameraTopLeft();
-    sf::Vector2f center = player_local_position * scale;
+    sf::Vector2f center = sf::Vector2f(player_local_position.x * scale.x, player_local_position.y * scale.y);
 
     center.x = mousepos.x - center.x;
     center.y = mousepos.y - center.y;
@@ -122,7 +126,7 @@ void Player::handleInput(float dt) {
         draw_weapon_over = true;
         break;
     }
-   
+    
     float l = std::sqrt(vel.x * vel.x + vel.y * vel.y);
     if (l != 0)	vel /= l;
     vel *= speed;

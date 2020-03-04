@@ -130,6 +130,7 @@
     <ClCompile Include="Forest_room.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
+    <ClCompile Include="Framework\Projectiles.cpp" />
     <ClCompile Include="Framework\RoomManager.cpp" />
     <ClCompile Include="Framework\Weapon.cpp" />
     <ClCompile Include="JSONparser\JSONparser.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Framework\InputHandler.h" />
     <ClInclude Include="Framework\RoomManager.fwd.h" />
     <ClInclude Include="Framework\RoomManager.h" />
+    <ClInclude Include="Framework\Tween.h" />
     <ClInclude Include="Framework\Weapon.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />
     <ClInclude Include="Player.h" />

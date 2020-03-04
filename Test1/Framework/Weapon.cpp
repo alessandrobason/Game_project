@@ -1,11 +1,11 @@
 #include "Weapon.h"
 
-Weapon::Weapon(sf::Texture* txt, sf::Vector2i tex_coords, InputHandler* i) {
+Weapon::Weapon(sf::Texture* txt, sf::Vector2i tex_coords, InputHandler* i, Collision::LAYER l, RoomManager* rm) {
 	in = i;
 	setTexture(*txt);
 	setTextureRect(sf::IntRect(tex_coords.x, tex_coords.y, 16, 16));
 	setOrigin(12, 12);
-	projectiles = Projectiles(txt, sf::Vector2i(16, 0));
+	projectiles = Projectiles(txt, sf::Vector2i(16, 0), l, rm);
 }
 
 void Weapon::handleInput(float dt) {

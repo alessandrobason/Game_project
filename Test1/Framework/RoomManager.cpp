@@ -1,8 +1,6 @@
 #include "RoomManager.h"
 
-RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
-	//sf::Thread loadThread(&RoomManager::loadMaps, this);
-}
+RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {}
 
 void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* dt) {
 	w = win; 
@@ -10,7 +8,6 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	deltaclock = dt;
 
 	p = Player(in, this, w);
-	//p.setPosition(sf::Vector2f(16, 16));
 	p.setSpeed(100);
 
 	JSONparser worldmap = JSONparser("Levels/worldmap.json");
@@ -30,7 +27,7 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	loadingThread.launch();
 	loadingThread.wait();
 	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
-	p.bow.setEnemies(getCurrentRoom()->getEnemies());
+	//p.bow.setGameObjects(getCurrentRoom()->getGameObjects());
 	loadTextures();
 }
 
@@ -45,11 +42,13 @@ void RoomManager::handleInput(float dt) {
 }
 
 void RoomManager::update(float dt) {
-	rooms[map.data[map.currentRoom]]->update(dt);
+	if (!movingmap) rooms[map.data[map.currentRoom]]->update(dt);
+	else animatetransition(dt);
 }
 
 void RoomManager::draw() {
 	w->clear();
+	if (movingmap) rooms[mapmovement.oldroom]->draw();
 	rooms[map.data[map.currentRoom]]->draw();
 	w->display();
 }
@@ -127,85 +126,59 @@ void RoomManager::moveRoom(int side) {
 		offsetdirection = sf::Vector2f(1, 0);
 		break;
 	}
+
 	loadingThread.launch();
-	bound = rooms[oldcurrentroom]->getBound(side);
+
 	int currentroom = map.data[map.currentRoom];
-	//p = Player(in, rooms[currentroom], oldplayerpos);
-	//p.setSpeed(100);
 
 	rooms[oldcurrentroom]->removePlayer();
 	rooms[currentroom]->setPlayer(&p);
-	tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.resetAnimation();
 	
-	bool transitioning = true;
-	bool movingplayer = true;
-	float speed = 200;
-
-	sf::Vector2f playeroldposition = p.getSprite()->getPosition();
-	p.setDirection(lastplayerdirection);
-	p.vel = sf::Vector2f(0, 0);
-
-	bool wasdebug = rooms[oldcurrentroom]->isdebug;
+	mapmovement.oldroom = oldcurrentroom;
+	mapmovement.wasdebug = rooms[oldcurrentroom]->isdebug;
 	rooms[oldcurrentroom]->isdebug = false;
+	mapmovement.maincamera = maincamera;
+	mapmovement.offsetdirection = offsetdirection;
 
-	sf::Clock deltaClock;
-	while (transitioning) {
-		//std::cout << "fuck\n";
-		w->clear();
-		float dt = deltaClock.restart().asSeconds();
-		tilemapData[rooms[oldcurrentroom]->getFolder()].tilemap.animate(dt);
-		tilemapData[rooms[currentroom]->getFolder()].tilemap.animate(dt);
-		//p.update(dt);
-		
-		rooms[oldcurrentroom]->draw();
-		rooms[currentroom]->draw();
+	// LERPING
+	// -- camera
+	mapmovement.startCamera = maincamera.getCenter();
+	mapmovement.targetCamera = mapmovement.startCamera + sf::Vector2f(maincamera.getSize().x * offsetdirection.x, maincamera.getSize().y * offsetdirection.y);
+	mapmovement.cameratotaltime = 0.5f;
+	mapmovement.cameratimeremaining = mapmovement.cameratotaltime;
+	// -- player
+	mapmovement.startPlayer = oldplayerpos - p.collider.collision_offset;
+	mapmovement.targetPlayer = mapmovement.startPlayer + (17.f * offsetdirection);
+	mapmovement.playertotaltime = 0.3f;
+	mapmovement.playertimeremaining = mapmovement.playertotaltime;
+	
+	movingmap = true;
+}
 
-		maincamera.move(offsetdirection*dt*speed);
-		if (movingplayer) {
-			p.move(offsetdirection * dt * speed);
-		}
-		w->setView(maincamera);
-		std::cout << maincamera.getCenter().x << " " << maincamera.getCenter().y << "\n";
-		w->display();
+void RoomManager::animatetransition(float dt) {
+	getCurrentRoom()->tilemap->animate(dt);
+	rooms[mapmovement.oldroom]->tilemap->animate(dt);
 
-		switch (side) {
-		case TOP:
-			if (maincamera.getCenter().y + (maincamera.getSize().y / 2) <= bound.top) {
-				transitioning = false;
-			}
-			if (p.collider.rect.top <= oldplayerpos.y - (p.collider.rect.height + 1)) {
-				movingplayer = false;
-			}
-			break;
-		case BOTTOM:
-			if (maincamera.getCenter().y - (maincamera.getSize().y / 2) >= bound.top + bound.height) {
-				transitioning = false;
-			}
-			if (p.collider.rect.top >= oldplayerpos.y + (p.collider.rect.height + 1)) {
-				movingplayer = false;
-			}
-			break;
-		case LEFT:
-			if (maincamera.getCenter().x + (maincamera.getSize().x / 2) <=  bound.left) {
-				transitioning = false;
-			}
-			if (p.collider.rect.left <= oldplayerpos.x - (p.collider.rect.width + 1)) {
-				movingplayer = false;
-			}
-			break;
-		case RIGHT:
-			if (maincamera.getCenter().x - (maincamera.getSize().x / 2) >= bound.left + bound.width) {
-				transitioning = false;
-			}
-			if (p.collider.rect.left >= oldplayerpos.x + (p.collider.rect.width + 1)) {
-				movingplayer = false;
-			}
-			break;
-		}		
+	mapmovement.playertimeremaining -= dt;
+	sf::Vector2f newplayerposition;
+	float playerpercentagepassed = 1 - (mapmovement.playertimeremaining / mapmovement.playertotaltime);
+	if (playerpercentagepassed < 1) {
+		newplayerposition.x = Tween::lerp(mapmovement.startPlayer.x, mapmovement.targetPlayer.x, playerpercentagepassed);
+		newplayerposition.y = Tween::lerp(mapmovement.startPlayer.y, mapmovement.targetPlayer.y, playerpercentagepassed);
+		p.setPosition(newplayerposition);
+		std::cout << newplayerposition.x << " " << newplayerposition.y << "\n";
 	}
-	std::cout << "\n-->\n";
-	std::cout << maincamera.getCenter().x << " " << maincamera.getCenter().y << "\n";
-	rooms[currentroom]->isdebug = wasdebug;
-	rooms[currentroom]->setMainCamera(maincamera);
-	deltaclock->restart();
+
+	mapmovement.cameratimeremaining -= dt;
+	sf::Vector2f newcameraposition;
+	float camerapercentagepassed = 1 - (mapmovement.cameratimeremaining / mapmovement.cameratotaltime);
+	newcameraposition.x = Tween::lerp(mapmovement.startCamera.x, mapmovement.targetCamera.x, camerapercentagepassed);
+	newcameraposition.y = Tween::lerp(mapmovement.startCamera.y, mapmovement.targetCamera.y, camerapercentagepassed);
+	mapmovement.maincamera.setCenter(newcameraposition);
+	w->setView(mapmovement.maincamera);
+	if (camerapercentagepassed >= 1) {
+		getCurrentRoom()->isdebug = mapmovement.wasdebug;
+		getCurrentRoom()->setMainCamera(mapmovement.maincamera);
+		movingmap = false;
+	}
 }

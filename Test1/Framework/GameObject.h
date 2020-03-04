@@ -40,11 +40,13 @@ public:
 	void setTexture(sf::Texture* t) { txt = t; }
 	sf::Texture* getTexture() { return txt; }
 
-	virtual void hit() { std::cout << "I've been hit\n"; }
+	virtual void hit() { std::cout << "Object hit\n"; }
 
 	Collision collider;
 	sf::Vector2f vel;
 	sf::Vector2f oldVel;
+
+	Collision::LAYER collisionlayer = Collision::LAYER::ALL;
 
 protected:
 	// Sprite properties

@@ -22,17 +22,16 @@ private:
 	};
 
 public:
-	enum COLLISIONTYPE {
-		TILE,
+	enum class LAYER {
+		ALL,
 		OBJECT,
-		PLAYER,
-		PROJECTILE
+		PLAYER
 	};
-
+	
 	// RECTANGLE (by default it's a 0x0 rectangle) 
 	Collision();
-	Collision(sf::FloatRect r, COLLISIONTYPE type);
-	Collision(int x, int y, int w, int h, COLLISIONTYPE type);
+	Collision(sf::FloatRect r, LAYER type);
+	Collision(int x, int y, int w, int h, LAYER type);
 
 	// CIRCLE
 	Collision(sf::Vector2i p, int r);
@@ -58,7 +57,7 @@ public:
 	void drawDebug(sf::RenderWindow* w);
 
 	COLLISION_SHAPES type;
-	COLLISIONTYPE collisiontype;
+	LAYER collisionlayer;
 	sf::FloatRect rect;
 	sf::Vector2f collision_offset;
 	IntCircle circle;
