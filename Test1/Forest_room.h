@@ -23,6 +23,9 @@ public:
 	std::vector<GameObject*>* getGameObjects() { return &sceneObjects; }
 	std::vector<Collision*>* getColliders() { return &sceneColliders; }
 
+	void removeObject(GameObject* g);
+	void freeMemory();
+
 	void handleInput(float dt) override;
 	void update(float dt) override;
 	void draw() override;
@@ -37,7 +40,5 @@ private:
 	sf::Vector2f camera_top_left;
 	sf::Vector2f camera_bottom_right;
 
-	//std::vector<Enemy*> enemies;
-
-	Player* p;
+	Player* p = nullptr;
 };

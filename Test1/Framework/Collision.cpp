@@ -1,16 +1,13 @@
 #include "Collision.h"
 #include <iostream>
 
-// RECTANGLE
 Collision::Collision() {
-	type = RECT;
 	rect = sf::FloatRect(0, 0, 0, 0);
 	collision_offset = sf::Vector2f();
 	setupDebugBox(rect);
 }
 
 Collision::Collision(sf::FloatRect r, LAYER t) {
-	type = RECT;
 	collisionlayer = t;
 	rect = r;
 	collision_offset = sf::Vector2f(r.left, r.top);
@@ -18,7 +15,6 @@ Collision::Collision(sf::FloatRect r, LAYER t) {
 }
 
 Collision::Collision(int x, int y, int w, int h, LAYER t) {
-	type = RECT;
 	collisionlayer = t;
 	rect = sf::FloatRect(x, y, w, h);
 	collision_offset = sf::Vector2f(x, y);
@@ -28,22 +24,9 @@ Collision::Collision(int x, int y, int w, int h, LAYER t) {
 void Collision::setupDebugBox(sf::FloatRect r) {
 	debug.setPosition(sf::Vector2f(r.left + 1, r.top + 1));
 	debug.setSize(sf::Vector2f(r.width - 2, r.height - 2));
-	//debug.setPosition(sf::Vector2f(r.left, r.top));
-	//debug.setSize(sf::Vector2f(r.width, r.height));
 	debug.setOutlineColor(sf::Color::Red);
 	debug.setOutlineThickness(1.f);
 	debug.setFillColor(sf::Color::Transparent);
-}
-
-// CIRCLE
-Collision::Collision(sf::Vector2i p, int r) {
-	type = CIRCLE;
-	circle = { p, r };
-}
-
-Collision::Collision(int x, int y, int r) {
-	type = CIRCLE;
-	circle = { sf::Vector2i(x, y), r };
 }
 
 Collision::~Collision() {}
@@ -51,37 +34,7 @@ Collision::~Collision() {}
 //////////////////////////////////////////////////
 
 bool Collision::Check_Collision(sf::FloatRect r) {
-	switch (type) {
-	case RECT:
-	{
-
-		return rect.intersects(r) && r!=rect;
-		break;
-	}
-	case CIRCLE:
-		/*
-		int dx = circle.pos.x - c.pos.y;
-		int dy = circle.pos.y - c.pos.y;
-		float d = std::sqrtf(dx * dx + dy * dy);
-		return d < circle.radius - c.radius;
-		*/
-		break;
-	}
-	return false;
-}
-
-bool Collision::Check_Collision(IntCircle c) {
-	switch (type) {
-		case RECT:
-			break;
-		case CIRCLE:
-			int dx = circle.pos.x - c.pos.y;
-			int dy = circle.pos.y - c.pos.y;
-			float d = std::sqrt(dx * dx + dy * dy);
-			return d < circle.radius - c.radius;
-			break;
-	}
-	return false;
+	return rect.intersects(r) && r!=rect;
 }
 
 sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) {

@@ -151,7 +151,7 @@
     <ClInclude Include="Framework\InputHandler.h" />
     <ClInclude Include="Framework\RoomManager.fwd.h" />
     <ClInclude Include="Framework\RoomManager.h" />
-    <ClInclude Include="Framework\Tween.h" />
+    <ClInclude Include="Framework\UsefulFunctions.h" />
     <ClInclude Include="Framework\Weapon.h" />
     <ClInclude Include="GameObjects\Octorock.h" />
     <ClInclude Include="JSONparser\JSONparser.h" />

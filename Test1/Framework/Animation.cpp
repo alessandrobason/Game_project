@@ -1,5 +1,4 @@
 #include "Animation.h"
-
 void AnimatedSprite::draw(sf::RenderWindow* w) {
 	w->draw(sprite);
 }
@@ -10,6 +9,9 @@ void AnimatedSprite::animate(float dt) {
 		if (elapsedTime >= animations[current_animation].speed) {
 			current_frame++;
 			if (current_frame >= (int)animations[current_animation].frames.size()) {
+				if (call_back_function != nullptr) {
+					if (call_back_function(*parent, current_animation)) return;
+				}
 				if (animations[current_animation].looping) {
 					current_frame = 0;
 				}

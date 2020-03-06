@@ -5,7 +5,6 @@
 #include "Framework/InputHandler.h"
 #include "Framework/Collision.h"
 #include "Framework/Animation.h"
-#include "Framework/RoomManager.fwd.h"
 #include "Framework/Weapon.h"
 
 class Player : public GameObject {
@@ -17,9 +16,6 @@ public:
 		UP_LEFT,
 	};
 private:
-	// pointer to the room manager to access texture ecc
-	RoomManager* roommanager = nullptr;
-
 	JSONparser* config;
 	
 	bool pressed_keys[256] = { false };

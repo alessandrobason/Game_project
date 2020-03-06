@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Tween.h"
 #include "../GameObjects/Enemy.h"
 #include "RoomManager.fwd.h"
 
@@ -24,6 +23,7 @@ class Projectiles {
 	sf::FloatRect projectilehitbox = sf::FloatRect(4, 4, 4, 4);
 
 	float speed = 100.f;
+	float damage = 0.f;
 	sf::Vector2f texture_coordinates;
 	std::vector<sf::Vertex> vertexs;
 	//sf::VertexArray vertexs;
@@ -46,6 +46,7 @@ public:
 	void setGameObjects(std::vector<GameObject*>* g) { gameobjects = g; }
 	void setTilemap(std::vector<Collision*>* t) { tilemapcollisions = t; }
 	void setHitBox(sf::FloatRect hb) { projectilehitbox = hb; }
+	void setDamage(float d) { damage = d; }
 
 	void update(float dt);
 

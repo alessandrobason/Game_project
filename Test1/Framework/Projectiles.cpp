@@ -53,22 +53,21 @@ void Projectiles::update(float dt) {
 			if (&current_gameobject->collider == collision_hit) {
 				//removing_projectiles.back().deathtime = 0.f;
 				removing_projectiles.back().timeremaining = 0.f;
-				current_gameobject->hit();
+				current_gameobject->hit(damage);
 				break;
 			}
 		}
 	}
 
 	for (size_t i = 0; i < removing_projectiles.size(); i++) {
-		std::cout << "alpha: " << removing_projectiles[i].alpha << "\n";
 		removing_projectiles[i].timeremaining -= dt;
 		float percentagepassed = 1 - (removing_projectiles[i].timeremaining / removing_projectiles[i].deathtime);
-		removing_projectiles[i].alpha = Tween::lerp(255, 0, percentagepassed);
+		removing_projectiles[i].alpha = UsefulFunc::lerp(255, 0, percentagepassed);
 		size_t k = removing_projectiles[i].positioninarray * 4;
 		for (size_t j = 0; j < 4; j++) {
 			vertexs[k + j].color = sf::Color(255, 255, 255, removing_projectiles[i].alpha);
 		}
-		if (removing_projectiles[i].alpha <= 0 /*|| removing_projectiles[i].timeremaining <= 0*/) {
+		if (removing_projectiles[i].alpha <= 0) {
 			removeArrow(removing_projectiles[i].positioninarray);
 			i--;
 		}

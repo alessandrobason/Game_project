@@ -1,6 +1,6 @@
 #include "RoomManager.h"
 
-RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this)/*, enemyLoadingThread(&RoomManager::loadEnemies, this)*/{}
+RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {}
 
 void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* dt) {
 	w = win; 
@@ -8,7 +8,6 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	deltaclock = dt;
 
 	p = Player(in, this, w);
-	p.setSpeed(100);
 
 	enemydata.readJSON("GameObjects/enemy_data.json");
 
@@ -23,17 +22,15 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* d
 	for (size_t i = 0; i < worldmap.doc["map"].arr.size(); i++) {
 		map.data.push_back(worldmap.doc["map"].arr[i].i);
 	}
-	map.currentRoom = worldmap.doc["spawn"].i;
 
+	map.currentRoom = worldmap.doc["spawn"].i;
 	rooms[map.data[map.currentRoom]]->setPlayer(&p);
+
 	loadEnemies();
-	loadingThread.launch();
-	// while loading the maps, load enemy data
-	//enemyLoadingThread.launch();
-	loadingThread.wait();
-	//enemyLoadingThread.wait();
+	loadMaps();
+
 	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
-	//p.bow.setGameObjects(getCurrentRoom()->getGameObjects());
+
 	loadTextures();
 }
 
@@ -56,11 +53,12 @@ void RoomManager::loadEnemies() {
 		e.setTexture(&textures["enemy"]);
 		e.setInput(in);
 		e.setWindow(w);
+		e.setRoomManager(this);
 		std::string name = enemydata.doc["enemies"].arr[i].obj["name"].str;
 		int x = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
-		int y = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
-		int wi = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
-		int h = enemydata.doc["enemies"].arr[i].obj["collision"].obj["x"].i;
+		int y = enemydata.doc["enemies"].arr[i].obj["collision"].obj["y"].i;
+		int wi = enemydata.doc["enemies"].arr[i].obj["collision"].obj["width"].i;
+		int h = enemydata.doc["enemies"].arr[i].obj["collision"].obj["height"].i;
 		e.collisionlayer = Collision::LAYER::ENEMY;
 		e.collider = Collision(x, y, wi, h, e.collisionlayer);
 		
@@ -80,6 +78,8 @@ void RoomManager::loadEnemies() {
 		
 		e.setAnimatedSprite(animatedsprite);
 		e.setProjectile(enemydata.doc["enemies"].arr[i].obj["projectile"].b);
+		e.setSpeed(enemydata.doc["enemies"].arr[i].obj["speed"].i);
+		e.setLife(enemydata.doc["enemies"].arr[i].obj["life"].d);
 
 		enemycopies[name] = e;
 	}
@@ -109,17 +109,17 @@ void RoomManager::loadMaps() {
 	std::vector<load> toLoad;
 	toLoad.push_back({ map.currentRoom, map.data[map.currentRoom] });
 	// on the left
-	if (map.currentRoom % map.width > 0 && map.data[map.currentRoom - 1] != -1)
-		toLoad.push_back({ map.currentRoom - 1, map.data[map.currentRoom - 1] });
+	if (map.currentRoom % map.width > 0 && map.data[(int)map.currentRoom - 1] != -1)
+		toLoad.push_back({ map.currentRoom - 1, map.data[(int)map.currentRoom - 1] });
 	// on the right
-	if (map.currentRoom % map.width < map.width-1 && map.data[map.currentRoom + 1] != -1)
-		toLoad.push_back({ map.currentRoom + 1, map.data[map.currentRoom + 1] });
+	if (map.currentRoom % map.width < map.width-1 && map.data[(int)map.currentRoom + 1] != -1)
+		toLoad.push_back({ map.currentRoom + 1, map.data[(int)map.currentRoom + 1] });
 	// on top
-	if (map.currentRoom >= map.width && map.data[map.currentRoom - map.width] != -1)
-		toLoad.push_back({ map.currentRoom - map.width, map.data[map.currentRoom - map.width] });
+	if (map.currentRoom >= map.width && map.data[(int)map.currentRoom - map.width] != -1)
+		toLoad.push_back({ map.currentRoom - map.width, map.data[(int)map.currentRoom - map.width] });
 	// on bottom
-	if (map.currentRoom / map.width < map.height - 1 && map.data[map.currentRoom + map.width] != -1)
-		toLoad.push_back({ map.currentRoom + map.width, map.data[map.currentRoom + map.width] });
+	if (map.currentRoom / map.width < map.height - 1 && map.data[(int)map.currentRoom + map.width] != -1)
+		toLoad.push_back({ map.currentRoom + map.width, map.data[(int)map.currentRoom + map.width] });
 	
 	for (size_t i = 0; i < toLoad.size(); i++) {
 		if (*rooms[toLoad[i].map]->isloaded == true) continue;
@@ -211,8 +211,8 @@ void RoomManager::animatetransition(float dt) {
 	sf::Vector2f newplayerposition;
 	float playerpercentagepassed = 1 - (mapmovement.playertimeremaining / mapmovement.playertotaltime);
 	if (playerpercentagepassed < 1) {
-		newplayerposition.x = Tween::lerp(mapmovement.startPlayer.x, mapmovement.targetPlayer.x, playerpercentagepassed);
-		newplayerposition.y = Tween::lerp(mapmovement.startPlayer.y, mapmovement.targetPlayer.y, playerpercentagepassed);
+		newplayerposition.x = UsefulFunc::lerp(mapmovement.startPlayer.x, mapmovement.targetPlayer.x, playerpercentagepassed);
+		newplayerposition.y = UsefulFunc::lerp(mapmovement.startPlayer.y, mapmovement.targetPlayer.y, playerpercentagepassed);
 		p.setPosition(newplayerposition);
 		std::cout << newplayerposition.x << " " << newplayerposition.y << "\n";
 	}
@@ -220,8 +220,8 @@ void RoomManager::animatetransition(float dt) {
 	mapmovement.cameratimeremaining -= dt;
 	sf::Vector2f newcameraposition;
 	float camerapercentagepassed = 1 - (mapmovement.cameratimeremaining / mapmovement.cameratotaltime);
-	newcameraposition.x = Tween::lerp(mapmovement.startCamera.x, mapmovement.targetCamera.x, camerapercentagepassed);
-	newcameraposition.y = Tween::lerp(mapmovement.startCamera.y, mapmovement.targetCamera.y, camerapercentagepassed);
+	newcameraposition.x = UsefulFunc::lerp(mapmovement.startCamera.x, mapmovement.targetCamera.x, camerapercentagepassed);
+	newcameraposition.y = UsefulFunc::lerp(mapmovement.startCamera.y, mapmovement.targetCamera.y, camerapercentagepassed);
 	mapmovement.maincamera.setCenter(newcameraposition);
 	w->setView(mapmovement.maincamera);
 	if (camerapercentagepassed >= 1) {

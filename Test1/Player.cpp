@@ -1,24 +1,21 @@
 #include "Player.h"
 #include "Framework/RoomManager.h"
 
-Player::Player() : GameObject(nullptr, nullptr){}
+Player::Player() : GameObject(nullptr, nullptr, nullptr){}
 
-Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : GameObject(input, win){
-    in = input;
-    w = win;
-
+Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : GameObject(input, rm, win){
     collisionlayer = Collision::LAYER::PLAYER;
 
     // load player data from json
     config = new JSONparser("player_data.json");
+
+    setSpeed(config->doc["speed"].i);
 
     int x = config->doc["collision"].obj["x"].i;
     int y = config->doc["collision"].obj["y"].i;
     int w = config->doc["collision"].obj["width"].i;
     int h = config->doc["collision"].obj["height"].i;
     collider = Collision(x, y, w, h, collisionlayer);
-
-    roommanager = rm;
 
     if (!roommanager->textures["player"].loadFromFile(config->doc["spritesheet"].obj["image"].str)) {
         std::cout << "Failed to load " << config->doc["spritesheet"].str << "\n";
@@ -53,12 +50,15 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     bow_texture_coordinates.x = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[0].i;
     bow_texture_coordinates.y = config->doc["weapons"].obj["bow"].obj["texture coordinates"].arr[1].i;
     bow = Weapon(&roommanager->textures["weapons"], bow_texture_coordinates, in, collisionlayer, roommanager);
+
     sf::FloatRect arrowhitbox;
     arrowhitbox.top = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[0].i;
     arrowhitbox.left = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[1].i;
     arrowhitbox.width = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[2].i;
     arrowhitbox.height = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[3].i;
     bow.setHitBox(arrowhitbox);
+
+    bow.setDamage(config->doc["weapons"].obj["bow"].obj["base_damage"].d);
 }
 
 void Player::move(sf::Vector2f offset) {
@@ -79,17 +79,12 @@ void Player::handleInput(float dt) {
     vel.x = in->isKeyDown(in->KEY_RIGHT) - in->isKeyDown(in->KEY_LEFT);
     vel.y = in->isKeyDown(in->KEY_DOWN) - in->isKeyDown(in->KEY_UP);
 
-    sf::Vector2f mousepos = (sf::Vector2f) in->getMouseRelative();
-
-    sf::Vector2f scale;
-    scale.x = w->getSize().x / w->getView().getSize().x;
-    scale.y = w->getSize().y / w->getView().getSize().y;
-    sf::Vector2f player_local_position = getSprite()->getPosition() + local_center - roommanager->getCurrentRoom()->getCameraTopLeft();
-    sf::Vector2f center = sf::Vector2f(player_local_position.x * scale.x, player_local_position.y * scale.y);
+    sf::Vector2i mousepos = in->getMouseRelative();
+    sf::Vector2i center = w->mapCoordsToPixel(getSprite()->getPosition() + local_center);
 
     center.x = mousepos.x - center.x;
     center.y = mousepos.y - center.y;
-    angle_to_mouse = std::atan2(center.y, center.x)*180/M_PI + 180;
+    angle_to_mouse = UsefulFunc::atan2(center.y, center.x)*180/M_PI + 180;
     bow.setAngle(angle_to_mouse);
 
     switch ((int)(angle_to_mouse / 45)) {
@@ -114,9 +109,9 @@ void Player::handleInput(float dt) {
         draw_weapon_over = true;
         break;
     }
-    
-    float l = std::sqrt(vel.x * vel.x + vel.y * vel.y);
-    if (l != 0)	vel /= l;
+
+    float l = UsefulFunc::InvSqrt(vel.x * vel.x + vel.y * vel.y);
+    vel *= l;
     vel *= speed;
 
     std::string anim = "";

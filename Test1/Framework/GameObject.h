@@ -3,13 +3,16 @@
 #include <iostream>
 #include "InputHandler.h"
 #include "Collision.h"
+#include "UsefulFunctions.h"
+#include "RoomManager.fwd.h"
 
 class GameObject {
 public:
 	GameObject() {}
-	GameObject(InputHandler* i, sf::RenderWindow* win) {
+	GameObject(InputHandler* i, RoomManager* rm, sf::RenderWindow* win) {
 		collider.setDebugColor(sf::Color::Green);
 		in = i;
+		roommanager = rm;
 		w = win;
 	}
 	~GameObject() {}
@@ -19,6 +22,8 @@ public:
 	virtual void update(float dt) {}
 	virtual void draw() {}
 	virtual void drawDebug() { collider.drawDebug(w); }
+
+	virtual bool animationCallback(std::string name) { return false; }
 
 	virtual sf::Sprite* getSprite() { return nullptr; }
 
@@ -31,8 +36,15 @@ public:
 	// Set the input component
 	void setInput(InputHandler* input) { in = input; }
 	void setWindow(sf::RenderWindow* win) { w = win; }
+	void setRoomManager(RoomManager* rm) { roommanager = rm; }
 
 	float getY() { return collider.rect.top; }
+
+	virtual void setPosition(sf::Vector2f position) {
+		getSprite()->setPosition(position);
+		collider.rect = sf::FloatRect(position.x, position.y, collider.rect.width, collider.rect.height);
+		collider.setDebugPosition(sf::Vector2f(position.x+1, position.y+1));
+	}
 
 	// Control sprite speed
 	void setSpeed(float spd) { speed = spd; }
@@ -42,7 +54,7 @@ public:
 	void setTexture(sf::Texture* t) { txt = t; }
 	sf::Texture* getTexture() { return txt; }
 
-	virtual void hit() { std::cout << "Object hit\n"; }
+	virtual void hit(float damage) { std::cout << "Object hit\n"; }
 
 	Collision collider;
 	sf::Vector2f vel;
@@ -54,9 +66,10 @@ protected:
 	// Sprite properties
 	float speed = 0;
 
-	// input component
 	InputHandler* in = nullptr;
 	sf::RenderWindow* w = nullptr;
+	// pointer to the room manager
+	RoomManager* roommanager = nullptr;
 
 	sf::Texture* txt = nullptr;
 };

@@ -27,6 +27,7 @@ public:
 	void setAngle(float ang) { angle_to_mouse = ang; }
 	void setCollisionArray(std::vector<Collision*>* c) {}
 	void setHitBox(sf::FloatRect hb) { projectiles.setHitBox(hb); }
+	void setDamage(float d) { projectiles.setDamage(d); }
 
 	void shoot();
 	void move(sf::Vector2f offset);

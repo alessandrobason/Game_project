@@ -67,6 +67,7 @@ protected:
 
 	// vectors with scene objects/colliders
 	std::vector<GameObject*> sceneObjects;
+	std::vector<GameObject*> destroyedSceneObjects;
 	std::vector<GameObject*> invisibleSceneObjects;
 	std::vector<Collision*> sceneColliders;
 	std::vector<Collision*> invisibleSceneColliders;

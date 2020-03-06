@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include "Tween.h"
 #include "InputHandler.h"
 #include "Tilemap.h"
 #include "../JSONparser/JSONparser.h"
@@ -52,7 +51,6 @@ class RoomManager {
 	void loadTextures();
 
 	sf::Thread loadingThread;
-	//sf::Thread enemyLoadingThread;
 public:
 	enum RoomSides {
 		TOP,

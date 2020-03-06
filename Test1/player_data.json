@@ -62,6 +62,7 @@
       "flipped": false
     }
   ],
+  "speed": 100,
   "collision": {
     "x": 0,
     "y": 16,
@@ -74,7 +75,7 @@
     "columns": 2,
     "bow": {
       "texture coordinates": [ 0, 0 ],
-      "base_damage": 10
+      "base_damage": 25.0
     },
     "arrow": {
       "texture coordinates": [ 16, 0 ],

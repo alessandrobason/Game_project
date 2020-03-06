@@ -2,6 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <functional>
+
+class GameObject;
 
 class AnimatedSprite {
 protected:
@@ -23,6 +26,8 @@ protected:
 	int current_frame = 0;
 	std::string current_animation = "";
 	std::map<std::string, Anim> animations;
+
+	GameObject* parent;
 
 	float elapsedTime = 0;
 
@@ -55,8 +60,8 @@ public:
 	void setPlaying(bool p) { playing = p; }
 	bool getPlaying() { return playing; }
 
-	//void setFlipped(bool f) { flipped = f; }
-	//bool getFlipped() { return flipped; }
+	void setParent(GameObject* g) { parent = g; }
+	std::function<bool(GameObject&, std::string)> call_back_function;
 
 	void addAnimation(std::string name, std::vector<int> frames, float speed, bool looping = true);
 

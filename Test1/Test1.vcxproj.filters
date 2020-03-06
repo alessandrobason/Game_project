@@ -101,10 +101,10 @@
     <ClInclude Include="Framework\Projectiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Tween.h">
+    <ClInclude Include="GameObjects\Octorock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjects\Octorock.h">
+    <ClInclude Include="Framework\UsefulFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

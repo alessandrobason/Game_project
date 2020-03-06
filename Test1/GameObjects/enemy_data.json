@@ -61,9 +61,16 @@
           "array": [ 7, 6 ],
           "speed": 0.2,
           "looping": true
+        },
+        {
+          "name": "death",
+          "array": [ 0, 4, 6, 2, 0, 4, 6, 2 ],
+          "speed": 0.2,
+          "looping": false
         }
       ],
-      "life": 100
+      "life": 100.0,
+      "speed": 50
     }
   ]
 }

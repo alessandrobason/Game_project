@@ -26,10 +26,7 @@ void Forest_room::load(sf::Vector2f offset) {
 		if (name == "octorock") {
 			sceneObjects.push_back(new Octorock(roomManager->getEnemyCopy(name)));
 		}
-		sceneObjects.back()->setInput(in);
-		sceneObjects.back()->setWindow(w);
-		sceneObjects.back()->getSprite()->setPosition(position);
-		sceneColliders.push_back(&sceneObjects.back()->collider);
+		sceneObjects.back()->setPosition(position);
 		std::cout << "##### LOADING ENEMIES #####\n";
 		std::cout << "name: " << name << "\n";
 		std::cout << "position: " << position.x << " " << position.y << "\n";
@@ -105,15 +102,12 @@ void Forest_room::handleInput(float dt) {
 void Forest_room::update(float dt) {
 	tilemap->animate(dt);
 
-	// OTHER GAMEOBJECTS UPDATE
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		sceneObjects[i]->update(dt);
 	}
 
-	// PLAYER UPDATE
 	for (size_t i = 0; i < sceneColliders.size(); i++) {
 		sf::FloatRect rect = sceneColliders[i]->rect;
-
 		if (p->collider.Check_Collision(rect)) {
 			sf::Vector2f revVel = p->collider.getCollisionSide(rect, p->oldVel);
 			p->move(revVel);
@@ -122,18 +116,6 @@ void Forest_room::update(float dt) {
 		else {
 			sceneColliders[i]->setDebugColor(sf::Color::Red);
 		}
-		/*
-		for (size_t k = 0; k < sceneObjects.size(); k++) {
-			if (sceneObjects[k]->collider.Check_Collision(rect)) {
-				sf::Vector2f revVel = sceneObjects[k]->collider.getCollisionSide(rect, sceneObjects[k]->oldVel);
-				sceneObjects[k]->move(revVel);
-				sceneColliders[i]->setDebugColor(sf::Color::Blue);
-			}
-			else {
-				sceneColliders[i]->setDebugColor(sf::Color::Red);
-			}
-		}
-		*/
 	}
 
 	// check if player is going in another map //
@@ -170,6 +152,7 @@ void Forest_room::update(float dt) {
 	// update top_left of the camera for player
 	camera_top_left = main_camera.getCenter() - main_camera.getSize() / 2.f;
 	w->setView(main_camera);
+	freeMemory();
 	//cullGameObjects();
 	//std::cout << "->" << main_camera.getCenter().x << " " << main_camera.getCenter().x << "\n";
 }
@@ -198,6 +181,30 @@ void Forest_room::draw() {
 
 }
 
+void Forest_room::removeObject(GameObject* g) {
+	for (size_t i = 0; i < sceneObjects.size(); i++) {
+		if (sceneObjects[i] == g) {
+			destroyedSceneObjects.push_back(sceneObjects[i]);
+			sceneObjects[i] = sceneObjects.back();
+			sceneObjects.resize(sceneObjects.size() - 1);
+			break;
+		}
+	}
+	for (size_t i = 0; i < sceneColliders.size(); i++) {
+		if (sceneColliders[i] == &g->collider) {
+			sceneColliders[i] = sceneColliders.back();
+			sceneColliders.resize(sceneColliders.size() - 1);
+			break;
+		}
+	}
+}
+
+void Forest_room::freeMemory() {
+	for (size_t i = 0; i < destroyedSceneObjects.size(); i++) {
+		delete destroyedSceneObjects[i];
+	}
+	destroyedSceneObjects.clear();
+}
 
 void Forest_room::sortGameObjects() {
 	std::sort(sceneObjects.begin(), sceneObjects.end(), gameobjectsorting());
