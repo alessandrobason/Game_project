@@ -127,7 +127,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Forest_room.cpp" />
+    <ClCompile Include="Framework\GUI\GUImanager.cpp" />
+    <ClCompile Include="Framework\MainScreen.cpp" />
+    <ClCompile Include="Map_room.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
     <ClCompile Include="Framework\Projectiles.cpp" />
@@ -142,7 +144,13 @@
     <ClCompile Include="GameObjects\Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Forest_room.h" />
+    <ClInclude Include="Framework\GUI\GUIbox.h" />
+    <ClInclude Include="Framework\GUI\GUIelement.h" />
+    <ClInclude Include="Framework\GUI\GUImanager.h" />
+    <ClInclude Include="Framework\GUI\GUIpanel.h" />
+    <ClInclude Include="Framework\MainScreen.h" />
+    <ClInclude Include="Framework\Tweening.h" />
+    <ClInclude Include="Map_room.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\Collision.h" />
     <ClInclude Include="Framework\Projectiles.h" />
@@ -163,12 +171,12 @@
   <ItemGroup>
     <None Include="Assets\forest_tileset.json" />
     <None Include="GameObjects\enemy_data.json" />
-    <None Include="Levels\Level1\Level1.json" />
-    <None Include="Levels\Level1\level1_map.json" />
-    <None Include="Levels\Level2\Level2.json" />
-    <None Include="Levels\Level2\Level2_map.json" />
-    <None Include="Levels\Level3\Level3_map.json" />
-    <None Include="Levels\worldmap.json" />
+    <None Include="Rooms\Level1\Level1.json" />
+    <None Include="Rooms\Level1\level1_map.json" />
+    <None Include="Rooms\Level2\Level2.json" />
+    <None Include="Rooms\Level2\Level2_map.json" />
+    <None Include="Rooms\Level3\Level3_map.json" />
+    <None Include="Rooms\worldmap.json" />
     <None Include="old_player_data.json" />
     <None Include="player_data.json" />
     <None Include="Shaders\grayscale.frag" />

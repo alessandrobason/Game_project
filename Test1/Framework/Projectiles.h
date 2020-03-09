@@ -3,6 +3,7 @@
 #include <vector>
 #include "../GameObjects/Enemy.h"
 #include "RoomManager.fwd.h"
+#include "Tweening.h"
 
 class Projectiles {
 	struct singleprojectile {
@@ -14,8 +15,6 @@ class Projectiles {
 
 	struct projectiledeath {
 		size_t positioninarray;
-		float deathtime = 0.f;
-		float timeremaining = 0.f;
 		float alpha = 255.f;
 	};
 
@@ -38,6 +37,8 @@ class Projectiles {
 	RoomManager* roommanager = nullptr;
 	std::vector<Collision*>* tilemapcollisions = nullptr;
 	std::vector<GameObject*>* gameobjects = nullptr;
+
+	std::vector<Tweening<float>> projectilestween;
 public:
 	Projectiles() {}
 

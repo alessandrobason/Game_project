@@ -2,7 +2,6 @@
 #include "RoomManager.h"
 
 Projectiles::Projectiles(sf::Texture* txt, sf::Vector2i tex_coords, Collision::LAYER l, RoomManager* rm) {
-	//vertexs.setPrimitiveType(sf::Quads);
 	states.texture = txt;
 	texture_coordinates = (sf::Vector2f) tex_coords;
 	collisionlayer = l;
@@ -41,7 +40,8 @@ void Projectiles::update(float dt) {
 			if (projectile_vector[i].collider.Check_Collision(rect)) {
 				collision_hit = current_collision;
 				projectile_vector[i].hitsomething = true;
-				removing_projectiles.push_back({ i, 1.f, 1.f, 255.f });
+				projectilestween.push_back(Tweening<float>(255.f, 0.f, 1.f));
+				removing_projectiles.push_back({ i });
 				break;
 			}
 		}
@@ -51,8 +51,7 @@ void Projectiles::update(float dt) {
 		for (size_t j = 0; j < roommanager->getCurrentRoom()->getGameObjects()->size(); j++) {
 			GameObject* current_gameobject = roommanager->getCurrentRoom()->getGameObjects()->at(j);
 			if (&current_gameobject->collider == collision_hit) {
-				//removing_projectiles.back().deathtime = 0.f;
-				removing_projectiles.back().timeremaining = 0.f;
+				projectilestween.back().setTotalTime(0.f);
 				current_gameobject->hit(damage);
 				break;
 			}
@@ -60,14 +59,12 @@ void Projectiles::update(float dt) {
 	}
 
 	for (size_t i = 0; i < removing_projectiles.size(); i++) {
-		removing_projectiles[i].timeremaining -= dt;
-		float percentagepassed = 1 - (removing_projectiles[i].timeremaining / removing_projectiles[i].deathtime);
-		removing_projectiles[i].alpha = UsefulFunc::lerp(255, 0, percentagepassed);
+		projectilestween[i].update(dt);
 		size_t k = removing_projectiles[i].positioninarray * 4;
 		for (size_t j = 0; j < 4; j++) {
-			vertexs[k + j].color = sf::Color(255, 255, 255, removing_projectiles[i].alpha);
+			vertexs[k + j].color = sf::Color(255, 255, 255, projectilestween[i].getValue());
 		}
-		if (removing_projectiles[i].alpha <= 0) {
+		if (projectilestween[i].isfinished()) {
 			removeArrow(removing_projectiles[i].positioninarray);
 			i--;
 		}
@@ -106,12 +103,15 @@ void Projectiles::removeArrow(size_t n) {
 	size_t vn = n * 4;
 	vertexs.erase(vertexs.begin() + vn, vertexs.begin() + vn + 4);
 	projectile_vector.erase(projectile_vector.begin() + n);
+	
 	for (size_t i = 0; i < removing_projectiles.size(); i++) {
 		if (removing_projectiles[i].positioninarray == n) {
+			projectilestween.erase(projectilestween.begin() + i);
 			removing_projectiles.erase(removing_projectiles.begin() + i);
 			i--;
 			continue;
 		}
 		if (removing_projectiles[i].positioninarray > n) removing_projectiles[i].positioninarray--;
 	}
+	
 }

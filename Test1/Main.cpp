@@ -54,7 +54,7 @@ int main() {
 
 	sf::Clock deltaClock;
 
-	roomManager.setData(&window, in, &deltaClock);
+	roomManager.setData(&window, in);
 	// Game Loop
 	while (window.isOpen()) {
 		// Handle window events.

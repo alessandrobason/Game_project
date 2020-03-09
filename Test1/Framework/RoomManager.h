@@ -3,10 +3,11 @@
 #include <SFML/System.hpp>
 #include "InputHandler.h"
 #include "Tilemap.h"
+#include "Tweening.h"
 #include "../JSONparser/JSONparser.h"
 #include "RoomManager.fwd.h"
-#include "Room.fwd.h"
-#include "../Forest_room.h"
+#include "../Map_room.h"
+#include "MainScreen.h"
 
 class RoomManager {
 	struct Map {
@@ -21,16 +22,18 @@ class RoomManager {
 		int oldroom;
 		sf::View maincamera;
 		sf::Vector2f offsetdirection;
-		sf::Vector2f startCamera;
-		sf::Vector2f targetCamera;
-		sf::Vector2f startPlayer;
-		sf::Vector2f targetPlayer;
-		float cameratotaltime;
-		float cameratimeremaining;
-		float playertotaltime;
-		float playertimeremaining;
+		Tweening<sf::Vector2f> playertween;
+		Tweening<sf::Vector2f> cameratween;
 		bool wasdebug;
 	};
+
+	enum class STATES {
+		MAINSCREEN,
+		MAP,
+		MAPTRANSITION
+	};
+
+	STATES currentstate;
 
 	std::map<std::string, Enemy> enemycopies;
 
@@ -38,14 +41,17 @@ class RoomManager {
 
 	Player p;
 	Map map;
-	std::vector<Forest_room*> rooms;
+	std::vector<Map_room*> maprooms;
+	MainScreen* mainscreen = nullptr;
+	//std::map<std::string, Room*> rooms;
+	std::string currentroom = "";
 	InputHandler* in = nullptr;
 	sf::RenderWindow* w = nullptr;
-	sf::Clock* deltaclock = nullptr;
+	//sf::Clock* deltaclock = nullptr;
 
 	JSONparser enemydata;
 
-	bool movingmap = false;
+	//bool movingmap = false;
 
 	void loadMaps();
 	void loadTextures();
@@ -62,13 +68,13 @@ public:
 	RoomManager();
 	~RoomManager();
 
-	void setData(sf::RenderWindow* win, InputHandler* i, sf::Clock* dt);
+	void setData(sf::RenderWindow* win, InputHandler* i);
 
 	void handleInput(float dt);
 	void update(float dt);
 	void draw();
 
-	Forest_room* getCurrentRoom() { return rooms[map.data[map.currentRoom]]; }
+	Map_room* getCurrentRoom() { return maprooms[map.data[map.currentRoom]]; }
 	JSONparser* getEnemyData() { return &enemydata; }
 	Enemy& getEnemyCopy(std::string enemy) { return enemycopies[enemy]; }
 

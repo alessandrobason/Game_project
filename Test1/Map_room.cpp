@@ -1,15 +1,130 @@
-#include "Forest_room.h"
+#include "Map_room.h"
 #include "Framework/RoomManager.h"
 
-Forest_room::Forest_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold) : Room(fold, input, rm) {
-	std::cout << "1\n";
-	w = window;
-	std::cout << "2\n";
-	w->setView(main_camera);
+Map_room::Map_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold) : Room(fold, window, input, rm) {
+	layers = &roomManager->tilemapData[fold].layers;
+	tilemap_data = &roomManager->tilemapData[fold].tilemap_data;
+	tilemap = &roomManager->tilemapData[fold].tilemap;
+	shader = &roomManager->tilemapData[fold].shader;
 }
 
-void Forest_room::load(sf::Vector2f offset) {
+Map_room::~Map_room() {
+	delete layers;
+	delete tilemap_data;
+	delete tilemap;
+	delete shader;
+	layers = nullptr;
+	tilemap_data = nullptr;
+	tilemap = nullptr;
+	shader = nullptr;
+}
+
+void Map_room::load(sf::Vector2f offs) {
+	offset = offs;
 	Room::load(offset);
+	if (roomManager->tilemapData[FOLDER].loaded) return;
+	std::cout << "Loading: " << FOLDER << "\n";
+	std::string tileset_json;
+	std::string tileset_file;
+
+	const std::string ASSETS = "Assets/";
+
+	std::cout << "Loading json file\n";
+	// get the json file for the map
+	std::string map = config->doc["map"].str;
+	// load the json file for the map
+	tilemap_json = new JSONparser("Rooms/" + FOLDER + "/" + map);
+
+	// load tileset json
+	tileset_json = tilemap_json->doc["tilesets"].arr[0].obj["source"].str;
+	JSONparser* ts_json = new JSONparser(tileset_json);
+
+	std::vector<Tilemap::animated_tiles_data> animatedTilesData;
+
+	// load tilemap data
+	tilemap_data->numb_layers = (int)tilemap_json->doc["layers"].arr.size();
+	tilemap_data->tileSize.x = tilemap_json->doc["tilewidth"].i;
+	tilemap_data->tileSize.y = tilemap_json->doc["tileheight"].i;
+	tilemap_data->h = tilemap_json->doc["height"].i;
+	tilemap_data->w = tilemap_json->doc["width"].i;
+
+	std::cout << "Map json file: " << map << "\n";
+	std::cout << "Map height: " << tilemap_data->h << "\n";
+	std::cout << "Map width: " << tilemap_data->w << "\n";
+	std::cout << "Number of layers: " << tilemap_data->numb_layers << "\n";
+
+	int numb_layers = tilemap_data->numb_layers;
+	std::vector<Collision> collisions;
+
+	// LOAD LAYERS DATA //
+	for (int i = 0; i < numb_layers; i++) {
+		std::cout << "Layer " << i + 1 << ": \n";
+
+		// load collisions
+		if (tilemap_json->doc["layers"].arr[i].obj["type"].str == "objectgroup") {
+			tilemap_data->numb_layers--;
+			for (size_t k = 0; k < tilemap_json->doc["layers"].arr[i].obj["objects"].arr.size(); k++) {
+				int x = offset.x + tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["x"].i;
+				int y = offset.y + tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["y"].i;
+				int w = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["width"].i;
+				int h = tilemap_json->doc["layers"].arr[i].obj["objects"].arr[k].obj["height"].i;
+				collisions.push_back(Collision(x, y, w, h, Collision::LAYER::ALL));
+			}
+			continue;
+		}
+		std::cout << "\tName: " << tilemap_json->doc["layers"].arr[i].obj["name"].str << "\n";
+
+		// load tileset
+		for (int j = 0; j < tilemap_json->doc["layers"].arr[i].obj["data"].arr.size(); j++) {
+			int t = tilemap_json->doc["layers"].arr[i].obj["data"].arr[j].i;
+			t--; // tiled starts at 1 instead of 0
+			layers->push_back(t);
+		}
+	}
+
+	// load tileset data
+
+	tileset_file = ts_json->doc["image"].str;
+
+	std::cout << "Tileset json file: " << tileset_json << "\n";
+	std::cout << "Tileset image file: " << tileset_file << "\n";
+	sf::Image tilesetTemp;
+	//sf::Texture tilesetTemp;
+	if (!tilesetTemp.loadFromFile(tileset_file)) {
+		std::cout << "Couldn't load tileset from " << tileset_file << "\n";
+	}
+
+	int tilesetinimagesposition = images->size();
+	images->push_back({ "tiles", tilesetTemp });
+
+	//textures->insert(std::pair<std::string, sf::Texture>("tileset", tilesetTemp));
+
+
+	std::cout << "number of tiles: " << ts_json->doc["tiles"].size << "\n";
+
+	// loading animated tiles
+	std::map<std::string, JSONparser::datatypes>::const_iterator it;
+	for (auto const& x : ts_json->doc["tiles"].obj) {
+		it = x.second.obj.find("animation");
+		if (it != x.second.obj.end()) {
+			std::vector<Tilemap::animated_tiles_data::data> temp;
+			for (size_t i = 0; i < it->second.arr.size(); i++) {
+				temp.push_back({ it->second.arr[i].obj.at("duration").i , it->second.arr[i].obj.at("tileid").i });
+			}
+			animatedTilesData.push_back({ x.first, temp });
+		}
+	}
+
+	std::cout << "animatedTilesData: " << animatedTilesData.size() << "\n";
+
+	tilemap->load(&isdebug, &images->at(tilesetinimagesposition).img, animatedTilesData, *layers, *tilemap_data, offset);
+	tilemap->loadCollisions(collisions);
+
+	delete ts_json;
+	ts_json = nullptr;
+
+	*isloaded = true;
+
 	setBounds(offset);
 
 	tilemap->setWindow(w);
@@ -30,21 +145,11 @@ void Forest_room::load(sf::Vector2f offset) {
 		std::cout << "##### LOADING ENEMIES #####\n";
 		std::cout << "name: " << name << "\n";
 		std::cout << "position: " << position.x << " " << position.y << "\n";
-
-		//if (name == "octorock") {
-			//roomManager->getEnemyData()->doc["enemies"].obj["octorock"];
-			//sceneObjects.push_back(new Octorock(&roomManager->textures["enemy"], in, w, position));
-		//}
-		
 	}
 	
-	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
-	//sceneObjects.push_back(new Enemy(&roomManager->textures["tileset"], in, w, offset));
-
 	// load collisions
 	for (size_t i = 0; i < tilemap->collisions.size(); i++) {
 		sceneColliders.push_back(&tilemap->collisions[i]);
-		//std::cout << i << "\n";
 	}
 
 	for (size_t i = 1; i < sceneObjects.size(); i++) {
@@ -62,13 +167,13 @@ void Forest_room::load(sf::Vector2f offset) {
 	*/
 }
 
-void Forest_room::setPlayer(Player* pl) {
+void Map_room::setPlayer(Player* pl) {
 	p = pl;
 	sceneObjects.push_back(p);
 	sceneColliders.push_back(&p->collider);
 }
 
-void Forest_room::removePlayer() {
+void Map_room::removePlayer() {
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		if (sceneObjects[i] == p){
 			sceneObjects.erase(sceneObjects.begin() + i);
@@ -77,7 +182,7 @@ void Forest_room::removePlayer() {
 	p = nullptr; 
 }
 
-void Forest_room::setPlayerPosition(sf::Vector2f pos) {
+void Map_room::setPlayerPosition(sf::Vector2f pos) {
 	p->setPosition(pos);
 }
 
@@ -86,7 +191,7 @@ void Forest_room::setPlayerPosition(sf::Vector2f pos) {
 ||     HANDLE INPUT     ||
 ||                      ||
 \*######################*/
-void Forest_room::handleInput(float dt) {
+void Map_room::handleInput(float dt) {
 	if (in->isKeyPressed(sf::Keyboard::F1)) isdebug = !isdebug;
 	
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
@@ -99,7 +204,7 @@ void Forest_room::handleInput(float dt) {
 ||        UPDATE        ||
 ||                      ||
 \*######################*/
-void Forest_room::update(float dt) {
+void Map_room::update(float dt) {
 	tilemap->animate(dt);
 
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
@@ -162,7 +267,7 @@ void Forest_room::update(float dt) {
 ||         DRAW         ||
 ||                      ||
 \*######################*/
-void Forest_room::draw() {
+void Map_room::draw() {
 	sortGameObjects();
 	tilemap->drawUnder();
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
@@ -181,7 +286,7 @@ void Forest_room::draw() {
 
 }
 
-void Forest_room::removeObject(GameObject* g) {
+void Map_room::removeObject(GameObject* g) {
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
 		if (sceneObjects[i] == g) {
 			destroyedSceneObjects.push_back(sceneObjects[i]);
@@ -199,18 +304,18 @@ void Forest_room::removeObject(GameObject* g) {
 	}
 }
 
-void Forest_room::freeMemory() {
+void Map_room::freeMemory() {
 	for (size_t i = 0; i < destroyedSceneObjects.size(); i++) {
 		delete destroyedSceneObjects[i];
 	}
 	destroyedSceneObjects.clear();
 }
 
-void Forest_room::sortGameObjects() {
+void Map_room::sortGameObjects() {
 	std::sort(sceneObjects.begin(), sceneObjects.end(), gameobjectsorting());
 }
 
-void Forest_room::cullGameObjects() {
+void Map_room::cullGameObjects() {
 	sf::Vector2f size = main_camera.getSize();
 	sf::Vector2f pos = main_camera.getCenter();
 	sf::FloatRect rect = sf::FloatRect(pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
@@ -263,14 +368,14 @@ void Forest_room::cullGameObjects() {
 	}
 }
 
-sf::Vector2f Forest_room::moveRoom(sf::Transform t) {
+sf::Vector2f Map_room::moveRoom(sf::Transform t) {
 	sf::RenderStates tilemapstate = tilemap->getStates();
 	tilemapstate.transform = t;
 	tilemap->setStates(tilemapstate);
 	return tilemap->getPosition();
 }
 
-void Forest_room::setBounds(sf::Vector2f offset) {
+void Map_room::setBounds(sf::Vector2f offset) {
 	this->offset = offset;
 	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , static_cast<float>(roomManager->MAPSIZE), 0.1f); //top
 	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roomManager->MAPSIZE, static_cast<float>(roomManager->MAPSIZE), 0.1f); //bottom

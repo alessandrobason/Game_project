@@ -1,43 +1,46 @@
 #include "RoomManager.h"
 
-RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {}
+RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
+	currentstate = STATES::MAINSCREEN;
+}
 
-void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp, sf::Clock* dt) {
+void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
 	w = win; 
 	in = inp; 
-	deltaclock = dt;
+
+	mainscreen = new MainScreen(w, in, this);
 
 	p = Player(in, this, w);
 
 	enemydata.readJSON("GameObjects/enemy_data.json");
 
-	JSONparser worldmap = JSONparser("Levels/worldmap.json");
+	JSONparser worldmap = JSONparser("Rooms/worldmap.json");
 	map.width = worldmap.doc["width"].i;
 	map.height = worldmap.doc["height"].i;
 
 	for (size_t i = 0; i < worldmap.doc["Levels"].arr.size(); i++) {
 		map.files.push_back(worldmap.doc["Levels"].arr[i].str);
-		rooms.push_back(new Forest_room(this, w, in, map.files[i]));
+		maprooms.push_back(new Map_room(this, w, in, map.files[i]));
 	}
 	for (size_t i = 0; i < worldmap.doc["map"].arr.size(); i++) {
 		map.data.push_back(worldmap.doc["map"].arr[i].i);
 	}
 
 	map.currentRoom = worldmap.doc["spawn"].i;
-	rooms[map.data[map.currentRoom]]->setPlayer(&p);
+	maprooms[map.data[map.currentRoom]]->setPlayer(&p);
 
 	loadEnemies();
 	loadMaps();
 
-	p.setPosition(rooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
+	p.setPosition(maprooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
 
 	loadTextures();
+
 }
 
 RoomManager::~RoomManager() {
 	delete in;
 	in = nullptr;
-	deltaclock = nullptr;
 }
 
 void RoomManager::loadEnemies() {
@@ -86,18 +89,46 @@ void RoomManager::loadEnemies() {
 }
 
 void RoomManager::handleInput(float dt) {
-	rooms[map.data[map.currentRoom]]->handleInput(dt);
+	switch (currentstate) {
+	case RoomManager::STATES::MAINSCREEN:
+		mainscreen->handleInput(dt);
+		break;
+	case RoomManager::STATES::MAP:
+		maprooms[map.data[map.currentRoom]]->handleInput(dt);
+		break;
+	case RoomManager::STATES::MAPTRANSITION:
+		break;
+	}
 }
 
 void RoomManager::update(float dt) {
-	if (!movingmap) rooms[map.data[map.currentRoom]]->update(dt);
-	else animatetransition(dt);
+	switch (currentstate) {
+	case RoomManager::STATES::MAINSCREEN:
+		mainscreen->update(dt);
+		break;
+	case RoomManager::STATES::MAP:
+		maprooms[map.data[map.currentRoom]]->update(dt);
+		break;
+	case RoomManager::STATES::MAPTRANSITION:
+		animatetransition(dt);
+		break;
+	}
 }
 
 void RoomManager::draw() {
 	w->clear();
-	if (movingmap) rooms[mapmovement.oldroom]->draw();
-	rooms[map.data[map.currentRoom]]->draw();
+	switch (currentstate) {
+	case RoomManager::STATES::MAINSCREEN:
+		mainscreen->draw();
+		break;
+	case RoomManager::STATES::MAP:
+		maprooms[map.data[map.currentRoom]]->draw();
+		break;
+	case RoomManager::STATES::MAPTRANSITION:
+		maprooms[mapmovement.oldroom]->draw();
+		maprooms[map.data[map.currentRoom]]->draw();
+		break;
+	}
 	w->display();
 }
 
@@ -122,14 +153,14 @@ void RoomManager::loadMaps() {
 		toLoad.push_back({ map.currentRoom + map.width, map.data[(int)map.currentRoom + map.width] });
 	
 	for (size_t i = 0; i < toLoad.size(); i++) {
-		if (*rooms[toLoad[i].map]->isloaded == true) continue;
+		if (*maprooms[toLoad[i].map]->isloaded == true) continue;
 		int mapx = toLoad[i].position % map.width;
 		int mapy = toLoad[i].position / map.width;
 		std::cout << "load: " << toLoad[i].map << "\n";
 		sf::Vector2f offset;
 		offset = sf::Vector2f(mapx * MAPSIZE, mapy * MAPSIZE);
 		
-		rooms[toLoad[i].map]->load(offset);
+		maprooms[toLoad[i].map]->load(offset);
 	}
 }
 
@@ -139,16 +170,16 @@ void RoomManager::loadTextures() {
 			std::cout << "couldn't load " << images[i].key << "\n";
 		}
 	}
-	for (size_t i = 0; i < rooms.size(); i++) {
-		if (!rooms[i]->isloaded) continue;
-		rooms[i]->tilemap->setTexture(&textures["tiles"]);
+	for (size_t i = 0; i < maprooms.size(); i++) {
+		if (!maprooms[i]->isloaded) continue;
+		maprooms[i]->getTilemap()->setTexture(&textures["tiles"]);
 	}
 }
 
 void RoomManager::moveRoom(int side) {
 	int oldcurrentroom = map.data[map.currentRoom];
-	sf::View maincamera = rooms[oldcurrentroom]->getMainCamera();
-	sf::Vector2f oldplayerpos = rooms[oldcurrentroom]->getPlayerPosition();
+	sf::View maincamera = maprooms[oldcurrentroom]->getMainCamera();
+	sf::Vector2f oldplayerpos = maprooms[oldcurrentroom]->getPlayerPosition();
 	Player::DIRECTIONS lastplayerdirection = p.getDirection();
 	sf::Vector2f offsetdirection;
 	sf::FloatRect bound;
@@ -179,54 +210,47 @@ void RoomManager::moveRoom(int side) {
 
 	int currentroom = map.data[map.currentRoom];
 
-	rooms[oldcurrentroom]->removePlayer();
-	rooms[currentroom]->setPlayer(&p);
+	maprooms[oldcurrentroom]->removePlayer();
+	maprooms[currentroom]->setPlayer(&p);
 	
 	mapmovement.oldroom = oldcurrentroom;
-	mapmovement.wasdebug = rooms[oldcurrentroom]->isdebug;
-	rooms[oldcurrentroom]->isdebug = false;
+	mapmovement.wasdebug = maprooms[oldcurrentroom]->isdebug;
+	maprooms[oldcurrentroom]->isdebug = false;
 	mapmovement.maincamera = maincamera;
 	mapmovement.offsetdirection = offsetdirection;
 
 	// LERPING
 	// -- camera
-	mapmovement.startCamera = maincamera.getCenter();
-	mapmovement.targetCamera = mapmovement.startCamera + sf::Vector2f(maincamera.getSize().x * offsetdirection.x, maincamera.getSize().y * offsetdirection.y);
-	mapmovement.cameratotaltime = 0.5f;
-	mapmovement.cameratimeremaining = mapmovement.cameratotaltime;
+	sf::Vector2f finalcamera = maincamera.getCenter() + sf::Vector2f(maincamera.getSize().x * offsetdirection.x, maincamera.getSize().y * offsetdirection.y);
+	mapmovement.cameratween = Tweening<sf::Vector2f>(maincamera.getCenter(), finalcamera, 0.5f);
 	// -- player
-	mapmovement.startPlayer = oldplayerpos - p.collider.collision_offset;
-	mapmovement.targetPlayer = mapmovement.startPlayer + (17.f * offsetdirection);
-	mapmovement.playertotaltime = 0.3f;
-	mapmovement.playertimeremaining = mapmovement.playertotaltime;
+	sf::Vector2f startPlayer = oldplayerpos - p.collider.collision_offset;
+	sf::Vector2f finalplayer = startPlayer + (17.f * offsetdirection);
+	mapmovement.playertween = Tweening<sf::Vector2f>(startPlayer, finalplayer, 0.3f);
 	
-	movingmap = true;
+	currentstate = STATES::MAPTRANSITION;
+	//movingmap = true;
 }
 
 void RoomManager::animatetransition(float dt) {
-	getCurrentRoom()->tilemap->animate(dt);
-	rooms[mapmovement.oldroom]->tilemap->animate(dt);
-
-	mapmovement.playertimeremaining -= dt;
+	mapmovement.playertween.update(dt);
+	mapmovement.cameratween.update(dt);
+	
 	sf::Vector2f newplayerposition;
-	float playerpercentagepassed = 1 - (mapmovement.playertimeremaining / mapmovement.playertotaltime);
-	if (playerpercentagepassed < 1) {
-		newplayerposition.x = UsefulFunc::lerp(mapmovement.startPlayer.x, mapmovement.targetPlayer.x, playerpercentagepassed);
-		newplayerposition.y = UsefulFunc::lerp(mapmovement.startPlayer.y, mapmovement.targetPlayer.y, playerpercentagepassed);
+	if (!mapmovement.playertween.isfinished()) {
+		newplayerposition = mapmovement.playertween.getValue();
 		p.setPosition(newplayerposition);
-		std::cout << newplayerposition.x << " " << newplayerposition.y << "\n";
 	}
 
-	mapmovement.cameratimeremaining -= dt;
 	sf::Vector2f newcameraposition;
-	float camerapercentagepassed = 1 - (mapmovement.cameratimeremaining / mapmovement.cameratotaltime);
-	newcameraposition.x = UsefulFunc::lerp(mapmovement.startCamera.x, mapmovement.targetCamera.x, camerapercentagepassed);
-	newcameraposition.y = UsefulFunc::lerp(mapmovement.startCamera.y, mapmovement.targetCamera.y, camerapercentagepassed);
+	newcameraposition = mapmovement.cameratween.getValue();
 	mapmovement.maincamera.setCenter(newcameraposition);
 	w->setView(mapmovement.maincamera);
-	if (camerapercentagepassed >= 1) {
+	if (mapmovement.cameratween.isfinished()) {
 		getCurrentRoom()->isdebug = mapmovement.wasdebug;
 		getCurrentRoom()->setMainCamera(mapmovement.maincamera);
-		movingmap = false;
+		currentstate = STATES::MAP;
+		//movingmap = false;
 	}
+	
 }

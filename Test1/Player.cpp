@@ -141,7 +141,6 @@ void Player::update(float dt) {
     animSprite.animate(dt);
     move(vel * dt);
     bow.update(dt);
-    //std::cout << "spr pos:\t" << getSprite()->getPosition().x << " " << getSprite()->getPosition().y << "\n";
 }
 
 void Player::draw() {

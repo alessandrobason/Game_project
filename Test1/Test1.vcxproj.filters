@@ -33,9 +33,6 @@
     <ClCompile Include="Framework\Tilemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Forest_room.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,6 +49,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameObjects\Octorock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\MainScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\GUI\GUImanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,9 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Tilemap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Forest_room.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Animation.h">
@@ -107,19 +110,40 @@
     <ClInclude Include="Framework\UsefulFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Map_room.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Tweening.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\MainScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GUI\GUImanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GUI\GUIelement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GUI\GUIpanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\GUI\GUIbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Levels\Level1\Level1.json" />
-    <None Include="Levels\Level1\level1_map.json" />
     <None Include="Assets\forest_tileset.json" />
     <None Include="Shaders\grayscale.frag" />
-    <None Include="Levels\Level2\Level2_map.json" />
-    <None Include="Levels\Level2\Level2.json" />
-    <None Include="Levels\Level3\Level3_map.json" />
     <None Include="old_player_data.json" />
     <None Include="player_data.json" />
-    <None Include="Levels\worldmap.json" />
     <None Include="GameObjects\enemy_data.json" />
+    <None Include="Rooms\Level1\Level1.json" />
+    <None Include="Rooms\Level1\level1_map.json" />
+    <None Include="Rooms\Level2\Level2.json" />
+    <None Include="Rooms\Level2\Level2_map.json" />
+    <None Include="Rooms\Level3\Level3_map.json" />
+    <None Include="Rooms\worldmap.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\forest_tiles.png">

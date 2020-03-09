@@ -10,7 +10,8 @@
 
 class Room {
 public:
-	Room(std::string fold, InputHandler* input, RoomManager* rm);
+	Room() {}
+	Room(std::string fold, sf::RenderWindow* window, InputHandler* input, RoomManager* rm);
 	~Room();
 
 	virtual void handleInput(float dt);
@@ -29,11 +30,8 @@ public:
 
 	// if true: draw collisionboxes ecc
 	bool isdebug = false;
-
 	bool* isloaded = nullptr;
-	Tilemap* tilemap = nullptr;
-
-	JSONparser* config;
+	JSONparser* config = nullptr;
 
 	struct gameobjectsorting {
 		inline bool operator() (GameObject* g1, GameObject* g2) {
@@ -42,8 +40,10 @@ public:
 	};
 
 protected:
+	// input handler
+	InputHandler* in = nullptr;
 	// render window
-	sf::RenderWindow* w;
+	sf::RenderWindow* w = nullptr;
 
 	// room manager
 	RoomManager* roomManager = nullptr;
@@ -52,18 +52,10 @@ protected:
 	std::string FOLDER;
 	const std::string ASSETS = "Assets/";
 
-	// tilemap data
-	JSONparser* tilemap_json;
-	sf::Vector2f offset;
-	std::vector<int>* layers = nullptr;
-	Tilemap::tilemap_data* tilemap_data = nullptr;
-	sf::Shader* shader = nullptr;
 
 	// main camera
 	sf::View main_camera;
 
-	// input handler
-	InputHandler* in;
 
 	// vectors with scene objects/colliders
 	std::vector<GameObject*> sceneObjects;

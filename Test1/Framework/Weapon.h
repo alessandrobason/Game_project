@@ -19,6 +19,7 @@ public:
 	
 	void handleInput(float dt);
 	void update(float dt);
+	void animate(float dt);
 	void drawArrows(sf::RenderWindow* w);
 	void drawDebug(sf::RenderWindow* w);
 

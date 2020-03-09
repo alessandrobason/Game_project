@@ -4,10 +4,10 @@
 #include "Player.h"
 #include "GameObjects/Octorock.h"
 
-class Forest_room : public Room {
+class Map_room : public Room {
 public:
-	Forest_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold);
-	~Forest_room() {}
+	Map_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold);
+	~Map_room();
 
 	void load(sf::Vector2f offset) override;
 	void setPlayer(Player* pl);
@@ -30,6 +30,8 @@ public:
 	void update(float dt) override;
 	void draw() override;
 
+	Tilemap* getTilemap() { return tilemap; }
+
 	sf::Vector2f moveRoom(sf::Transform t);
 	void setBounds(sf::Vector2f offset);
 	sf::Vector2f getOffset() { return offset; }
@@ -40,5 +42,14 @@ private:
 	sf::Vector2f camera_top_left;
 	sf::Vector2f camera_bottom_right;
 
+	// tilemap data
+	Tilemap* tilemap = nullptr;
+	JSONparser* tilemap_json = nullptr;
+	sf::Vector2f offset;
+	std::vector<int>* layers = nullptr;
+	Tilemap::tilemap_data* tilemap_data = nullptr;
+	sf::Shader* shader = nullptr;
+
+	// player pointer
 	Player* p = nullptr;
 };
