@@ -68,7 +68,7 @@ public:
 	}
 
 	sf::View getView() { return windowview; }
-	//sf::FloatRect getViewPort() {}
+	const sf::Vector2f getScreenSize() { return screensize; }
 
 	enum KEY_ENUM {
 		KEY_UP = sf::Keyboard::W,
@@ -80,6 +80,7 @@ public:
 
 private:
 	sf::RenderWindow* w = nullptr;
+	const sf::Vector2f screensize = sf::Vector2f(192, 144);
 
 	struct Mouse {
 		sf::Vector2i position;

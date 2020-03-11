@@ -42,7 +42,7 @@ class RoomManager {
 	Player p;
 	Map map;
 	std::vector<Map_room*> maprooms;
-	MainScreen* mainscreen = nullptr;
+	Room* mainscreen = nullptr;
 	//std::map<std::string, Room*> rooms;
 	std::string currentroom = "";
 	InputHandler* in = nullptr;
@@ -87,6 +87,8 @@ public:
 	// dictionary with all the textures of the game
 	std::map<std::string, sf::Texture> textures;
 	std::vector<Image> images;
+	// dictionary with all the fonts of the game
+	std::map<std::string, sf::Font> fonts;
 	// dictionary with all the maps currently loaded
 	std::map<std::string, MapData> tilemapData;
 

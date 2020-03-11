@@ -116,7 +116,8 @@ void RoomManager::update(float dt) {
 }
 
 void RoomManager::draw() {
-	w->clear();
+	//w->clear();
+	w->clear(sf::Color::Cyan);
 	switch (currentstate) {
 	case RoomManager::STATES::MAINSCREEN:
 		mainscreen->draw();
