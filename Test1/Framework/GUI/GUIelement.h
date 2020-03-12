@@ -26,6 +26,7 @@ public:
 
 	int zbuffer = 0;
 	bool enabled = true;
+	GUIelement* oldpointer = nullptr;
 
 	virtual void draw(sf::RenderWindow* w);
 
@@ -36,27 +37,20 @@ public:
 	void setParent(GUIelement* p) { parent = p; zbuffer = parent->zbuffer + 1; }
 	GUIelement* getParent() { return parent; }
 
-	void setPosition(sf::Vector2f pos) {
-		sf::Vector2f offset = pos - getPosition();
-		states.transform.translate(offset);
-		boxrect.left = pos.x;
-		boxrect.top = pos.y;
+	void setOffset(sf::Vector2f o) { elementoffset = o; }
+	void setPosition(sf::Vector2f pos);
+	void setCenter(sf::Vector2f p) { setPosition(sf::Vector2f(p.x - (boxrect.width / 2), p.y - (boxrect.height / 2))); }
+	sf::Vector2f getPosition() { return sf::Vector2f(boxrect.left, boxrect.top); }
+	sf::Vector2f getCenter() { return sf::Vector2f(boxrect.left, boxrect.top) + (sf::Vector2f(boxrect.width, boxrect.height) / 2.f); }
+	sf::Vector2f getOffset() { return elementoffset; }
 
-		std::cout << "pos: " << offset.x << " " << offset.y << "\n";
-	}
-	sf::Vector2f getPosition() {
-		return sf::Vector2f(boxrect.left, boxrect.top);
+	void updatePosition(sf::Vector2f o = sf::Vector2f()) {
+		setOffset(getOffset() + o);
+		setPosition(getPosition());
 	}
 
 	virtual int getCharacterSize() { return 0; }
 	virtual void setCharacterSize(int s) {}
-
-	void setCenter(sf::Vector2f p) {
-		//boxrect.left = p.x - (boxrect.width / 2);
-		//boxrect.top = p.y - (boxrect.height / 2);
-		setPosition(sf::Vector2f(p.x - (boxrect.width / 2), p.y - (boxrect.height / 2)));
-	}
-	sf::Vector2f getCenter() { return sf::Vector2f(boxrect.left, boxrect.top) + (sf::Vector2f(boxrect.width, boxrect.height) / 2.f); }
 
 	void setTexture(sf::Texture* t) { states.texture = t; }
 	void setRect(sf::IntRect b) { boxrect = b; }
@@ -66,7 +60,6 @@ public:
 	sf::IntRect getRect() { return boxrect; }
 	CONTROL_STATES getState() { return currentcontrol; }
 
-	GUIelement* oldpointer = nullptr;
 
 protected:
 	GUIelement* parent = nullptr;
@@ -74,6 +67,7 @@ protected:
 	std::vector<sf::Vertex> vertexs;
 	sf::RenderStates states;
 	sf::IntRect boxrect;
+	sf::Vector2f elementoffset;
 	CONTROL_STATES currentcontrol = CONTROL_STATES::NONE;
 	ALIGN horizontal_alignment = ALIGN::NONE;
 	ALIGN vertical_alignment = ALIGN::NONE;

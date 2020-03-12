@@ -31,10 +31,10 @@ GUImanager::GUImanager(sf::RenderWindow* window, InputHandler* input, RoomManage
 	button.setNormalTexture(&roommanager->textures["guibutton"]);
 	button.setHoverTexture(&roommanager->textures["guibuttonhover"]);
 	button.setPressedTexture(&roommanager->textures["guibuttonpressed"]);
-	button.setRect(sf::IntRect(0, 50, 64, 24));
-	button.setCenter(sf::Vector2f(0, 0));
+	button.setRect(sf::IntRect(0, 0, 64, 24));
+	//button.setCenter(sf::Vector2f(0, 0));
 	button.setTileSize(8);
-	button.setText(&roommanager->fonts["font"], "ciao");
+	button.setText(&roommanager->fonts["font"], "CiAoBiTcH");
 	button.load();
 	elements.push_back(new GUIbox(guibox));
 	elements.push_back(new GUIbutton(button));

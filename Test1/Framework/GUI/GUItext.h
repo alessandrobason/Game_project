@@ -1,8 +1,9 @@
 #pragma once
 #include "GUIelement.h"
 
-class GUItext {
+class GUItext : public GUIelement {
 public:
+	GUItext(const GUItext& copy) : GUIelement(copy) {}
 	GUItext(GUIelement* p) { parent = p; }
 
 	void setFont(sf::Font* f) { 
@@ -10,26 +11,39 @@ public:
 		text.setFont(*font);
 	}
 
-	void load(std::string t, unsigned size, sf::Color color = sf::Color::White) {
+	void setText(std::string t) { text.setString(t); }
+	void setCharacterSize(unsigned s) { text.setCharacterSize(s); }
+
+	void load(sf::Color color = sf::Color::White) {
 		if (font == nullptr) {
 			std::cout << "Font is not loaded\n";
 			abort();
 		}
 
-		sf::Texture& texture = const_cast<sf::Texture&>(font->getTexture(size));
+		text.setFillColor(color);
+
+		sf::Texture& texture = const_cast<sf::Texture&>(font->getTexture(text.getCharacterSize()));
 		texture.setSmooth(false);
 
-		text.setString(t);
-		text.setCharacterSize(size);
-		text.setFillColor(color);
+		boxrect = (sf::IntRect)text.getLocalBounds();
+
+		alignElement();
+		update();
 	}
 
 	void update() {
-		text.setPosition(sf::Vector2f(parent->getRect().left, parent->getRect().top));
+		text.setPosition(sf::Vector2f(boxrect.left, boxrect.top));
 	}
 
 	void draw(sf::RenderWindow* w) {
+		sf::RectangleShape aaa;
+		aaa.setPosition(getPosition());
+		aaa.setSize(sf::Vector2f(boxrect.width, boxrect.height));
+		aaa.setFillColor(sf::Color::Transparent);
+		aaa.setOutlineColor(sf::Color::Red);
+		aaa.setOutlineThickness(1.f);
 		w->draw(text);
+		//w->draw(aaa);
 	}
 
 	int getCharacterSize() { return text.getCharacterSize(); }
@@ -41,7 +55,7 @@ public:
 	}
 
 protected:
-	GUIelement* parent = nullptr;
+	//GUIelement* parent = nullptr;
 	sf::Text text;
 	sf::Font* font = nullptr;
 };

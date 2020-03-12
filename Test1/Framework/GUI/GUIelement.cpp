@@ -17,13 +17,24 @@ void GUIelement::draw(sf::RenderWindow* w) {
 	w->draw(vertexs.data(), vertexs.size(), sf::Quads, states);
 }
 
+void GUIelement::setPosition(sf::Vector2f pos) {
+	pos += elementoffset;
+	sf::Vector2f offset = pos - getPosition();
+	states.transform.translate(offset);
+	boxrect.left = pos.x;
+	boxrect.top = pos.y;
+
+	std::cout << "pos: " << offset.x << " " << offset.y << " " << elementoffset.x << " " << elementoffset.y << "\n";
+}
+
+
 void GUIelement::alignElement() {
 	// HORIZONTAL
 	switch (horizontal_alignment)
 	{
 	case ALIGN::CENTER:
 		//std::cout << "parent center: " << parent->getCenter().x << " " << parent->getCenter().y << "\n";
-		//setCenter(sf::Vector2f(parent->getCenter().x, getCenter().y));
+		setCenter(sf::Vector2f(parent->getCenter().x, getCenter().y));
 		break;
 	case ALIGN::LEFT:
 		setPosition(sf::Vector2f(parent->boxrect.left, boxrect.top));
@@ -36,7 +47,7 @@ void GUIelement::alignElement() {
 	switch (vertical_alignment)
 	{
 	case ALIGN::CENTER:
-		//setCenter(sf::Vector2f(getCenter().x, parent->getCenter().y));
+		setCenter(sf::Vector2f(getCenter().x, parent->getCenter().y));
 		break;
 	case ALIGN::TOP:
 		setPosition(sf::Vector2f(boxrect.left, parent->boxrect.top));
@@ -46,7 +57,7 @@ void GUIelement::alignElement() {
 		break;
 	}
 
-	//setPosition(sf::Vector2f(192 / 2, 144 / 2));
+	//setCenter(sf::Vector2f(192 / 2, 144 / 2));
 
 	std::cout << "##---###" << getPosition().x << " " << getPosition().y << "\n";
 }
