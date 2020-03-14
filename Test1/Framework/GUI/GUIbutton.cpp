@@ -1,11 +1,14 @@
 #include "GUIbutton.h"
 
 GUIbutton::GUIbutton(const GUIbutton& copy) : GUItiledelement(copy) {
+	id = copy.id;
 	tilesize = copy.tilesize;
 	normal = copy.normal;
 	hover = copy.hover;
 	pressed = copy.pressed;
 	insidetext = copy.insidetext;
+	callback = copy.callback;
+	callbackobject = copy.callbackobject;
 }
 
 void GUIbutton::setText(sf::Font* f, std::string text) {
@@ -21,6 +24,7 @@ void GUIbutton::draw(sf::RenderWindow* w) {
 }
 
 void GUIbutton::trigger() {
+	callback(*callbackobject, id);
 }
 
 void GUIbutton::load() {
@@ -43,9 +47,8 @@ void GUIbutton::changeControlState(CONTROL_STATES newcontrol) {
 		if (newcontrol != currentcontrol) {
 			//std::cout << "Nothing the button\r";
 			states.texture = normal;
-			if (newcontrol != currentcontrol && currentcontrol == CONTROL_STATES::CLICK) {
-				insidetext.setOffset(sf::Vector2f(0, -2));
-				insidetext.updatePosition();
+			if (newcontrol != currentcontrol && currentcontrol == CONTROL_STATES::CLICKDOWN) {
+				insidetext.updatePosition(sf::Vector2f(0, -2));
 				insidetext.update();
 			}
 		}
@@ -54,19 +57,21 @@ void GUIbutton::changeControlState(CONTROL_STATES newcontrol) {
 		if (newcontrol != currentcontrol) {
 			//std::cout << "Hovering the button\r";
 			states.texture = hover;
-			if (newcontrol != currentcontrol && currentcontrol == CONTROL_STATES::CLICK) {
-				insidetext.setOffset(sf::Vector2f(0, -2));
-				insidetext.updatePosition();
+			if (newcontrol != currentcontrol && currentcontrol == CONTROL_STATES::CLICKDOWN) {
+				insidetext.updatePosition(sf::Vector2f(0, -2));
 				insidetext.update();
 			}
 		}
 		break;
-	case CONTROL_STATES::CLICK:
+	case CONTROL_STATES::CLICKDOWN:
 		if (newcontrol != currentcontrol) {
-			//std::cout << "Pressing the button\r";
 			states.texture = pressed;
 			insidetext.updatePosition(sf::Vector2f(0, 2));
 			insidetext.update();
+		}
+		break;
+	case CONTROL_STATES::CLICKUP:
+		if (newcontrol != currentcontrol) {
 			trigger();
 		}
 		break;

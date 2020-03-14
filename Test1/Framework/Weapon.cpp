@@ -12,12 +12,12 @@ void Weapon::handleInput(float dt) {
 	if (in->isMouseLPressed()) {
 		shoot();
 	}
+	angle_to_mouse -= 45;
 }
 
 void Weapon::update(float dt) {
-	angle_to_mouse -= 45;
-	setRotation(angle_to_mouse);
 	projectiles.update(dt);
+	setRotation(angle_to_mouse);
 }
 
 void Weapon::drawArrows(sf::RenderWindow* w) {

@@ -8,13 +8,13 @@ Room::Room(std::string fold, sf::RenderWindow* window, InputHandler* input, Room
 
 	in = input;
 	w = window;
-	roomManager = rm;
+	roommanager = rm;
 
 	main_camera = in->getView();
 	w->setView(main_camera);
 
-	images = &roomManager->images;
-	isloaded = &roomManager->tilemapData[fold].loaded;
+	images = &roommanager->images;
+	isloaded = &roommanager->tilemapData[fold].loaded;
 }
 
 Room::~Room() {

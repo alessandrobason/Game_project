@@ -12,7 +12,8 @@ public:
 	enum class CONTROL_STATES {
 		NONE,
 		HOVER,
-		CLICK
+		CLICKDOWN,
+		CLICKUP
 	};
 
 	enum class ALIGN {
@@ -28,11 +29,14 @@ public:
 	bool enabled = true;
 	GUIelement* oldpointer = nullptr;
 
+	virtual void update(float dt) {}
 	virtual void draw(sf::RenderWindow* w);
 
 	virtual void trigger() {}
 	virtual void load() {}
 	virtual void changeControlState(CONTROL_STATES newcontrol) {}
+
+	bool isdead() { return dead; }
 
 	void setParent(GUIelement* p) { parent = p; zbuffer = parent->zbuffer + 1; }
 	GUIelement* getParent() { return parent; }
@@ -45,7 +49,7 @@ public:
 	sf::Vector2f getOffset() { return elementoffset; }
 
 	void updatePosition(sf::Vector2f o = sf::Vector2f()) {
-		setOffset(getOffset() + o);
+		if(o != sf::Vector2f()) setOffset(o);
 		setPosition(getPosition());
 	}
 
@@ -53,24 +57,26 @@ public:
 	virtual void setCharacterSize(int s) {}
 
 	void setTexture(sf::Texture* t) { states.texture = t; }
-	void setRect(sf::IntRect b) { boxrect = b; }
+	void setRect(sf::FloatRect b) { boxrect = b; }
+
+	virtual void appendQuad(sf::Vertex v, sf::Vector2f size) {}
 
 	void setAlign(ALIGN h, ALIGN v) { horizontal_alignment = h; vertical_alignment = v; }
 
-	sf::IntRect getRect() { return boxrect; }
+	sf::FloatRect getRect() { return boxrect; }
 	CONTROL_STATES getState() { return currentcontrol; }
-
 
 protected:
 	GUIelement* parent = nullptr;
 
 	std::vector<sf::Vertex> vertexs;
 	sf::RenderStates states;
-	sf::IntRect boxrect;
+	sf::FloatRect boxrect;
 	sf::Vector2f elementoffset;
 	CONTROL_STATES currentcontrol = CONTROL_STATES::NONE;
 	ALIGN horizontal_alignment = ALIGN::NONE;
 	ALIGN vertical_alignment = ALIGN::NONE;
+	bool dead = false;
 
 	void alignElement();
 };

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
 class GameObject;
 
@@ -25,9 +26,12 @@ protected:
 	bool playing = true;
 	int current_frame = 0;
 	std::string current_animation = "";
-	std::map<std::string, Anim> animations;
+	// apparently unordered_map is faster than map
+	// if you need a lot of fetch, but not a lot of
+	// insert/delete
+	std::unordered_map<std::string, Anim> animations;
 
-	GameObject* parent;
+	GameObject* parent = nullptr;
 
 	float elapsedTime = 0;
 

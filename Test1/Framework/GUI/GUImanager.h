@@ -1,17 +1,19 @@
 #pragma once
 #include "../InputHandler.h"
 #include "../RoomManager.fwd.h"
+#include "GUIpanel.h"
 #include "GUIbox.h"
 #include "GUIbutton.h"
+#include "GUIsplashscreen.h"
 
 class GUImanager {
-	InputHandler* in = nullptr;
-	sf::RenderWindow* w = nullptr;
-	RoomManager* roommanager = nullptr;
+	InputHandler* GUIin = nullptr;
+	sf::RenderWindow* GUIw = nullptr;
+	bool wasmousedown = false;
 
-	//GUIbox guibox;
+protected:
+	RoomManager* GUIroommanager = nullptr;
 	std::vector<GUIelement*> elements;
-	std::vector<sf::IntRect> elementsrects;
 
 	struct textureload {
 		std::string n;
@@ -29,7 +31,7 @@ public:
 	void loadTextures(std::vector<textureload> texturenames);
 	void loadFonts(std::vector<fontload> fontnames);
 
-	void handleInput(float dt);
-	void update(float dt);
-	void draw();
+	virtual void handleInput(float dt);
+	virtual void update(float dt);
+	virtual void draw();
 };

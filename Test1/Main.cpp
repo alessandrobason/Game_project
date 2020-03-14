@@ -15,8 +15,7 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 			window->close();
 			break;
 		case sf::Event::Resized:
-			in->resizeView(sf::Vector2u(event.size.width, event.size.height), sf::Vector2u(192, 144));
-			//window->setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
+			in->resizeView(sf::Vector2u(event.size.width, event.size.height));
 			break;
 		case sf::Event::KeyPressed:
 			in->setKeyDown(event.key.code);
@@ -40,30 +39,31 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 				in->setMouseRUp();
 			break;
 		default:
-			// don't handle other events
 			break;
 		}
 	}
 }
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(192*5, 144*5), "Game Project");
+	const sf::Vector2f screensize = sf::Vector2f(160, 144);
+	sf::RenderWindow window(sf::VideoMode(screensize.x*5, screensize.y*5), "Game Project");
 	InputHandler *in = new InputHandler(&window);
+	in->setScreenSize(screensize);
 
-	RoomManager roomManager;
+	RoomManager roommanager;
 
 	sf::Clock deltaClock;
 
-	roomManager.setData(&window, in);
+	roommanager.setData(&window, in);
 	// Game Loop
 	while (window.isOpen()) {
 		// Handle window events.
 		windowProcess(&window, in);
 
 		float dt = deltaClock.restart().asSeconds();
-		roomManager.handleInput(dt);
-		roomManager.update(dt);
-		roomManager.draw();
+		roommanager.handleInput(dt);
+		roommanager.update(dt);
+		roommanager.draw();
 	}
 }
 

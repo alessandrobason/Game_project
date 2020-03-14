@@ -23,10 +23,7 @@ void GUIelement::setPosition(sf::Vector2f pos) {
 	states.transform.translate(offset);
 	boxrect.left = pos.x;
 	boxrect.top = pos.y;
-
-	std::cout << "pos: " << offset.x << " " << offset.y << " " << elementoffset.x << " " << elementoffset.y << "\n";
 }
-
 
 void GUIelement::alignElement() {
 	// HORIZONTAL

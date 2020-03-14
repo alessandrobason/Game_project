@@ -139,8 +139,10 @@ void Player::handleInput(float dt) {
 
 void Player::update(float dt) {
     animSprite.animate(dt);
-    move(vel * dt);
     bow.update(dt);
+    if (canmove) {
+        move(vel * dt);
+    }
 }
 
 void Player::draw() {

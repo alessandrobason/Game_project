@@ -46,7 +46,7 @@ protected:
 	sf::RenderWindow* w = nullptr;
 
 	// room manager
-	RoomManager* roomManager = nullptr;
+	RoomManager* roommanager = nullptr;
 
 	// useful information
 	std::string FOLDER;

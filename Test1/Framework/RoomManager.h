@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <unordered_map>
 #include "InputHandler.h"
 #include "Tilemap.h"
 #include "Tweening.h"
@@ -8,15 +9,31 @@
 #include "RoomManager.fwd.h"
 #include "../Map_room.h"
 #include "MainScreen.h"
+#include "SplashScreens.h"
 
 class RoomManager {
+public:
+	enum RoomSides {
+		TOP,
+		BOTTOM,
+		LEFT,
+		RIGHT
+	};
+	enum class STATES {
+		MENU,
+		MAP,
+		MAPTRANSITION,
+		MENUTRANSITION
+	};
+
+private:
 	struct Map {
 		int width = 0;
 		int height = 0;
 		int currentRoom = -1;
 		std::vector<int> data;
 		std::vector<std::string> files;
-	};
+	} map;
 
 	struct MapMovement {
 		int oldroom;
@@ -25,29 +42,31 @@ class RoomManager {
 		Tweening<sf::Vector2f> playertween;
 		Tweening<sf::Vector2f> cameratween;
 		bool wasdebug;
-	};
+	} mapmovement;
 
-	enum class STATES {
-		MAINSCREEN,
-		MAP,
-		MAPTRANSITION
-	};
+	struct MenuTransition {
+		Tweening<sf::Vector2f> uppersquaretween;
+		Tweening<sf::Vector2f> bottomsquaretween;
+		sf::RectangleShape uppersquare;
+		sf::RectangleShape bottomsquare;
+		std::string newmenu;
+		bool actually_finished = false;
+	} menutransitiondata;
 
 	STATES currentstate;
 
 	std::map<std::string, Enemy> enemycopies;
 
-	MapMovement mapmovement;
-
 	Player p;
-	Map map;
 	std::vector<Map_room*> maprooms;
-	Room* mainscreen = nullptr;
-	//std::map<std::string, Room*> rooms;
 	std::string currentroom = "";
 	InputHandler* in = nullptr;
 	sf::RenderWindow* w = nullptr;
-	//sf::Clock* deltaclock = nullptr;
+	
+	std::unordered_map<std::string, Room*> menuscreens;
+	std::string currentmenu = "";
+	//Room* mainscreen = nullptr;
+	//Room* splashscreen = nullptr;
 
 	JSONparser enemydata;
 
@@ -58,12 +77,6 @@ class RoomManager {
 
 	sf::Thread loadingThread;
 public:
-	enum RoomSides {
-		TOP,
-		BOTTOM,
-		LEFT,
-		RIGHT
-	};
 
 	RoomManager();
 	~RoomManager();
@@ -79,10 +92,18 @@ public:
 	Enemy& getEnemyCopy(std::string enemy) { return enemycopies[enemy]; }
 
 	void moveRoom(int side);
+	void moveMenu(std::string newmenu);
 
 	void animatetransition(float dt);
+	void menuTransition(float dt);
+	void drawMenuTransition();
 
 	void loadEnemies();
+
+	void setCurrentState(STATES s) { currentstate = s; }
+	STATES getCurrentState() { return currentstate; }
+	void setCurrentMenu(std::string m) { currentmenu = m; }
+	std::string getCurrentMenu() { return currentmenu; }
 
 	// dictionary with all the textures of the game
 	std::map<std::string, sf::Texture> textures;

@@ -2,10 +2,10 @@
 #include "Framework/RoomManager.h"
 
 Map_room::Map_room(RoomManager* rm, sf::RenderWindow* window, InputHandler* input, std::string fold) : Room(fold, window, input, rm) {
-	layers = &roomManager->tilemapData[fold].layers;
-	tilemap_data = &roomManager->tilemapData[fold].tilemap_data;
-	tilemap = &roomManager->tilemapData[fold].tilemap;
-	shader = &roomManager->tilemapData[fold].shader;
+	layers = &roommanager->tilemapData[fold].layers;
+	tilemap_data = &roommanager->tilemapData[fold].tilemap_data;
+	tilemap = &roommanager->tilemapData[fold].tilemap;
+	shader = &roommanager->tilemapData[fold].shader;
 }
 
 Map_room::~Map_room() {
@@ -22,7 +22,7 @@ Map_room::~Map_room() {
 void Map_room::load(sf::Vector2f offs) {
 	offset = offs;
 	Room::load(offset);
-	if (roomManager->tilemapData[FOLDER].loaded) return;
+	if (roommanager->tilemapData[FOLDER].loaded) return;
 	std::cout << "Loading: " << FOLDER << "\n";
 	std::string tileset_json;
 	std::string tileset_file;
@@ -139,7 +139,7 @@ void Map_room::load(sf::Vector2f offs) {
 		position.y += tilemap_json->doc["enemies"].arr[i].obj["position"].obj["y"].i;
 		
 		if (name == "octorock") {
-			sceneObjects.push_back(new Octorock(roomManager->getEnemyCopy(name)));
+			sceneObjects.push_back(new Octorock(roommanager->getEnemyCopy(name)));
 		}
 		sceneObjects.back()->setPosition(position);
 		std::cout << "##### LOADING ENEMIES #####\n";
@@ -226,7 +226,7 @@ void Map_room::update(float dt) {
 	// check if player is going in another map //
 	for (size_t i = 0; i < 4; i++) {
 		if (p->collider.Check_Collision(bounds[i])) {
-			roomManager->moveRoom(static_cast<int>(i));
+			roommanager->moveRoom(static_cast<int>(i));
 			return;
 		}
 	}
@@ -377,8 +377,8 @@ sf::Vector2f Map_room::moveRoom(sf::Transform t) {
 
 void Map_room::setBounds(sf::Vector2f offset) {
 	this->offset = offset;
-	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , static_cast<float>(roomManager->MAPSIZE), 0.1f); //top
-	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roomManager->MAPSIZE, static_cast<float>(roomManager->MAPSIZE), 0.1f); //bottom
-	bounds[2] = sf::FloatRect(offset.x						 , offset.y						  , 0.1f									, static_cast<float>(roomManager->MAPSIZE)); //left
-	bounds[3] = sf::FloatRect(offset.x + roomManager->MAPSIZE, offset.y						  , 0.1f									, static_cast<float>(roomManager->MAPSIZE)); //right
+	bounds[0] = sf::FloatRect(offset.x						 , offset.y						  , static_cast<float>(roommanager->MAPSIZE), 0.1f); //top
+	bounds[1] = sf::FloatRect(offset.x						 , offset.y + roommanager->MAPSIZE, static_cast<float>(roommanager->MAPSIZE), 0.1f); //bottom
+	bounds[2] = sf::FloatRect(offset.x						 , offset.y						  , 0.1f									, static_cast<float>(roommanager->MAPSIZE)); //left
+	bounds[3] = sf::FloatRect(offset.x + roommanager->MAPSIZE, offset.y						  , 0.1f									, static_cast<float>(roommanager->MAPSIZE)); //right
 }

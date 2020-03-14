@@ -1,16 +1,31 @@
 #include "RoomManager.h"
 
 RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
-	currentstate = STATES::MAINSCREEN;
+	currentstate = STATES::MENU;
+	currentmenu = "splashscreen";
 }
 
 void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
 	w = win; 
 	in = inp; 
+	
+	menutransitiondata.uppersquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, in->getScreenSize().y / 2), 0.5f);
+	menutransitiondata.bottomsquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, -in->getScreenSize().y / 2), 0.5f);
 
-	mainscreen = new MainScreen(w, in, this);
+	menutransitiondata.uppersquare = sf::RectangleShape(sf::Vector2f(in->getScreenSize().x, 0));
+	menutransitiondata.uppersquare.setPosition(sf::Vector2f());
+	menutransitiondata.uppersquare.setFillColor(sf::Color::Black);
+	menutransitiondata.bottomsquare = sf::RectangleShape(sf::Vector2f(in->getScreenSize().x, 0));
+	menutransitiondata.bottomsquare.setPosition(sf::Vector2f(0, in->getScreenSize().y));
+	menutransitiondata.bottomsquare.setFillColor(sf::Color::Black);
+
+	menuscreens["startscreen"] = new MainScreen(w, in, this);
+	menuscreens["splashscreen"] = new SplashScreens(w, in, this);
+	//mainscreen = new MainScreen(w, in, this);
+	//splashscreen= new SplashScreens(w, in, this);
 
 	p = Player(in, this, w);
+	p.setCanMove(false);
 
 	enemydata.readJSON("GameObjects/enemy_data.json");
 
@@ -90,27 +105,29 @@ void RoomManager::loadEnemies() {
 
 void RoomManager::handleInput(float dt) {
 	switch (currentstate) {
-	case RoomManager::STATES::MAINSCREEN:
-		mainscreen->handleInput(dt);
+	case RoomManager::STATES::MENU:
+		menuscreens[currentmenu]->handleInput(dt);
 		break;
 	case RoomManager::STATES::MAP:
 		maprooms[map.data[map.currentRoom]]->handleInput(dt);
-		break;
-	case RoomManager::STATES::MAPTRANSITION:
 		break;
 	}
 }
 
 void RoomManager::update(float dt) {
 	switch (currentstate) {
-	case RoomManager::STATES::MAINSCREEN:
-		mainscreen->update(dt);
+	case RoomManager::STATES::MENU:
+		menuscreens[currentmenu]->update(dt);
 		break;
 	case RoomManager::STATES::MAP:
 		maprooms[map.data[map.currentRoom]]->update(dt);
 		break;
 	case RoomManager::STATES::MAPTRANSITION:
 		animatetransition(dt);
+		break;
+	case RoomManager::STATES::MENUTRANSITION:
+		if (currentmenu == "game") maprooms[map.data[map.currentRoom]]->update(dt);
+		menuTransition(dt);
 		break;
 	}
 }
@@ -119,8 +136,8 @@ void RoomManager::draw() {
 	//w->clear();
 	w->clear(sf::Color::Cyan);
 	switch (currentstate) {
-	case RoomManager::STATES::MAINSCREEN:
-		mainscreen->draw();
+	case RoomManager::STATES::MENU:
+		menuscreens[currentmenu]->draw();
 		break;
 	case RoomManager::STATES::MAP:
 		maprooms[map.data[map.currentRoom]]->draw();
@@ -128,6 +145,11 @@ void RoomManager::draw() {
 	case RoomManager::STATES::MAPTRANSITION:
 		maprooms[mapmovement.oldroom]->draw();
 		maprooms[map.data[map.currentRoom]]->draw();
+		break;
+	case RoomManager::STATES::MENUTRANSITION:
+		if(currentmenu == "game") maprooms[map.data[map.currentRoom]]->draw();
+		else menuscreens[currentmenu]->draw();
+		drawMenuTransition();
 		break;
 	}
 	w->display();
@@ -230,7 +252,6 @@ void RoomManager::moveRoom(int side) {
 	mapmovement.playertween = Tweening<sf::Vector2f>(startPlayer, finalplayer, 0.3f);
 	
 	currentstate = STATES::MAPTRANSITION;
-	//movingmap = true;
 }
 
 void RoomManager::animatetransition(float dt) {
@@ -251,7 +272,56 @@ void RoomManager::animatetransition(float dt) {
 		getCurrentRoom()->isdebug = mapmovement.wasdebug;
 		getCurrentRoom()->setMainCamera(mapmovement.maincamera);
 		currentstate = STATES::MAP;
-		//movingmap = false;
 	}
 	
+}
+
+void RoomManager::moveMenu(std::string newmenu) {
+	menutransitiondata.newmenu = newmenu;
+	currentstate = STATES::MENUTRANSITION;
+}
+
+void RoomManager::menuTransition(float dt) {
+	menutransitiondata.uppersquaretween.update(dt);
+	menutransitiondata.bottomsquaretween.update(dt);
+
+	menutransitiondata.uppersquare.setSize(menutransitiondata.uppersquaretween.getValue());
+	menutransitiondata.bottomsquare.setSize(menutransitiondata.bottomsquaretween.getValue());
+	if (menutransitiondata.uppersquaretween.isfinished() && menutransitiondata.bottomsquaretween.isfinished()) {
+		std::string newmenu = menutransitiondata.newmenu;
+
+		if (menutransitiondata.actually_finished) {
+			if (newmenu != "game") {
+				currentmenu = newmenu;
+				currentstate = STATES::MENU;
+			}
+			else {
+				currentstate = STATES::MAP;
+				p.setCanMove(true);
+			}
+			menutransitiondata.actually_finished = false;
+			menutransitiondata.uppersquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, in->getScreenSize().y / 2), 0.5f);
+			menutransitiondata.bottomsquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, -in->getScreenSize().y / 2), 0.5f);
+
+		}
+		else {
+			currentmenu = newmenu;
+			menutransitiondata.uppersquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, in->getScreenSize().y / 2), sf::Vector2f(in->getScreenSize().x, 0), 0.5f);
+			menutransitiondata.bottomsquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, -in->getScreenSize().y / 2), sf::Vector2f(in->getScreenSize().x, 0), 0.5f);
+			menutransitiondata.actually_finished = true;
+			sf::Vector2f offsetU = sf::Vector2f();
+			sf::Vector2f offsetB = sf::Vector2f(0, in->getScreenSize().y);
+			if (newmenu == "game") {
+				offsetU = getCurrentRoom()->getOffset();
+				offsetB += offsetU;
+			}
+			menutransitiondata.uppersquare.setPosition(offsetU);
+			menutransitiondata.bottomsquare.setPosition(offsetB);
+		}
+	}
+}
+
+void RoomManager::drawMenuTransition() {
+	w->draw(menutransitiondata.uppersquare);
+	w->draw(menutransitiondata.bottomsquare);
 }

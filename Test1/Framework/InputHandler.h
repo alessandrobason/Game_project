@@ -47,11 +47,11 @@ public:
 	}
 
 
-	void resizeView(sf::Vector2u windowsize, sf::Vector2u designedsize) {
+	void resizeView(sf::Vector2u windowsize) {
 		sf::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
 
-		float screenwidth = static_cast<float>(windowsize.x) / designedsize.x;
-		float screenheight = static_cast<float>(windowsize.y) / designedsize.y;
+		float screenwidth = static_cast<float>(windowsize.x) / screensize.x;
+		float screenheight = static_cast<float>(windowsize.y) / screensize.y;
 
 		if (screenwidth > screenheight) {
 			viewport.width = screenheight / screenwidth;
@@ -62,12 +62,13 @@ public:
 			viewport.top = (1.f - viewport.height) / 2.f;
 		}
 
-		sf::View view(sf::FloatRect(0, 0, static_cast<float>(designedsize.x), static_cast<float>(designedsize.y)));
+		sf::View view(sf::FloatRect(0, 0, static_cast<float>(screensize.x), static_cast<float>(screensize.y)));
 		view.setViewport(viewport);
 		windowview = view;
 	}
 
 	sf::View getView() { return windowview; }
+	void setScreenSize(sf::Vector2f s) { const_cast<sf::Vector2f&>(screensize) = s; windowview.setSize(s); }
 	const sf::Vector2f getScreenSize() { return screensize; }
 
 	enum KEY_ENUM {
@@ -80,7 +81,8 @@ public:
 
 private:
 	sf::RenderWindow* w = nullptr;
-	const sf::Vector2f screensize = sf::Vector2f(192, 144);
+	// gameboy screen size
+	const sf::Vector2f screensize = sf::Vector2f(0, 0);
 
 	struct Mouse {
 		sf::Vector2i position;
@@ -94,6 +96,6 @@ private:
 	bool pressed_keys[256]{ false };
 	Mouse mouse;
 
-	sf::View windowview = sf::View(sf::FloatRect(0, 0, 16 * 12, 16 * 9));
+	sf::View windowview = sf::View(sf::FloatRect(0, 0, screensize.x, screensize.y));
 };
 

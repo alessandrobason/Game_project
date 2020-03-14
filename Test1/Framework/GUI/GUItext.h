@@ -25,7 +25,7 @@ public:
 		sf::Texture& texture = const_cast<sf::Texture&>(font->getTexture(text.getCharacterSize()));
 		texture.setSmooth(false);
 
-		boxrect = (sf::IntRect)text.getLocalBounds();
+		boxrect = text.getLocalBounds();
 
 		alignElement();
 		update();

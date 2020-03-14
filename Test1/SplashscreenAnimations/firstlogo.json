@@ -1,0 +1,9 @@
+{
+  "images": [ "GUI/testanimation.png" ],
+  "animations": [
+    {
+      "image": 0,
+      "color": 
+    }
+  ]
+}

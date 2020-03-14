@@ -35,7 +35,7 @@ public:
 
 protected:
 	InputHandler* in = nullptr;
-	float angle_to_mouse = 0.f;
+	float angle_to_mouse = 180.f;
 	
 	sf::Vector2f texture_coordinates;
 

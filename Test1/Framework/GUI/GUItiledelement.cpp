@@ -32,7 +32,7 @@ void GUItiledelement::appendQuad(sf::Vertex v, sf::Vector2f size) {
 
 void GUItiledelement::nineslice(int tilesize) {
 	sf::Vertex v;
-	sf::IntRect boxrectnine = boxrect;
+	sf::FloatRect boxrectnine = boxrect;
 	boxrectnine.width += boxrect.left;
 	boxrectnine.height += boxrect.top;
 

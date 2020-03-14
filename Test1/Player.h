@@ -28,6 +28,8 @@ private:
 
 	bool draw_weapon_over = false;
 
+	bool canmove = true;
+
 public:
 	Player();
 	Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win);
@@ -38,6 +40,9 @@ public:
 	void drawDebug() override;
 
 	void move(sf::Vector2f offset);
+
+	void setCanMove(bool c) { canmove = c; }
+	bool getCanMove() { return canmove; }
 
 	void setPosition(sf::Vector2f pos);
 	DIRECTIONS getDirection() { return last_direction; }
