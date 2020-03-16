@@ -152,10 +152,6 @@ void Map_room::load(sf::Vector2f offs) {
 		sceneColliders.push_back(&tilemap->collisions[i]);
 	}
 
-	for (size_t i = 1; i < sceneObjects.size(); i++) {
-		sceneColliders.push_back(&sceneObjects[i]->collider);
-	}
-
 	sf::VertexArray over = tilemap->getOver();
 
 	/*
@@ -170,7 +166,7 @@ void Map_room::load(sf::Vector2f offs) {
 void Map_room::setPlayer(Player* pl) {
 	p = pl;
 	sceneObjects.push_back(p);
-	sceneColliders.push_back(&p->collider);
+	//sceneColliders.push_back(&p->collider);
 }
 
 void Map_room::removePlayer() {
@@ -207,19 +203,32 @@ void Map_room::handleInput(float dt) {
 void Map_room::update(float dt) {
 	tilemap->animate(dt);
 
+	//update every gameobject (player too)
 	for (size_t i = 0; i < sceneObjects.size(); i++) {
-		sceneObjects[i]->update(dt);
+		if (sceneObjects[i] == p) sceneObjects[i]->update(dt);
+		else {
+			sceneObjects[i]->Advance();
+			//check if player has gone inside gameobject checkbox (used for enemies)
+			sf::FloatRect rect = sceneObjects[i]->checkbox.rect;
+			if (p->checkbox.Check_Collision(rect))	sceneObjects[i]->isPlayerInside(true);
+			else									sceneObjects[i]->isPlayerInside(false);
+			sceneObjects[i]->update(dt);
+		}
 	}
 
+	// check if player is colliding with anything
 	for (size_t i = 0; i < sceneColliders.size(); i++) {
 		sf::FloatRect rect = sceneColliders[i]->rect;
-		if (p->collider.Check_Collision(rect)) {
-			sf::Vector2f revVel = p->collider.getCollisionSide(rect, p->oldVel);
-			p->move(revVel);
-			sceneColliders[i]->setDebugColor(sf::Color::Blue);
-		}
-		else {
-			sceneColliders[i]->setDebugColor(sf::Color::Red);
+		for (size_t j = 0; j < sceneObjects.size(); j++) {
+			if (sceneObjects[j]->collider.Check_Collision(rect)) {
+				sf::Vector2f revVel = sceneObjects[j]->collider.getCollisionSide(rect, sceneObjects[j]->oldVel);
+				sceneObjects[j]->move(revVel);
+				sceneObjects[j]->collided = true;
+				sceneColliders[i]->setDebugColor(sf::Color::Blue);
+			}
+			else {
+				sceneColliders[i]->setDebugColor(sf::Color::Red);
+			}
 		}
 	}
 
@@ -279,8 +288,8 @@ void Map_room::draw() {
 	// draw debug
 	if (isdebug) {
 		p->drawDebug();
-		for (size_t i = 0; i < sceneColliders.size(); i++) {
-			sceneColliders[i]->drawDebug(w);
+		for (size_t i = 0; i < sceneObjects.size(); i++) {
+			sceneObjects[i]->drawDebug();
 		}
 	}
 

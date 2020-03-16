@@ -28,6 +28,10 @@ public:
 		return r;
 	}
 
+	static sf::Vector2f normalize(sf::Vector2f v) {
+		return v * InvSqrt(magnitude2(v));
+	}
+
 	static float magnitude2(sf::Vector2f v) {
 		return v.x * v.x + v.y * v.y;		
 	}

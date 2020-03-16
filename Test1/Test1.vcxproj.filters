@@ -164,6 +164,9 @@
     <ClInclude Include="Framework\GUI\GUIcallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\FiniteStateMachine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\forest_tileset.json" />

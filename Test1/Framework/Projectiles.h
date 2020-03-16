@@ -19,7 +19,8 @@ class Projectiles {
 	};
 
 	sf::Vector2f projectilesize;
-	sf::FloatRect projectilehitbox = sf::FloatRect(4, 4, 4, 4);
+	sf::FloatRect projectilehitbox;
+	sf::Vector2f orientation = sf::Vector2f(0, 0);
 
 	float speed = 100.f;
 	float damage = 0.f;
@@ -47,7 +48,9 @@ public:
 	void setGameObjects(std::vector<GameObject*>* g) { gameobjects = g; }
 	void setTilemap(std::vector<Collision*>* t) { tilemapcollisions = t; }
 	void setHitBox(sf::FloatRect hb) { projectilehitbox = hb; }
+	void setSize(sf::Vector2f s) { projectilesize = s; }
 	void setDamage(float d) { damage = d; }
+	void setOrientation(sf::Vector2f o) { orientation = o; }
 
 	void update(float dt);
 

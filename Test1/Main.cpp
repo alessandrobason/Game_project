@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include "Framework/RoomManager.h"
 
 float min(float a, float b) { return (a < b ? a : b); }
@@ -45,6 +47,8 @@ void windowProcess(sf::RenderWindow* window, InputHandler *in) {
 }
 
 int main() {
+	srand(time(NULL));
+
 	const sf::Vector2f screensize = sf::Vector2f(160, 144);
 	sf::RenderWindow window(sf::VideoMode(screensize.x*5, screensize.y*5), "Game Project");
 	InputHandler *in = new InputHandler(&window);

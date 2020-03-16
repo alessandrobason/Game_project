@@ -35,9 +35,8 @@ MainScreen::MainScreen(sf::RenderWindow* window, InputHandler* input, RoomManage
 	button.setPressedTexture(&roommanager->textures["guibuttonpressed"]);
 	button.setRect(sf::FloatRect(0, 0, 64, 24));
 	button.setTileSize(8);
-	button.setText(&roommanager->fonts["font"], "CiAoBiTcH");
+	button.setText(&roommanager->fonts["font"], "start");
 	button.setCallback(this);
-	//button.callback = &GUIcallback::callback;
 	button.load();
 
 	elements.push_back(new GUIpanel(mainbackground));
@@ -53,6 +52,5 @@ void MainScreen::update(float dt) {
 void MainScreen::callback(std::string id) {
 	if (id == "start") {
 		roommanager->moveMenu("game");
-		//roommanager->setCurrentState(RoomManager::STATES::MAP);
 	}
 }

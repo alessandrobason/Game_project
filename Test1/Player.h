@@ -20,6 +20,7 @@ private:
 	
 	bool pressed_keys[256] = { false };
 
+	std::string directionnames[4] = { "up-right", "down-right", "down-left", "up-left" };
 	AnimatedSprite animSprite;
 	DIRECTIONS last_direction = DOWN_RIGHT;
 
@@ -39,10 +40,14 @@ public:
 	void draw() override;
 	void drawDebug() override;
 
+	float getAngleToMouse() { return angle_to_mouse; }
+
 	void move(sf::Vector2f offset);
 
 	void setCanMove(bool c) { canmove = c; }
 	bool getCanMove() { return canmove; }
+
+	void hit(float damage) override;
 
 	void setPosition(sf::Vector2f pos);
 	DIRECTIONS getDirection() { return last_direction; }

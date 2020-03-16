@@ -63,6 +63,18 @@ sf::Vector2f Collision::getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel) 
 	return reverseVel;
 }
 
+void Collision::setPosition(sf::Vector2f pos) {
+	rect.left = pos.x;
+	rect.top = pos.y;
+	debug.setPosition(sf::Vector2f(rect.left + 1, rect.top + 1));
+}
+
+void Collision::setCenter(sf::Vector2f c) {
+	rect.left = c.x - rect.width / 2;
+	rect.top = c.y - rect.height / 2;
+	debug.setPosition(sf::Vector2f(rect.left + 1, rect.top + 1));
+}
+
 void Collision::moveCollision(sf::Vector2f mov) {
 	rect.left += mov.x;
 	rect.top += mov.y;

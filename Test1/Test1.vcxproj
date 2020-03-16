@@ -149,6 +149,7 @@
     <ClCompile Include="GameObjects\Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\FiniteStateMachine.h" />
     <ClInclude Include="Framework\GUI\GUIbox.h" />
     <ClInclude Include="Framework\GUI\GUIbutton.h" />
     <ClInclude Include="Framework\GUI\GUIcallback.h" />

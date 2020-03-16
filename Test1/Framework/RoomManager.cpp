@@ -1,7 +1,7 @@
 #include "RoomManager.h"
 
 RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
-	currentstate = STATES::MENU;
+	currentstate = STATES::MAP;
 	currentmenu = "splashscreen";
 }
 
@@ -21,11 +21,9 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
 
 	menuscreens["startscreen"] = new MainScreen(w, in, this);
 	menuscreens["splashscreen"] = new SplashScreens(w, in, this);
-	//mainscreen = new MainScreen(w, in, this);
-	//splashscreen= new SplashScreens(w, in, this);
 
 	p = Player(in, this, w);
-	p.setCanMove(false);
+	//p.setCanMove(false);
 
 	enemydata.readJSON("GameObjects/enemy_data.json");
 
@@ -64,6 +62,13 @@ void RoomManager::loadEnemies() {
 	}
 	else {
 		std::cout << "Loaded enemy spritesheet\n";
+	}
+
+	if (!textures["enemyproj"].loadFromFile("Assets/enemyprojectiles.png")) {
+		std::cout << "couldn't load enemies projectiles\n";
+	}
+	else {
+		std::cout << "Loaded enemies projectiles texture\n";
 	}
 
 	for (size_t i = 0; i < enemydata.doc["enemies"].arr.size(); i++) {
@@ -133,8 +138,7 @@ void RoomManager::update(float dt) {
 }
 
 void RoomManager::draw() {
-	//w->clear();
-	w->clear(sf::Color::Cyan);
+	w->clear();
 	switch (currentstate) {
 	case RoomManager::STATES::MENU:
 		menuscreens[currentmenu]->draw();

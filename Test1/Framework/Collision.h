@@ -41,6 +41,8 @@ public:
 
 	bool Check_Collision(sf::FloatRect r);
 
+	void setPosition(sf::Vector2f pos);
+	void setCenter(sf::Vector2f c);
 	void moveCollision(sf::Vector2f mov);
 	
 	sf::Vector2f getCollisionSide(sf::FloatRect r, sf::Vector2f& oldVel);

@@ -40,8 +40,7 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
 
     local_center = collider.collision_offset + sf::Vector2f(collider.rect.width / 2, collider.rect.height / 2);
     
-    // load weapon
-
+    // LOAD WEAPONs
     if (!roommanager->textures["weapons"].loadFromFile(config->doc["weapons"].obj["spritesheet"].str)) {
         std::cout << "Failed to load weapons texture from " << config->doc["weapons"].obj["spritesheet"].str << "\n";
     }
@@ -57,19 +56,29 @@ Player::Player(InputHandler* input, RoomManager* rm, sf::RenderWindow* win) : Ga
     arrowhitbox.width = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[2].i;
     arrowhitbox.height = config->doc["weapons"].obj["arrow"].obj["hitbox"].arr[3].i;
     bow.setHitBox(arrowhitbox);
-
     bow.setDamage(config->doc["weapons"].obj["bow"].obj["base_damage"].d);
+
+    //  CHECKBOX
+    checkboxsize = sf::Vector2f(200, 200);
+    checkbox = Collision(-checkboxsize.x / 2.f, -checkboxsize.y / 2.f, checkboxsize.x / 2.f, checkboxsize.y / 2.f, Collision::LAYER::PLAYER);
+    checkbox.setDebugColor(sf::Color::Yellow);
 }
 
 void Player::move(sf::Vector2f offset) {
     GameObject::move(offset);
     bow.move(offset);
+    checkbox.moveCollision(offset);
 }
 
 void Player::setPosition(sf::Vector2f pos) {
     getSprite()->setPosition(pos);
     collider.rect = sf::FloatRect(pos.x + collider.collision_offset.x, pos.y + collider.collision_offset.y, collider.rect.width, collider.rect.height);
     bow.setPosition(pos + local_center);
+    checkbox.setCenter(pos + local_center);
+}
+
+void Player::hit(float damage) {
+    std::cout << "Player hit\n";
 }
 
 void Player::handleInput(float dt) {
@@ -110,28 +119,12 @@ void Player::handleInput(float dt) {
         break;
     }
 
-    float l = UsefulFunc::InvSqrt(vel.x * vel.x + vel.y * vel.y);
-    vel *= l;
-    vel *= speed;
+    vel = UsefulFunc::normalize(vel) * speed;
 
-    std::string anim = "";
-    if (vel != sf::Vector2f(0, 0)) anim += "walk ";
-    else anim += "idle ";
+    std::string anim = "idle ";
+    if (vel != sf::Vector2f(0, 0)) anim = "walk ";
 
-    switch (last_direction) {
-    case UP_LEFT:
-        anim += "up-left";
-        break;
-    case UP_RIGHT:
-        anim += "up-right";
-        break;
-    case DOWN_RIGHT:
-        anim += "down-right";
-        break;
-    case DOWN_LEFT:
-        anim += "down-left";
-        break;
-    }
+    anim += directionnames[last_direction];
 
     animSprite.setCurrentAnimation(anim);
     bow.handleInput(dt);
@@ -155,4 +148,5 @@ void Player::draw() {
 void Player::drawDebug(){
     GameObject::drawDebug();
     bow.drawDebug(w);
+    checkbox.drawDebug(w);
 }

@@ -32,7 +32,21 @@ void Projectiles::update(float dt) {
 
 		Collision* collision_hit = nullptr;
 
-		// check collisions
+		// check game objects collisions
+		for (size_t j = 0; j < roommanager->getCurrentRoom()->getGameObjects()->size(); j++) {
+			Collision* current_collision = &roommanager->getCurrentRoom()->getGameObjects()->at(j)->collider;
+			if (collisionlayer == current_collision->collisionlayer) continue;
+			sf::FloatRect rect = current_collision->rect;
+			if (projectile_vector[i].collider.Check_Collision(rect)) {
+				collision_hit = current_collision;
+				projectile_vector[i].hitsomething = true;
+				projectilestween.push_back(Tweening<float>(255.f, 0.f, 0.f));
+				removing_projectiles.push_back({ i });
+				roommanager->getCurrentRoom()->getGameObjects()->at(j)->hit(damage);
+				break;
+			}
+		}
+		// check tilemap collisions
 		for (size_t j = 0; j < roommanager->getCurrentRoom()->getColliders()->size(); j++) {
 			Collision* current_collision = roommanager->getCurrentRoom()->getColliders()->at(j);
 			if (collisionlayer == current_collision->collisionlayer) continue;
@@ -47,6 +61,7 @@ void Projectiles::update(float dt) {
 		}
 
 		// if the projectile hit something: check if it's a gameobject
+		/*
 		if (collision_hit == nullptr) continue;
 		for (size_t j = 0; j < roommanager->getCurrentRoom()->getGameObjects()->size(); j++) {
 			GameObject* current_gameobject = roommanager->getCurrentRoom()->getGameObjects()->at(j);
@@ -56,6 +71,7 @@ void Projectiles::update(float dt) {
 				break;
 			}
 		}
+		*/
 	}
 
 	for (size_t i = 0; i < removing_projectiles.size(); i++) {
@@ -75,6 +91,21 @@ void Projectiles::shoot(sf::Transform transform) {
 	singleprojectile newprojectile;
 	sf::Vertex vertex[4];
 
+	transform.translate(sf::Vector2f(-projectilehitbox.width / 2, -projectilehitbox.height / 2));
+
+	newprojectile.position = sf::Vector2f(transform.getMatrix()[12], transform.getMatrix()[13]);
+	newprojectile.velocity = sf::Vector2f(0, 0);
+	newprojectile.velocity = transform.transformPoint(orientation * speed);
+	newprojectile.velocity -= newprojectile.position;
+	sf::Vector2f center = sf::Vector2f(projectilehitbox.left + projectilehitbox.width / 2, projectilehitbox.top + projectilehitbox.height / 2);
+	sf::Vector2f centerofcollision = transform.transformPoint(center);
+	newprojectile.collider = Collision( centerofcollision.x - projectilehitbox.width / 2,
+										centerofcollision.y - projectilehitbox.height / 2,
+										projectilehitbox.width,
+										projectilehitbox.height,
+										collisionlayer);
+	projectile_vector.push_back(newprojectile);
+
 	vertex[0].position = transform.transformPoint(sf::Vector2f());
 	vertex[1].position = transform.transformPoint(sf::Vector2f(projectilesize.x, 0));
 	vertex[2].position = transform.transformPoint(sf::Vector2f(projectilesize.x, projectilesize.y));
@@ -87,16 +118,6 @@ void Projectiles::shoot(sf::Transform transform) {
 
 	for (size_t i = 0; i < 4; i++) vertexs.push_back(vertex[i]);
 
-	newprojectile.position = sf::Vector2f(transform.getMatrix()[12], transform.getMatrix()[13]);
-	newprojectile.velocity = transform.transformPoint(sf::Vector2f(-speed, -speed));
-	newprojectile.velocity -= newprojectile.position;
-	sf::Vector2f centerofcollision = transform.transformPoint(sf::Vector2f(projectilehitbox.left, projectilehitbox.top));
-	newprojectile.collider = Collision(centerofcollision.x - projectilehitbox.left/2, 
-									   centerofcollision.y - projectilehitbox.top/ 2, 
-									   projectilehitbox.width, 
-									   projectilehitbox.height, 
-									   collisionlayer);
-	projectile_vector.push_back(newprojectile);
 }
 
 void Projectiles::removeArrow(size_t n) {

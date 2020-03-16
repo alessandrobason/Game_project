@@ -14,6 +14,7 @@ public:
 	void removePlayer();
 	void setPlayerPosition(sf::Vector2f pos);
 	sf::Vector2f getPlayerPosition() { return sf::Vector2f(p->collider.rect.left, p->collider.rect.top); };
+	Player* getPlayer() { return p; }
 	sf::FloatRect getBound(int i) { return bounds[i]; }
 	sf::Vector2f getCameraTopLeft() { return camera_top_left; }
 
@@ -49,6 +50,10 @@ private:
 	std::vector<int>* layers = nullptr;
 	Tilemap::tilemap_data* tilemap_data = nullptr;
 	sf::Shader* shader = nullptr;
+
+	// scene enemies
+	std::vector<GameObject*> sceneEnemies;
+	std::vector<GameObject*> destroyedSceneEnemies;
 
 	// player pointer
 	Player* p = nullptr;

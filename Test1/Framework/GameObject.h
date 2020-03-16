@@ -5,8 +5,9 @@
 #include "Collision.h"
 #include "UsefulFunctions.h"
 #include "RoomManager.fwd.h"
+#include "FiniteStateMachine.h"
 
-class GameObject {
+class GameObject : public FiniteStateMachine {
 public:
 	GameObject() {}
 	GameObject(InputHandler* i, RoomManager* rm, sf::RenderWindow* win) {
@@ -25,12 +26,13 @@ public:
 
 	virtual bool animationCallback(std::string name) { return false; }
 
+	virtual void isPlayerInside(bool p) {}
+
 	virtual sf::Sprite* getSprite() { return nullptr; }
 
-	void move(sf::Vector2f mov) {
+	virtual void move(sf::Vector2f mov) {
 		getSprite()->move(mov);
 		collider.moveCollision(mov);
-		//collider.setDebugPosition(sf::Vector2f(collider.rect.left + 1, collider.rect.top + 1));
 	}
 
 	// Set the input component
@@ -46,6 +48,13 @@ public:
 		collider.setDebugPosition(sf::Vector2f(position.x+1, position.y+1));
 	}
 
+	sf::Vector2f getCenter() {
+		sf::Vector2f c;
+		c.x = collider.rect.left + collider.rect.width / 2;
+		c.y = collider.rect.top + collider.rect.height / 2;
+		return c;
+	}
+
 	// Control sprite speed
 	void setSpeed(float spd) { speed = spd; }
 	float getSpeed() { return speed; }
@@ -59,6 +68,9 @@ public:
 	Collision collider;
 	sf::Vector2f vel;
 	sf::Vector2f oldVel;
+	bool collided = false;
+
+	Collision checkbox;
 
 	Collision::LAYER collisionlayer = Collision::LAYER::ALL;
 
@@ -66,10 +78,14 @@ protected:
 	// Sprite properties
 	float speed = 0;
 
+	bool dead = false;
+
 	InputHandler* in = nullptr;
 	sf::RenderWindow* w = nullptr;
 	// pointer to the room manager
 	RoomManager* roommanager = nullptr;
 
 	sf::Texture* txt = nullptr;
+
+	sf::Vector2f checkboxsize = sf::Vector2f(0, 0);
 };

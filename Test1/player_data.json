@@ -79,7 +79,7 @@
     },
     "arrow": {
       "texture coordinates": [ 16, 0 ],
-      "hitbox":  [4, 4, 4, 4]
+      "hitbox":  [0, 0, 6, 6]
     }
   }
   }
