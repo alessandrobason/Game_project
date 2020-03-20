@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 #include <unordered_map>
 #include "InputHandler.h"
 #include "Tilemap.h"
@@ -10,6 +11,8 @@
 #include "../Map_room.h"
 #include "MainScreen.h"
 #include "SplashScreens.h"
+#include "MainMenu.h"
+#include "Option.h"
 
 class RoomManager {
 public:
@@ -51,11 +54,12 @@ private:
 		sf::RectangleShape bottomsquare;
 		std::string newmenu;
 		bool actually_finished = false;
+
 	} menutransitiondata;
 
 	STATES currentstate;
 
-	std::map<std::string, Enemy> enemycopies;
+	std::unordered_map<std::string, Enemy> enemycopies;
 
 	Player p;
 	std::vector<Map_room*> maprooms;
@@ -65,12 +69,9 @@ private:
 	
 	std::unordered_map<std::string, Room*> menuscreens;
 	std::string currentmenu = "";
-	//Room* mainscreen = nullptr;
-	//Room* splashscreen = nullptr;
+	std::string lastmenu = "";
 
 	JSONparser enemydata;
-
-	//bool movingmap = false;
 
 	void loadMaps();
 	void loadTextures();
@@ -94,6 +95,10 @@ public:
 	void moveRoom(int side);
 	void moveMenu(std::string newmenu);
 
+	void setMenuTransitionOffset(std::string menu);
+
+	std::string getLastMenu() { return lastmenu; }
+
 	void animatetransition(float dt);
 	void menuTransition(float dt);
 	void drawMenuTransition();
@@ -112,6 +117,8 @@ public:
 	std::map<std::string, sf::Font> fonts;
 	// dictionary with all the maps currently loaded
 	std::map<std::string, MapData> tilemapData;
+	// dictionary with all the music of the game
+	std::unordered_map<std::string, sf::Music> musics;
 
 	int MAPSIZE = 16 * 40;
 };

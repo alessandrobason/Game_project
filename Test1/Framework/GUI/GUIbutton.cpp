@@ -9,6 +9,7 @@ GUIbutton::GUIbutton(const GUIbutton& copy) : GUItiledelement(copy) {
 	insidetext = copy.insidetext;
 	callback = copy.callback;
 	callbackobject = copy.callbackobject;
+	hastext = copy.hastext;
 }
 
 void GUIbutton::setText(sf::Font* f, std::string text) {
@@ -16,6 +17,19 @@ void GUIbutton::setText(sf::Font* f, std::string text) {
 	insidetext.setText(text);
 	insidetext.setCharacterSize(8);
 	insidetext.setAlign(ALIGN::CENTER, ALIGN::CENTER);
+	hastext = true;
+}
+
+void GUIbutton::setPosition(sf::Vector2f pos) {
+	GUIelement::setPosition(pos);
+}
+
+void GUIbutton::alignElement() {
+	GUIelement::alignElement();
+	if (hastext) {
+		insidetext.alignElement();
+		insidetext.update();
+	}
 }
 
 void GUIbutton::draw(sf::RenderWindow* w) {
@@ -24,20 +38,23 @@ void GUIbutton::draw(sf::RenderWindow* w) {
 }
 
 void GUIbutton::trigger() {
-	callback(*callbackobject, id);
+	callback(*callbackobject, id, {});
 }
 
 void GUIbutton::load() {
 	GUItiledelement::load();
 	if (states.texture == NULL) {
-		std::cout << "Texture not loaded\n";
+		std::cout << "Button texture not loaded\n";
 		abort();
 	}
-
-	nineslice(tilesize);
+	if (hastext) {
+		insidetext.setParent(this);
+		insidetext.setOffset(sf::Vector2f(0, -4));
+		insidetext.load();
+	}
+	nineslice();
 	alignElement();
-	insidetext.setOffset(sf::Vector2f(0, -4));
-	insidetext.load();
+	
 }
 
 void GUIbutton::changeControlState(CONTROL_STATES newcontrol) {
@@ -72,6 +89,9 @@ void GUIbutton::changeControlState(CONTROL_STATES newcontrol) {
 		break;
 	case CONTROL_STATES::CLICKUP:
 		if (newcontrol != currentcontrol) {
+			insidetext.updatePosition(sf::Vector2f(0, -2));
+			insidetext.update();
+			states.texture = hover;
 			trigger();
 		}
 		break;

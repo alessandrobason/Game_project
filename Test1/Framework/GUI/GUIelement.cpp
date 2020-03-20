@@ -29,6 +29,9 @@ void GUIelement::alignElement() {
 	// HORIZONTAL
 	switch (horizontal_alignment)
 	{
+	case ALIGN::NONE:
+		setPosition(sf::Vector2f(parent->getPosition().x + getPosition().x, boxrect.top));
+		break;
 	case ALIGN::CENTER:
 		//std::cout << "parent center: " << parent->getCenter().x << " " << parent->getCenter().y << "\n";
 		setCenter(sf::Vector2f(parent->getCenter().x, getCenter().y));
@@ -43,6 +46,9 @@ void GUIelement::alignElement() {
 	// VERTICAL
 	switch (vertical_alignment)
 	{
+	case ALIGN::NONE:
+		setPosition(sf::Vector2f(boxrect.left, parent->getPosition().y + getPosition().y));
+		break;
 	case ALIGN::CENTER:
 		setCenter(sf::Vector2f(getCenter().x, parent->getCenter().y));
 		break;
@@ -57,4 +63,33 @@ void GUIelement::alignElement() {
 	//setCenter(sf::Vector2f(192 / 2, 144 / 2));
 
 	std::cout << "##---###" << getPosition().x << " " << getPosition().y << "\n";
+}
+
+void GUIelement::appendQuad(sf::Vertex v, sf::Vector2f size) {
+	sf::Vector2f coords = v.position;
+	sf::Vector2f texcoords = v.texCoords;
+	sf::Vector2f positionoffset[4] = {
+		sf::Vector2f(0, 0),
+		sf::Vector2f(size.x, 0),
+		sf::Vector2f(size.x, size.y),
+		sf::Vector2f(0, size.y),
+	};
+
+	sf::Vector2f textureoffset[4] = { sf::Vector2f() };
+
+	if (states.texture) {
+		int w = states.texture->getSize().x;
+		int h = states.texture->getSize().y;
+		textureoffset[0] = sf::Vector2f(0, 0);
+		textureoffset[1] = sf::Vector2f(w, 0);
+		textureoffset[2] = sf::Vector2f(w, h);
+		textureoffset[3] = sf::Vector2f(0, h);
+	}
+
+	for (size_t i = 0; i < 4; i++) {
+		v.position = positionoffset[i] + coords;
+		if (states.texture) v.texCoords = textureoffset[i] + texcoords;
+		else v.color = backgroundcolor;
+		vertexs.push_back(v);
+	}
 }

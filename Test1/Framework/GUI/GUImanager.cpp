@@ -6,60 +6,6 @@ GUImanager::GUImanager(sf::RenderWindow* window, InputHandler* input, RoomManage
 	GUIin = input;
 	GUIw = window;
 	GUIroommanager = rm;
-	/*
-	std::vector<textureload> texturestoload;
-	std::vector<fontload> fontstoload;
-
-	texturestoload.push_back({ "testanimation", "GUI/testanimation.png" });
-	loadTextures(texturestoload);
-
-	GUIpanel mainpanel;
-	mainpanel.setRect(sf::FloatRect(0, 0, in->getScreenSize().x, in->getScreenSize().y));
-	mainpanel.setBackgroundColor(sf::Color::Black);
-	mainpanel.load();
-
-	GUIsplashscreen splashscreen;
-	splashscreen.setParent(&mainpanel);
-	splashscreen.setTexture(&roommanager->textures["testanimation"]);
-	splashscreen.setRect(sf::FloatRect(0, 0, 64, 64));
-	splashscreen.setAlign(GUIelement::ALIGN::CENTER, GUIelement::ALIGN::CENTER);
-	splashscreen.load();
-
-	elements.push_back(new GUIpanel(mainpanel));
-	elements.push_back(new GUIsplashscreen(splashscreen));
-
-	////////////////////
-	
-
-	//GUIbox guibox;
-	//guibox.setTexture(&roommanager->textures["guibox"]);
-	//guibox.setRect(sf::IntRect(0, 0, in->getScreenSize().x, in->getScreenSize().y));
-	//guibox.setTileSize(16);
-	//guibox.load();
-	
-	//////////////////////////////////////////
-	
-	struct oldpointerstruct { GUIelement* op; int pos; };
-
-	std::vector<oldpointerstruct> oldpointers;
-
-	// IF PARENTS STOP WORKING UNCOMMENT THIS
-	//for (size_t i = 0; i < elements.size(); i++) {
-	//	oldpointers.push_back({ elements[i]->oldpointer, (int)i });
-	//}
-
-	// fix parent pointers
-	for (size_t i = 0; i < elements.size(); i++) {
-		oldpointers.push_back({ elements[i]->oldpointer, (int)i });
-		if (elements[i]->getParent() == nullptr) continue;
-		for (size_t j = 0; j < oldpointers.size(); j++) {
-			if (elements[i]->getParent() == oldpointers[j].op) {
-				elements[i]->setParent(elements[oldpointers[j].pos]);
-				break;
-			}
-		}
-	}
-	*/
 }
 
 void GUImanager::loadTextures(std::vector<textureload> texturenames) {

@@ -13,11 +13,11 @@ class GUIbutton : public GUItiledelement {
 
 	std::string id = "null";
 	
-	GUItext insidetext = GUItext(this);
+	GUItext insidetext;
+	bool hastext = false;
 
-	//void (GUIcallback::*callback)() = nullptr;
 	GUIcallback* callbackobject = nullptr;
-	std::function<void(GUIcallback&, std::string id)> callback = &GUIcallback::callback;
+	std::function<void(GUIcallback&, std::string id, GUIcallback::RESPONSE value)> callback = &GUIcallback::callback;
 
 public:
 	GUIbutton() : GUItiledelement() {}
@@ -25,10 +25,12 @@ public:
 
 	void setId(std::string i) { id = i; }
 	void setText(sf::Font* f, std::string text);
-	void setTileSize(int t) { tilesize = t; }
 	void setNormalTexture(sf::Texture* n) { normal = n; }
 	void setHoverTexture(sf::Texture* h) { hover = h; }
 	void setPressedTexture(sf::Texture* p) { pressed = p; }
+
+	void setPosition(sf::Vector2f pos) override;
+	void alignElement() override;
 
 	void setCallback(GUIcallback* o) { callbackobject = o; }
 

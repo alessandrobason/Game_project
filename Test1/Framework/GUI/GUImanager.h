@@ -4,7 +4,10 @@
 #include "GUIpanel.h"
 #include "GUIbox.h"
 #include "GUIbutton.h"
-#include "GUIsplashscreen.h"
+#include "GUIverticalalign.h"
+#include "GUIhorizontalalign.h"
+#include "GUIcheckbox.h"
+#include "GUIslider.h"
 
 class GUImanager {
 	InputHandler* GUIin = nullptr;

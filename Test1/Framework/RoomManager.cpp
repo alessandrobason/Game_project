@@ -1,8 +1,13 @@
 #include "RoomManager.h"
 
 RoomManager::RoomManager() : loadingThread(&RoomManager::loadMaps, this) {
-	currentstate = STATES::MAP;
+	currentstate = STATES::MENU;
 	currentmenu = "splashscreen";
+	if (!musics["menu"].openFromFile("Assets/music/Bill Evans - Someday My Prince Will Come.ogg")) {
+		std::cout << "couldn't open music file for menu\n";
+		abort();
+	}
+	musics["menu"].setLoop(true);
 }
 
 void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
@@ -19,9 +24,11 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
 	menutransitiondata.bottomsquare.setPosition(sf::Vector2f(0, in->getScreenSize().y));
 	menutransitiondata.bottomsquare.setFillColor(sf::Color::Black);
 
-	menuscreens["startscreen"] = new MainScreen(w, in, this);
 	menuscreens["splashscreen"] = new SplashScreens(w, in, this);
-
+	menuscreens["startscreen"] = new MainScreen(w, in, this);
+	menuscreens["mainmenu"] = new MainMenu(w, in, this);
+	menuscreens["options"] = new OptionMenu(w, in, this);
+	
 	p = Player(in, this, w);
 	//p.setCanMove(false);
 
@@ -48,7 +55,6 @@ void RoomManager::setData(sf::RenderWindow* win, InputHandler* inp) {
 	p.setPosition(maprooms[map.data[map.currentRoom]]->getOffset() + sf::Vector2f(16, 16));
 
 	loadTextures();
-
 }
 
 RoomManager::~RoomManager() {
@@ -131,7 +137,7 @@ void RoomManager::update(float dt) {
 		animatetransition(dt);
 		break;
 	case RoomManager::STATES::MENUTRANSITION:
-		if (currentmenu == "game") maprooms[map.data[map.currentRoom]]->update(dt);
+		//if (currentmenu == "game") maprooms[map.data[map.currentRoom]]->update(dt);
 		menuTransition(dt);
 		break;
 	}
@@ -277,12 +283,23 @@ void RoomManager::animatetransition(float dt) {
 		getCurrentRoom()->setMainCamera(mapmovement.maincamera);
 		currentstate = STATES::MAP;
 	}
-	
 }
 
 void RoomManager::moveMenu(std::string newmenu) {
+	lastmenu = currentmenu;
 	menutransitiondata.newmenu = newmenu;
 	currentstate = STATES::MENUTRANSITION;
+	setMenuTransitionOffset(currentmenu);
+	/*
+	sf::Vector2f offsetU = sf::Vector2f();
+	sf::Vector2f offsetB = sf::Vector2f(0, in->getScreenSize().y);
+	if (newmenu == "game") {
+		offsetU = getCurrentRoom()->getCameraTopLeft();
+		offsetB += offsetU;
+	}
+	menutransitiondata.uppersquare.setPosition(offsetU);
+	menutransitiondata.bottomsquare.setPosition(offsetB);
+	*/
 }
 
 void RoomManager::menuTransition(float dt) {
@@ -291,6 +308,7 @@ void RoomManager::menuTransition(float dt) {
 
 	menutransitiondata.uppersquare.setSize(menutransitiondata.uppersquaretween.getValue());
 	menutransitiondata.bottomsquare.setSize(menutransitiondata.bottomsquaretween.getValue());
+
 	if (menutransitiondata.uppersquaretween.isfinished() && menutransitiondata.bottomsquaretween.isfinished()) {
 		std::string newmenu = menutransitiondata.newmenu;
 
@@ -298,6 +316,7 @@ void RoomManager::menuTransition(float dt) {
 			if (newmenu != "game") {
 				currentmenu = newmenu;
 				currentstate = STATES::MENU;
+				menuscreens[currentmenu]->start();
 			}
 			else {
 				currentstate = STATES::MAP;
@@ -306,26 +325,38 @@ void RoomManager::menuTransition(float dt) {
 			menutransitiondata.actually_finished = false;
 			menutransitiondata.uppersquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, in->getScreenSize().y / 2), 0.5f);
 			menutransitiondata.bottomsquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, 0), sf::Vector2f(in->getScreenSize().x, -in->getScreenSize().y / 2), 0.5f);
-
 		}
 		else {
 			currentmenu = newmenu;
 			menutransitiondata.uppersquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, in->getScreenSize().y / 2), sf::Vector2f(in->getScreenSize().x, 0), 0.5f);
 			menutransitiondata.bottomsquaretween = Tweening<sf::Vector2f>(sf::Vector2f(in->getScreenSize().x, -in->getScreenSize().y / 2), sf::Vector2f(in->getScreenSize().x, 0), 0.5f);
 			menutransitiondata.actually_finished = true;
-			sf::Vector2f offsetU = sf::Vector2f();
-			sf::Vector2f offsetB = sf::Vector2f(0, in->getScreenSize().y);
-			if (newmenu == "game") {
-				offsetU = getCurrentRoom()->getOffset();
-				offsetB += offsetU;
-			}
-			menutransitiondata.uppersquare.setPosition(offsetU);
-			menutransitiondata.bottomsquare.setPosition(offsetB);
+			setMenuTransitionOffset(newmenu);
 		}
 	}
 }
 
+void RoomManager::setMenuTransitionOffset(std::string menu) {
+	sf::View v = w->getView();
+	v.setCenter(in->getScreenSize()/2.f);
+	sf::Vector2f offsetU = sf::Vector2f();
+	sf::Vector2f offsetB = sf::Vector2f(0, in->getScreenSize().y);
+	if (menu == "game") {
+		getCurrentRoom()->update(0);
+		v = getCurrentRoom()->getMainCamera();
+		offsetU = getCurrentRoom()->getCameraTopLeft();
+		offsetB += offsetU;
+	}
+	w->setView(v);
+	menutransitiondata.uppersquare.setPosition(offsetU);
+	menutransitiondata.bottomsquare.setPosition(offsetB);
+}
+
 void RoomManager::drawMenuTransition() {
+	std::cout << menutransitiondata.uppersquare.getPosition().x << " " <<
+		menutransitiondata.uppersquare.getPosition().y << " " <<
+		menutransitiondata.uppersquare.getSize().x << " " <<
+		menutransitiondata.uppersquare.getSize().y << "\n";
 	w->draw(menutransitiondata.uppersquare);
 	w->draw(menutransitiondata.bottomsquare);
 }

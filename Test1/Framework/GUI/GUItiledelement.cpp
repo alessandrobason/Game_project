@@ -30,8 +30,9 @@ void GUItiledelement::appendQuad(sf::Vertex v, sf::Vector2f size) {
 	}
 }
 
-void GUItiledelement::nineslice(int tilesize) {
+void GUItiledelement::nineslice() {
 	sf::Vertex v;
+	if (backgroundcolor != sf::Color::Transparent) v.color = backgroundcolor;
 	sf::FloatRect boxrectnine = boxrect;
 	boxrectnine.width += boxrect.left;
 	boxrectnine.height += boxrect.top;
@@ -71,8 +72,8 @@ void GUItiledelement::nineslice(int tilesize) {
 	// LOAD INBETWEENS
 	int totalwidth = boxrect.width - tilesize * 2;
 	int totalheight = boxrect.height - tilesize * 2;
-	sf::Vector2i numberoftiles = sf::Vector2i(totalwidth, totalheight) / tilesize;
-	sf::Vector2f remainingsize = sf::Vector2f(totalwidth % tilesize, totalheight % tilesize);
+	numberoftiles = sf::Vector2i(totalwidth, totalheight) / tilesize;
+	remainingsize = sf::Vector2f(totalwidth % tilesize, totalheight % tilesize);
 	std::cout << "###### REMAINING SIZE ######" << remainingsize.x << " " << remainingsize.y << "\n";
 
 	sf::Vector2f sideCoords[4]{

@@ -268,7 +268,7 @@ void Map_room::update(float dt) {
 	w->setView(main_camera);
 	freeMemory();
 	//cullGameObjects();
-	//std::cout << "->" << main_camera.getCenter().x << " " << main_camera.getCenter().x << "\n";
+	//std::cout << "->" << camera_top_left.x << " " << camera_top_left.y << "\n";
 }
 
 /*######################*\

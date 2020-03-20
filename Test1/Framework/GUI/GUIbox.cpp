@@ -10,5 +10,5 @@ void GUIbox::load() {
 		std::cout << "Texture not loaded\n";
 		abort();
 	}
-	nineslice(tilesize);
+	nineslice();
 }

@@ -43,14 +43,18 @@ MainScreen::MainScreen(sf::RenderWindow* window, InputHandler* input, RoomManage
 	elements.push_back(new GUIbutton(button));
 }
 
+void MainScreen::start() {
+	roommanager->musics["menu"].play();
+}
+
 void MainScreen::update(float dt) {
 	main_camera.setViewport(Room::in->getView().getViewport());
 	Room::w->setView(main_camera);
 	GUImanager::update(dt);
 }
 
-void MainScreen::callback(std::string id) {
+void MainScreen::callback(std::string id, RESPONSE value) {
 	if (id == "start") {
-		roommanager->moveMenu("game");
+		roommanager->moveMenu("mainmenu");
 	}
 }

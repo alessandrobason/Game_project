@@ -3,8 +3,11 @@
 
 class GUItext : public GUIelement {
 public:
-	GUItext(const GUItext& copy) : GUIelement(copy) {}
-	GUItext(GUIelement* p) { parent = p; }
+	GUItext() {}
+	GUItext(const GUItext& copy) : GUIelement(copy) {
+		text = copy.text;
+		font = copy.font;
+	}
 
 	void setFont(sf::Font* f) { 
 		font = f; 
@@ -26,7 +29,7 @@ public:
 		texture.setSmooth(false);
 
 		boxrect = text.getLocalBounds();
-
+		std::cout << "Loading text: " << text.getString().toAnsiString() << "\n";
 		alignElement();
 		update();
 	}
@@ -35,18 +38,17 @@ public:
 		text.setPosition(sf::Vector2f(boxrect.left, boxrect.top));
 	}
 
-	void draw(sf::RenderWindow* w) {
-		sf::RectangleShape aaa;
-		aaa.setPosition(getPosition());
-		aaa.setSize(sf::Vector2f(boxrect.width, boxrect.height));
-		aaa.setFillColor(sf::Color::Transparent);
-		aaa.setOutlineColor(sf::Color::Red);
-		aaa.setOutlineThickness(1.f);
+	void draw(sf::RenderWindow* w) override {
 		w->draw(text);
-		//w->draw(aaa);
+	}
+
+	void setPosition(sf::Vector2f pos) override {
+		GUIelement::setPosition(pos);
+		update();
 	}
 
 	int getCharacterSize() { return text.getCharacterSize(); }
+	
 	void setCharacterSize(int s) { 
 		text.setCharacterSize(s); 
 		sf::Texture& texture = const_cast<sf::Texture&>(font->getTexture(s));
@@ -55,7 +57,6 @@ public:
 	}
 
 protected:
-	//GUIelement* parent = nullptr;
 	sf::Text text;
 	sf::Font* font = nullptr;
 };

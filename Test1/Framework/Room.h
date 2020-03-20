@@ -18,6 +18,7 @@ public:
 	virtual void update(float dt);
 	virtual void draw();
 	virtual void load(sf::Vector2f offset);
+	virtual void start() {}
 
 	sf::View getMainCamera() { return main_camera; }
 	std::string getFolder() { return FOLDER; }

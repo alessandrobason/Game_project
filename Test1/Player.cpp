@@ -126,6 +126,10 @@ void Player::handleInput(float dt) {
 
     anim += directionnames[last_direction];
 
+    if (in->isKeyPressed(sf::Keyboard::Escape)) {
+        roommanager->moveMenu("options");
+    }
+
     animSprite.setCurrentAnimation(anim);
     bow.handleInput(dt);
 }

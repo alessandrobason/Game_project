@@ -129,10 +129,13 @@
   <ItemGroup>
     <ClCompile Include="Framework\GUI\GUIbox.cpp" />
     <ClCompile Include="Framework\GUI\GUIbutton.cpp" />
+    <ClCompile Include="Framework\GUI\GUIcheckbox.cpp" />
     <ClCompile Include="Framework\GUI\GUIelement.cpp" />
     <ClCompile Include="Framework\GUI\GUImanager.cpp" />
     <ClCompile Include="Framework\GUI\GUItiledelement.cpp" />
+    <ClCompile Include="Framework\MainMenu.cpp" />
     <ClCompile Include="Framework\MainScreen.cpp" />
+    <ClCompile Include="Framework\Option.cpp" />
     <ClCompile Include="Framework\SplashScreens.cpp" />
     <ClCompile Include="Map_room.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
@@ -153,13 +156,19 @@
     <ClInclude Include="Framework\GUI\GUIbox.h" />
     <ClInclude Include="Framework\GUI\GUIbutton.h" />
     <ClInclude Include="Framework\GUI\GUIcallback.h" />
+    <ClInclude Include="Framework\GUI\GUIcheckbox.h" />
     <ClInclude Include="Framework\GUI\GUIelement.h" />
+    <ClInclude Include="Framework\GUI\GUIhorizontalalign.h" />
     <ClInclude Include="Framework\GUI\GUImanager.h" />
     <ClInclude Include="Framework\GUI\GUIpanel.h" />
+    <ClInclude Include="Framework\GUI\GUIslider.h" />
     <ClInclude Include="Framework\GUI\GUIsplashscreen.h" />
     <ClInclude Include="Framework\GUI\GUItext.h" />
     <ClInclude Include="Framework\GUI\GUItiledelement.h" />
+    <ClInclude Include="Framework\GUI\GUIverticalalign.h" />
+    <ClInclude Include="Framework\MainMenu.h" />
     <ClInclude Include="Framework\MainScreen.h" />
+    <ClInclude Include="Framework\Option.h" />
     <ClInclude Include="Framework\SplashScreens.h" />
     <ClInclude Include="Framework\Tweening.h" />
     <ClInclude Include="Map_room.h" />

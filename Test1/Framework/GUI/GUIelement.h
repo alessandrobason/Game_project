@@ -42,7 +42,7 @@ public:
 	GUIelement* getParent() { return parent; }
 
 	void setOffset(sf::Vector2f o) { elementoffset = o; }
-	void setPosition(sf::Vector2f pos);
+	virtual void setPosition(sf::Vector2f pos);
 	void setCenter(sf::Vector2f p) { setPosition(sf::Vector2f(p.x - (boxrect.width / 2), p.y - (boxrect.height / 2))); }
 	sf::Vector2f getPosition() { return sf::Vector2f(boxrect.left, boxrect.top); }
 	sf::Vector2f getCenter() { return sf::Vector2f(boxrect.left, boxrect.top) + (sf::Vector2f(boxrect.width, boxrect.height) / 2.f); }
@@ -56,15 +56,18 @@ public:
 	virtual int getCharacterSize() { return 0; }
 	virtual void setCharacterSize(int s) {}
 
-	void setTexture(sf::Texture* t) { states.texture = t; }
+	virtual void setTexture(sf::Texture* t) { states.texture = t; }
 	void setRect(sf::FloatRect b) { boxrect = b; }
 
-	virtual void appendQuad(sf::Vertex v, sf::Vector2f size) {}
+	virtual void appendQuad(sf::Vertex v, sf::Vector2f size);
 
 	void setAlign(ALIGN h, ALIGN v) { horizontal_alignment = h; vertical_alignment = v; }
-
+	virtual void alignElement();
+	
 	sf::FloatRect getRect() { return boxrect; }
 	CONTROL_STATES getState() { return currentcontrol; }
+
+	void setBackgroundColor(sf::Color bc) { backgroundcolor = bc; }
 
 protected:
 	GUIelement* parent = nullptr;
@@ -76,7 +79,7 @@ protected:
 	CONTROL_STATES currentcontrol = CONTROL_STATES::NONE;
 	ALIGN horizontal_alignment = ALIGN::NONE;
 	ALIGN vertical_alignment = ALIGN::NONE;
+	sf::Color backgroundcolor = sf::Color::Transparent;
 	bool dead = false;
 
-	void alignElement();
 };

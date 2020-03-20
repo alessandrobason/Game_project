@@ -9,6 +9,8 @@ public:
 
 	MainScreen(sf::RenderWindow* window, InputHandler* input, RoomManager* rm);
 
+	void start() override;
+
 	void handleInput(float dt) {
 		GUImanager::handleInput(dt);
 	}
@@ -19,5 +21,5 @@ public:
 		GUImanager::draw();
 	}
 
-	void callback(std::string id) override;
+	void callback(std::string id, RESPONSE value) override;
 };

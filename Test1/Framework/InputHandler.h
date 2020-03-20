@@ -79,6 +79,8 @@ public:
 		KEY_SPACE = sf::Keyboard::Space
 	};
 
+	bool isfullscreen = false;
+
 private:
 	sf::RenderWindow* w = nullptr;
 	// gameboy screen size

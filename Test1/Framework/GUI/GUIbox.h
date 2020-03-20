@@ -6,7 +6,5 @@ public:
 	GUIbox() : GUItiledelement() {}
 	GUIbox(const GUIbox& copy);
 
-	void setTileSize(int t) { tilesize = t; }
-
 	void load();
 };
